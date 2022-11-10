@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      args:
+        - DEV=true
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/backend
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
