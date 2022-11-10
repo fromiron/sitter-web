@@ -6,10 +6,11 @@
 .dockerignore
 
 # python
-app/__pycache__/
-app/*/__pycache__/
-app/*/*/__pycache__/
-app/*/*/*/__pycache__/
+/__pycache__/
+/*/__pycache__/
+/*/*/__pycache__/
+/*/*/*/__pycache__/
+
+
 .env/
 .venv/
-venv/

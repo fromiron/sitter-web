@@ -20,4 +20,4 @@ dpmd:
 	docker-compose run --rm backend sh -c "python manage.py $(c)"
 
 migration:
-	docker-compose run --rm backend sh -c "python manage.py makemigrations && python manage.py migrate"
+	docker-compose run --rm backend sh -c "python manage.py wait_for_db && python manage.py makemigrations && python manage.py migrate"
