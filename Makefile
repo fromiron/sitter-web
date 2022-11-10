@@ -8,7 +8,7 @@ stop:
 	docker-compose stop
 
 dtest:
-	docker-compose run --rm backend sh -c "python manage.py test && python manage.py flake8"
+	docker-compose run --rm backend sh -c "python manage.py test && flake8"
 
 dlint:
 	docker-compose run --rm backend sh -c "flake8"
