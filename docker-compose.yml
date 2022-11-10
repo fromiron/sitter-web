@@ -12,3 +12,24 @@ services:
       - ./backend:/backend
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DB_HOST=database
+      - DB_NAME=sitter-devdb
+      - DB_USER=dbuser
+      - DB_PASSWORD=password
+    depends_on:
+      - database
+
+  database:
+    image: postgres:13-alpine
+    volumes:
+      - sitter-web-database:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB:sitter-devdb
+      - POSTGRES_USER:dbuser
+      - POSTGRES_PASSWORD:password
+    ports:
+      - "5432:5432"
+
+volumes:
+  sitter-web-database:
