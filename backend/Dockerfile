@@ -9,10 +9,10 @@ EXPOSE 8000
 
 ARG DEV=false
 RUN python -m venv /py && \
-    /py/bin/pip install --upgrade pip && \
-    /py/bin/pip install -r requirements.txt && \
+    pip install --upgrade pip && \
+    pip install -r ./requirements.txt && \
     if [ $DEV = "true" ]; \
-        then /py/bin/pip install -r requirements.dev.txt ; \
+        then pip install -r ./requirements.dev.txt ; \
     fi && \
     rm -rf /temp && \
     adduser \
@@ -20,6 +20,6 @@ RUN python -m venv /py && \
         --no-create-home \
         django-user
 
-ENV PATH="/py/bin$PATH"
+ENV PATH="$PATH"
 
 USER django-user
