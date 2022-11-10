@@ -25,9 +25,9 @@ services:
     volumes:
       - sitter-web-database:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB:sitter-devdb
-      - POSTGRES_USER:dbuser
-      - POSTGRES_PASSWORD:password
+      - POSTGRES_DB=sitter-devdb
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=password
     ports:
       - "5432:5432"
 
