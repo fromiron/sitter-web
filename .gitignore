@@ -1,2 +1,5 @@
 ##python virtualenv
 .venv/
+
+##jetbrains
+.idea/
