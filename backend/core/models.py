@@ -15,6 +15,10 @@ class UserManager(BaseUserManager):
 
     def create_user(self, email, name, password=None, **extra_filed):
         """ユーザー登録"""
+        if not email:
+            raise ValueError('メールアドレスが必要です。')
+        if not name:
+            raise ValueError('ネーム指定が必要です。')
         user = self.model(email=self.normalize_email(
             email), name=name, **extra_filed)
         user.set_password(password)
