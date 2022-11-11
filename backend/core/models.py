@@ -26,6 +26,15 @@ class UserManager(BaseUserManager):
 
         return user
 
+    def create_superuser(self, email, name,  password):
+        """スーパーユーザー登録"""
+        user = self.create_user(email, name, password)
+        user.is_staff = True
+        user.is_superuser = True
+        user.save(using=self._db)
+
+        return user
+
 
 class User(AbstractBaseUser, PermissionsMixin):
     """ユーザーモデル"""
@@ -38,3 +47,4 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['name']
