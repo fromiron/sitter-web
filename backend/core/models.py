@@ -50,33 +50,28 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['name']
 
 
-class Memo(models.Model):
-    """pet, customer memo model"""
+class Customer(models.Model):
+    """Customer model"""
+
+    name = models.CharField(max_length=40)
+    name_kana = models.CharField(max_length=40, blank=True, null=True)
+    tel = models.CharField(max_length=40)
+    tel2 = models.CharField(max_length=40, blank=True, null=True)
+    address = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+
+class CustomerMemo(models.Model):
+    """customer memo model"""
     memo = models.TextField()
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.memo
-
-
-class Customer(models.Model):
-    """Customer model"""
-
-    name = models.CharField(max_length=40)
-    name_kana = models.CharField(max_length=40, blank=True)
-    tel = models.CharField(max_length=40)
-    tel2 = models.CharField(max_length=40)
-    address = models.CharField(max_length=255)
-    memo = models.ForeignKey(
-        Memo,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-    )
-
-    def __str__(self):
-        return self.name
 
 
 class PetType(models.Model):
@@ -112,12 +107,6 @@ class Pet(models.Model):
         null=True,
         help_text='柴犬･ネザーランドドワーフなど',
     )
-    memo = models.ForeignKey(
-        Memo,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-    )
     sex = models.BooleanField(help_text='オス=True、メス=False')
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     birth = models.DateField(null=True, help_text='誕生日')
@@ -125,3 +114,14 @@ class Pet(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class PetMemo(models.Model):
+    """pet  memo model"""
+    memo = models.TextField()
+    pet = models.ForeignKey(Pet, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.memo
