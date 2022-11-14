@@ -1,3 +1,14 @@
-from django.shortcuts import render
+from backend.customer.serializers import CustomerSerializer
+from core.models import Customer
 
-# Create your views here.
+from rest_framework import viewsets
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAdminUser
+
+
+class CustomerViewSet(viewsets.ModelViewSet):
+    """Customer api viset"""
+    queryset = Customer.objects.all()
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAdminUser]
+    serializer_class = CustomerSerializer

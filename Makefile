@@ -6,6 +6,10 @@ build:
 
 stop:
 	docker-compose stop
+	
+down:
+	docker-compose down
+
 
 dtest:
 	docker-compose run --rm backend sh -c "python manage.py test && flake8"
