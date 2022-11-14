@@ -48,3 +48,80 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name']
+
+
+class Memo(models.Model):
+    """pet, customer memo model"""
+    memo = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.memo
+
+
+class Customer(models.Model):
+    """Customer model"""
+
+    name = models.CharField(max_length=40)
+    name_kana = models.CharField(max_length=40, blank=True)
+    tel = models.CharField(max_length=40)
+    tel2 = models.CharField(max_length=40)
+    address = models.CharField(max_length=255)
+    memo = models.ForeignKey(
+        Memo,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+
+    def __str__(self):
+        return self.name
+
+
+class PetType(models.Model):
+    """pet type model"""
+    type = models.CharField(max_length=40, unique=True)
+
+    def __str__(self):
+        return self.type
+
+
+class PetBreed(models.Model):
+    """pet 品種 model"""
+    name = models.CharField(max_length=40, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Pet(models.Model):
+    """Pet model"""
+    name = models.CharField(max_length=40, help_text='名前')
+    type = models.ForeignKey(
+        PetType,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        help_text='犬･猫･うさぎなど',
+    )
+    breed = models.ForeignKey(
+        PetBreed,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        help_text='柴犬･ネザーランドドワーフなど',
+    )
+    memo = models.ForeignKey(
+        Memo,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+    sex = models.BooleanField(help_text='オス=True、メス=False')
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    birth = models.DateField(null=True, help_text='誕生日')
+    death = models.DateField(null=True, help_text='死亡日')
+
+    def __str__(self):
+        return self.name
