@@ -110,7 +110,7 @@ class Pet(models.Model):
     sex = models.BooleanField(help_text='オス=True、メス=False')
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     birth = models.DateField(null=True, help_text='誕生日')
-    death = models.DateField(null=True, help_text='死亡日')
+    death = models.DateField(blank=True, null=True, help_text='死亡日')
 
     def __str__(self):
         return self.name

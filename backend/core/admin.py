@@ -46,3 +46,9 @@ class UserAdmin(BaseUserAdmin):
 
 
 admin.site.register(models.User, UserAdmin)
+admin.site.register(models.Customer)
+admin.site.register(models.CustomerMemo)
+admin.site.register(models.Pet)
+admin.site.register(models.PetMemo)
+admin.site.register(models.PetType)
+admin.site.register(models.PetBreed)
