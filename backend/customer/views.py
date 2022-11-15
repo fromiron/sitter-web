@@ -1,4 +1,4 @@
-from backend.customer.serializers import CustomerSerializer
+from customer.serializers import CustomerSerializer
 from core.models import Customer
 
 from rest_framework import viewsets

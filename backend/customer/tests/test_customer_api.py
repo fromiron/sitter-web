@@ -29,6 +29,16 @@ def create_staff(**params):
     return get_user_model().objects.create_staff(**params)
 
 
+def create_customer(**params):
+    """顧客生成"""
+    defaults = {
+        'name': 'testuser1', 'name_kana': 'testuser1_kana',
+        'tel': '001-012-1111', 'tel2': '002-012-1111', 'address': 'address1111'
+    }
+    defaults.update(params)
+    return Customer.objects.create(**defaults)
+
+
 class PublicCustomerAPITests(TestCase):
     """認証なしユーザーのアクセス制限テスト"""
 
@@ -99,3 +109,54 @@ class PrivateCustomerApiTestsForStaff(TestCase):
         self.assertEqual(res.data[0]['name'], customers[0]['name'])
         self.assertEqual(res.data[1]['name_kana'], customers[1]['name_kana'])
         self.assertEqual(res.data[2]['tel'], customers[2]['tel'])
+
+    def test_create_customer(self):
+        """顧客生成テスト"""
+        payload = {'name': 'testuser1', 'name_kana': 'testuser1_kana',
+                   'tel': '001-012-1111', 'address': 'address1111'}
+
+        res = self.client.post(CUSTOMER_URL, payload)
+        data = res.data
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(data['name'], payload['name'])
+        self.assertEqual(data['name_kana'], payload['name_kana'])
+        self.assertEqual(data['tel'], payload['tel'])
+        self.assertEqual(data['address'], payload['address'])
+
+    def test_patch_customer(self):
+        """顧客部分修正テスト"""
+        customer = create_customer()
+        payload = {'name': 'patched name'}
+        url = detail_url(customer.id)
+
+        res = self.client.patch(url, payload)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        customer.refresh_from_db()
+        self.assertEqual(customer.name, payload['name'])
+
+    def test_put_customer(self):
+        """"顧客完全修正テスト"""
+        customer = create_customer()
+        payload = {
+            'name': 'testuser1', 'name_kana': 'testuser3_kana',
+            'tel': '001-012-3333', 'tel2': '002-012-3333',
+            'address': 'address3333'
+        }
+        url = detail_url(customer.id)
+
+        res = self.client.put(url, payload)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        customer.refresh_from_db()
+        self.assertEqual(customer.name, payload['name'])
+        self.assertEqual(customer.name_kana, payload['name_kana'])
+        self.assertEqual(customer.tel, payload['tel'])
+        self.assertEqual(customer.tel2, payload['tel2'])
+        self.assertEqual(customer.address, payload['address'])
+
+    def test_delete_customer(self):
+        """顧客削除テスト"""
+        customer = create_customer()
+        url = detail_url(customer.id)
+        res = self.client.delete(url)
+        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Customer.objects.filter(id=customer.id).exists())
