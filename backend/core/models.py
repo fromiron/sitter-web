@@ -85,7 +85,7 @@ class CustomerMemo(models.Model):
 
 class PetType(models.Model):
     """pet type model"""
-    type = models.CharField(max_length=40, unique=True)
+    name = models.CharField(max_length=40, unique=True)
 
     def __str__(self):
         return self.type

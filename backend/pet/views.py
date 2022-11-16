@@ -1,4 +1,6 @@
-from pet.serializers import PetSerializer, PetTypeSerializer, PetBreedSerializer
+from pet.serializers import (
+    PetSerializer, PetTypeSerializer, PetBreedSerializer
+)
 from core.models import Pet, PetType
 
 from rest_framework import viewsets

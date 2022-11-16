@@ -26,8 +26,5 @@ urlpatterns = [
          name='api-docs'),
     path('api/user/', include('user.urls')),
     path('api/customer/', include('customer.urls')),
-    path('api/pet/', include('pet.urls')),
-    path('api/pet-type/', include('pet.urls')),
-    path('api/pet-breed/', include('pet.urls'))
-
+    path('api/pet/', include('pet.urls'))
 ]

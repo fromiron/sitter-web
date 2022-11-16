@@ -8,9 +8,9 @@ from rest_framework.routers import DefaultRouter
 
 
 router = DefaultRouter()
-router.register('pet', views.PetViewSet)
-router.register('pet-type', views.PetTypeViewSet)
-router.register('pet-breed', views.PetBreedViewSet)
+router.register('pets', views.PetViewSet)
+router.register('types', views.PetTypeViewSet)
+router.register('breeds', views.PetBreedViewSet)
 
 app_name = 'pet'
 

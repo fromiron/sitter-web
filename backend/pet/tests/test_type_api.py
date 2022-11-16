@@ -96,3 +96,23 @@ class PrivatePetTypeApiTestsForStaff(TestCase):
         """権限不足こと確認するテスト"""
         res = self.client.get(PET_TYPE_URL)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+    def test_get_pet_type_list(self):
+        """petデータが正しく取得できるかの確認テスト"""
+        pets = [
+            {'name': 'いぬ'},
+            {'name': 'ねこ'},
+            {'name': 'うさぎ'},
+            {'name': 'とり'},
+        ]
+
+        for data in pets:
+            PetType.objects.create(**data)
+
+        res = self.client.get(PET_TYPE_URL)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res.data), len(pets))
+        self.assertEqual(res.data[0]['name'], pets[0]['name'])
+        self.assertEqual(res.data[1]['name'], pets[1]['name'])
+        self.assertEqual(res.data[2]['name'], pets[2]['name'])
