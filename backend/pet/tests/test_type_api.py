@@ -116,3 +116,29 @@ class PrivatePetTypeApiTestsForStaff(TestCase):
         self.assertEqual(res.data[0]['name'], pets[0]['name'])
         self.assertEqual(res.data[1]['name'], pets[1]['name'])
         self.assertEqual(res.data[2]['name'], pets[2]['name'])
+
+    def test_create_pet_type(self):
+        """pet type生成テスト"""
+        payload = {'name': 'いぬ'}
+        res = self.client.post(PET_TYPE_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(res.data['name'], payload['name'])
+
+    def test_delete_pet_type(self):
+        """pet type削除テスト"""
+        type = PetType.objects.create(name="いぬ")
+        url = detail_url(type.id)
+        res = self.client.delete(url)
+        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
+        types = PetType.objects.all()
+        self.assertFalse(types.exists())
+
+    def test_update_type(self):
+        """"pet type修正テスト"""
+        type = PetType.objects.create(name="いぬ")
+        payload = {'name': 'ねこ'}
+        url = detail_url(type.id)
+        res = self.client.patch(url, payload)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        type.refresh_from_db()
+        self.assertEqual(type.name, payload['name'])

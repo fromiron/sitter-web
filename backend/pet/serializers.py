@@ -17,8 +17,11 @@ class PetTypeSerializer(serializers.ModelSerializer):
     """Serializer for type."""
     class Meta:
         model = PetType
-        fields = ['id', 'type']
+        fields = ['id', 'name']
         read_only_fields = ['id']
+
+    # def create(self, pettype):
+    #     return PetType.objects.get_or_create(pettype['name'][0])
 
 
 class PetBreedSerializer(serializers.ModelSerializer):
