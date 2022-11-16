@@ -39,6 +39,14 @@ def create_customer(**params):
     return Customer.objects.create(**defaults)
 
 
+def create_pet(customer, **params):
+    """pet生成"""
+    defaults = {'name': 'testpet1', 'sex': True, 'birth': '2022-11-15'}
+    defaults.update(params)
+
+    return Pet.objects.create(customer=customer, **defaults)
+
+
 class PublicPetAPITests(TestCase):
     """認証なしユーザーのアクセス制限テスト"""
 
@@ -123,3 +131,21 @@ class PrivatePetApiTestsForStaff(TestCase):
         self.assertEqual(data['sex'], payload['sex'])
         self.assertEqual(data['birth'], payload['birth'])
         self.assertEqual(data['customer'], payload['customer'])
+
+    def test_delete_pet(self):
+        """ペットデータ削除テスト"""
+        customer = create_customer()
+        pet = create_pet(customer=customer)
+        url = detail_url(pet.id)
+        res = self.client.delete(url)
+        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Pet.objects.filter(id=pet.id).exists())
+
+    # def test_create_pet_withe_new_type(self):
+    #     """既存にないタイプを追加してペット情報を生成"""
+    #     payload = {'name': 'testpet1', 'sex': True, 'birth': '2022-11-15',
+    #                'customer': self.customer.id,
+    #                'type': 'チンチラ'}
+
+    #     res = self.client.post(PET_URL, payload)
+    #     self.assertEqual(res.status_code, status.HTTP_201_CREATED)
