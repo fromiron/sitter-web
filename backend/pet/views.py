@@ -1,7 +1,7 @@
 from pet.serializers import (
     PetSerializer, PetTypeSerializer, PetBreedSerializer
 )
-from core.models import Pet, PetType
+from core.models import Pet, PetType, PetBreed
 
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
@@ -26,7 +26,7 @@ class PetTypeViewSet(viewsets.ModelViewSet):
 
 class PetBreedViewSet(viewsets.ModelViewSet):
     """pet Breed view set"""
-    queryset = PetType.objects.all()
+    queryset = PetBreed.objects.all()
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAdminUser]
     serializer_class = PetBreedSerializer
