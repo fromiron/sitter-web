@@ -2,14 +2,14 @@
 Pet Breed apiテスト
 """
 
-from core.models import Pet, Customer, PetBreed
-from django.contrib.auth import get_user_model
+from core.models import PetBreed
 from django.test import TestCase
 from django.urls import reverse
 
 from rest_framework import status
 from rest_framework.test import APIClient
 
+from core.helper.create_dummy_pack import create_user, create_staff, create_customer
 
 PET_BREED_URL = reverse('pet:petbreed-list')
 
@@ -17,34 +17,6 @@ PET_BREED_URL = reverse('pet:petbreed-list')
 def detail_url(pet_breed_id):
     """顧客detail URL生成 """
     return reverse('pet:petbreed-detail', args=[pet_breed_id])
-
-
-def create_user(**params):
-    """ユーザー生成"""
-    return get_user_model().objects.create_user(**params)
-
-
-def create_staff(**params):
-    """staff生成"""
-    return get_user_model().objects.create_staff(**params)
-
-
-def create_customer(**params):
-    """顧客生成"""
-    defaults = {
-        'name': 'testuser1', 'name_kana': 'testuser1_kana',
-        'tel': '001-012-1111', 'tel2': '002-012-1111', 'address': 'address1111'
-    }
-    defaults.update(params)
-    return Customer.objects.create(**defaults)
-
-
-def create_pet(customer, **params):
-    """pet生成"""
-    defaults = {'name': 'testpet1', 'sex': True, 'birth': '2022-11-15'}
-    defaults.update(params)
-
-    return Pet.objects.create(customer=customer, **defaults)
 
 
 class PublicPetBreedAPITests(TestCase):
@@ -133,7 +105,7 @@ class PrivatePetBreedApiTestsForStaff(TestCase):
         types = PetBreed.objects.all()
         self.assertFalse(types.exists())
 
-    def test_update_type(self):
+    def test_update_breed(self):
         """"pet breed修正テスト"""
         type = PetBreed.objects.create(name="ネザーランドドワーフ")
         payload = {'name': 'ホーランドロップ'}

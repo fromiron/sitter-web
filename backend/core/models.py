@@ -85,7 +85,7 @@ class CustomerMemo(models.Model):
 
 class PetType(models.Model):
     """pet type model"""
-    name = models.CharField(max_length=40, unique=True)
+    name = models.CharField(max_length=40)
 
     def __str__(self):
         return self.name
@@ -93,7 +93,7 @@ class PetType(models.Model):
 
 class PetBreed(models.Model):
     """pet 品種 model"""
-    name = models.CharField(max_length=40, unique=True)
+    name = models.CharField(max_length=40)
 
     def __str__(self):
         return self.name

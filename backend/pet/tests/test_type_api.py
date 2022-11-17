@@ -2,13 +2,14 @@
 Pet type apiテスト
 """
 
-from core.models import Pet, Customer, PetType
-from django.contrib.auth import get_user_model
+from core.models import PetType
 from django.test import TestCase
 from django.urls import reverse
 
 from rest_framework import status
 from rest_framework.test import APIClient
+
+from core.helper.create_dummy_pack import create_user, create_staff, create_customer
 
 
 PET_TYPE_URL = reverse('pet:pettype-list')
@@ -17,34 +18,6 @@ PET_TYPE_URL = reverse('pet:pettype-list')
 def detail_url(pet_type_id):
     """顧客detail URL生成 """
     return reverse('pet:pettype-detail', args=[pet_type_id])
-
-
-def create_user(**params):
-    """ユーザー生成"""
-    return get_user_model().objects.create_user(**params)
-
-
-def create_staff(**params):
-    """staff生成"""
-    return get_user_model().objects.create_staff(**params)
-
-
-def create_customer(**params):
-    """顧客生成"""
-    defaults = {
-        'name': 'testuser1', 'name_kana': 'testuser1_kana',
-        'tel': '001-012-1111', 'tel2': '002-012-1111', 'address': 'address1111'
-    }
-    defaults.update(params)
-    return Customer.objects.create(**defaults)
-
-
-def create_pet(customer, **params):
-    """pet生成"""
-    defaults = {'name': 'testpet1', 'sex': True, 'birth': '2022-11-15'}
-    defaults.update(params)
-
-    return Pet.objects.create(customer=customer, **defaults)
 
 
 class PublicPetTypeAPITests(TestCase):
