@@ -1,8 +1,8 @@
 """
-Pet type apiテスト
+Pet Breed apiテスト
 """
 
-from core.models import Pet, Customer, PetType
+from core.models import Pet, Customer, PetBreed
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
@@ -11,12 +11,12 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 
-PET_TYPE_URL = reverse('pet:pettype-list')
+PET_BREED_URL = reverse('pet:petbreed-list')
 
 
-def detail_url(pet_type_id):
+def detail_url(pet_breed_id):
     """顧客detail URL生成 """
-    return reverse('pet:pettype-detail', args=[pet_type_id])
+    return reverse('pet:petbreed-detail', args=[pet_breed_id])
 
 
 def create_user(**params):
@@ -47,7 +47,7 @@ def create_pet(customer, **params):
     return Pet.objects.create(customer=customer, **defaults)
 
 
-class PublicPetTypeAPITests(TestCase):
+class PublicPetBreedAPITests(TestCase):
     """認証なしユーザーのアクセス制限テスト"""
 
     def setUp(self):
@@ -55,12 +55,12 @@ class PublicPetTypeAPITests(TestCase):
 
     def test_auth_required(self):
         """認証が必要なことを確認するテスト"""
-        res = self.client.get(PET_TYPE_URL)
+        res = self.client.get(PET_BREED_URL)
 
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
-class PrivatePetTypeApiTests(TestCase):
+class PrivatePetBreedApiTests(TestCase):
     """認証済ユーザーテスト"""
 
     def setUp(self):
@@ -75,11 +75,11 @@ class PrivatePetTypeApiTests(TestCase):
 
     def test_is_not_staff(self):
         """権限不足こと確認するテスト"""
-        res = self.client.get(PET_TYPE_URL)
+        res = self.client.get(PET_BREED_URL)
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
 
-class PrivatePetTypeApiTestsForStaff(TestCase):
+class PrivatePetBreedApiTestsForStaff(TestCase):
     """スタッフユーザーテスト"""
 
     def setUp(self):
@@ -94,22 +94,22 @@ class PrivatePetTypeApiTestsForStaff(TestCase):
 
     def test_is_staff(self):
         """権限不足こと確認するテスト"""
-        res = self.client.get(PET_TYPE_URL)
+        res = self.client.get(PET_BREED_URL)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
     def test_get_pet_type_list(self):
         """petデータが正しく取得できるかの確認テスト"""
         pets = [
-            {'name': 'いぬ'},
-            {'name': 'ねこ'},
-            {'name': 'うさぎ'},
-            {'name': 'とり'},
+            {'name': '柴犬'},
+            {'name': 'ネザーランドドワーフ'},
+            {'name': 'シベリアンハスキー'},
+            {'name': 'ブリティッシュショートヘア'},
         ]
 
         for data in pets:
-            PetType.objects.create(**data)
+            PetBreed.objects.create(**data)
 
-        res = self.client.get(PET_TYPE_URL)
+        res = self.client.get(PET_BREED_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(res.data), len(pets))
@@ -118,25 +118,25 @@ class PrivatePetTypeApiTestsForStaff(TestCase):
         self.assertEqual(res.data[2]['name'], pets[2]['name'])
 
     def test_create_pet_type(self):
-        """pet type生成テスト"""
-        payload = {'name': 'いぬ'}
-        res = self.client.post(PET_TYPE_URL, payload)
+        """pet breed生成テスト"""
+        payload = {'name': 'ネザーランドドワーフ'}
+        res = self.client.post(PET_BREED_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         self.assertEqual(res.data['name'], payload['name'])
 
     def test_delete_pet_type(self):
-        """pet type削除テスト"""
-        type = PetType.objects.create(name="いぬ")
+        """pet breed削除テスト"""
+        type = PetBreed.objects.create(name="ネザーランドドワーフ")
         url = detail_url(type.id)
         res = self.client.delete(url)
         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
-        types = PetType.objects.all()
+        types = PetBreed.objects.all()
         self.assertFalse(types.exists())
 
     def test_update_type(self):
-        """"pet type修正テスト"""
-        type = PetType.objects.create(name="いぬ")
-        payload = {'name': 'ねこ'}
+        """"pet breed修正テスト"""
+        type = PetBreed.objects.create(name="ネザーランドドワーフ")
+        payload = {'name': 'ホーランドロップ'}
         url = detail_url(type.id)
         res = self.client.patch(url, payload)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
