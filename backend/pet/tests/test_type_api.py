@@ -9,7 +9,9 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from core.helper.create_dummy_pack import create_user, create_staff, create_customer
+from core.helper.create_dummy_pack import (
+    create_user, create_staff, create_customer
+)
 
 
 PET_TYPE_URL = reverse('pet:pettype-list')
