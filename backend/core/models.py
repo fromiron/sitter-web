@@ -116,7 +116,8 @@ class Pet(models.Model):
         null=True,
         help_text='柴犬･ネザーランドドワーフなど',
     )
-    sex = models.BooleanField(help_text='オス=True、メス=False')
+    sex = models.BooleanField(
+        help_text='オス=True、メス=False', blank=True, null=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     birth = models.DateField(null=True, help_text='誕生日')
     death = models.DateField(blank=True, null=True, help_text='死亡日')

@@ -6,7 +6,7 @@ class PetTypeSerializer(serializers.ModelSerializer):
     """Serializer for type."""
     class Meta:
         model = PetType
-        fields = ['id', 'name']
+        fields = ['name']
         read_only_fields = ['id']
 
 
@@ -14,14 +14,14 @@ class PetBreedSerializer(serializers.ModelSerializer):
     """Serializer for breed."""
     class Meta:
         model = PetBreed
-        fields = ['id', 'name']
+        fields = ['name']
         read_only_fields = ['id']
 
 
 class PetSerializer(serializers.ModelSerializer):
     """Pet Serializer"""
-    type = PetTypeSerializer(required=False)
-    breed = PetBreedSerializer(required=False)
+    type = PetTypeSerializer(many=False, required=False)
+    breed = PetBreedSerializer(many=False, required=False)
 
     class Meta:
         model = Pet
@@ -43,8 +43,8 @@ class PetSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """Pet データ生成"""
 
-        type = validated_data.pop('type', {})
-        breed = validated_data.pop('breed', {})
+        type = validated_data.pop('type', None)
+        breed = validated_data.pop('breed', None)
         pet = Pet.objects.create(**validated_data)
         if type is not None:
             self._get_or_create_type(type, pet)
@@ -52,3 +52,19 @@ class PetSerializer(serializers.ModelSerializer):
             self._get_or_create_breed(breed, pet)
 
         return pet
+
+    def update(self, instance, validated_data):
+        """Pet データ Update."""
+
+        type = validated_data.pop('type', None)
+        breed = validated_data.pop('breed', None)
+        if type is not None:
+            self._get_or_create_type(type, instance)
+        if breed is not None:
+            self._get_or_create_breed(breed, instance)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance
