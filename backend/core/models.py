@@ -129,7 +129,8 @@ class Pet(models.Model):
 class PetMemo(models.Model):
     """pet  memo model"""
     memo = models.TextField()
-    pet = models.ForeignKey(Pet, on_delete=models.CASCADE)
+    pet = models.ForeignKey(Pet, related_name='memos',
+                            on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 

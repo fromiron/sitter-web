@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from core.models import Pet, PetType, PetBreed
+from core.models import Pet, PetType, PetBreed, PetMemo
 
 
 class PetTypeSerializer(serializers.ModelSerializer):
@@ -18,10 +18,20 @@ class PetBreedSerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
 
 
+class PetMemoSerializer(serializers.ModelSerializer):
+    """Serializer for pet memo."""
+
+    class Meta:
+        model = PetMemo
+        fields = ['id', 'memo']
+        read_only_fields = ['id']
+
+
 class PetSerializer(serializers.ModelSerializer):
     """Pet Serializer"""
     type = PetTypeSerializer(many=False, required=False)
     breed = PetBreedSerializer(many=False, required=False)
+    memo = PetMemoSerializer(many=True, required=False)
 
     class Meta:
         model = Pet
@@ -68,3 +78,12 @@ class PetSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+
+
+class PetDetailSerializer(PetSerializer):
+    """Serializer for recipe detail view."""
+    memos = PetMemoSerializer(many=True, required=False)
+
+    class Meta(PetSerializer.Meta):
+        model = Pet
+        fields = PetSerializer.Meta.fields + ['memos']
