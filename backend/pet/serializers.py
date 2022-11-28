@@ -31,7 +31,6 @@ class PetSerializer(serializers.ModelSerializer):
     """Pet Serializer"""
     type = PetTypeSerializer(many=False, required=False)
     breed = PetBreedSerializer(many=False, required=False)
-    memo = PetMemoSerializer(many=True, required=False)
 
     class Meta:
         model = Pet
