@@ -1,0 +1,22 @@
+---
+name: Checks
+
+on: [ push ]
+
+
+jobs:
+  test-lint:
+    name: Test and lint
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Login to Docker hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: BackendTest
+        run: docker-compose run --rm dev-app sh -c "python manage.py wait_for_db && python manage.py makemigrations && python manage.py migrate && python manage.py test"
+      - name: BackendTest
+        run: docker-compose run --rm dev-app sh -c "flake8"
