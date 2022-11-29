@@ -118,7 +118,7 @@ class PrivatePetApiTestsForStaff(TestCase):
     def test_create_pet_withe_new_type(self):
         """既存にないタイプを追加してペット情報を生成"""
         payload = {'name': 'testpet122', 'sex': True, 'birth': '2022-11-12',
-                   'type': {"name": "ネザーランドドワーフ"},
+                   'type': {"name": "うさぎ"},
                    'customer': self.customer.id}
 
         res = self.client.post(PET_URL, payload, format='json')
@@ -130,11 +130,11 @@ class PrivatePetApiTestsForStaff(TestCase):
     def test_create_pet_withe_same_type(self):
         """既存にあるタイプを追加してペット情報を生成"""
         payload1 = {'name': 'testpet1', 'sex': True, 'birth': '2022-11-12',
-                    'type': {"name": "ネザーランドドワーフ"},
+                    'type': {"name": "うさぎ"},
                     'customer': self.customer.id}
 
         payload2 = {'name': 'testpet2', 'sex': True, 'birth': '2022-11-13',
-                    'type': {"name": "ネザーランドドワーフ"},
+                    'type': {"name": "うさぎ"},
                     'customer': self.customer.id}
 
         res1 = self.client.post(PET_URL, payload1, format='json')
@@ -145,19 +145,68 @@ class PrivatePetApiTestsForStaff(TestCase):
         self.assertEqual(res2.status_code, status.HTTP_201_CREATED)
         self.assertEqual(data1['type']['id'], data2['type']['id'])
 
-    # def test_update_pet_data_with_type(self):
-    #     """タイプと当時にpetデータをアップデートするテスト"""
+    def test_update_pet_data_with_type(self):
+        """タイプと当時にpetデータをアップデートするテスト"""
 
-    #     defaults = {'name': 'testpet1', 'sex': True, 'birth': '2022-11-12',
-    #                 'type': {"name": "ネザーランドドワーフ"},
-    #                 'customer': self.customer.id}
-    #     petType = create_pettype('ネザーランドドワーフ')
+        defaults = {'name': 'testpet1', 'sex': True, 'birth': '2022-11-12',
+                    'customer': self.customer}
 
-    #     pet = create_pet(**defaults)
+        pet = create_pet(**defaults)
 
-    #     payload = {'name': 'testpet2', 'sex': True, 'birth': '2022-11-12',
-    #                'type': {"name": "ホーランドロップ"},
-    #                'customer': self.customer.id}
+        payload = {'name': 'testpet2', 'sex': True, 'birth': '2022-11-12',
+                   'type': {"name": "ホーランドロップ"},
+                   'customer': self.customer.id}
+        url = detail_url(pet.id)
+        res = self.client.put(url, payload, format='json')
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        pet.refresh_from_db()
+        self.assertEqual(res.data['name'], payload['name'])
+        self.assertEqual(res.data['type']['name'], payload['type']['name'])
 
-    #     res = self.client.post(PET_URL, payload, format='json')
-    #     self.assertEqual(res.status_code, status.HTTP_200_OK)
+    def test_create_pet_withe_new_breed(self):
+        """既存にないbreedを追加してペット情報を生成"""
+        payload = {'name': 'testpet122', 'sex': True, 'birth': '2022-11-12',
+                   'breed': {"name": "ネザーランドドワーフ"},
+                   'customer': self.customer.id}
+
+        res = self.client.post(PET_URL, payload, format='json')
+        data = res.data
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(data['name'], payload['name'])
+        self.assertEqual(data['breed']['name'], payload['breed']['name'])
+
+    def test_create_pet_withe_same_breed(self):
+        """既存にあるbreedを追加してペット情報を生成"""
+        payload1 = {'name': 'testpet1', 'sex': True, 'birth': '2022-11-12',
+                    'breed': {"name": "ネザーランドドワーフ"},
+                    'customer': self.customer.id}
+
+        payload2 = {'name': 'testpet2', 'sex': True, 'birth': '2022-11-13',
+                    'breed': {"name": "ネザーランドドワーフ"},
+                    'customer': self.customer.id}
+
+        res1 = self.client.post(PET_URL, payload1, format='json')
+        data1 = res1.data
+        self.assertEqual(res1.status_code, status.HTTP_201_CREATED)
+        res2 = self.client.post(PET_URL, payload2, format='json')
+        data2 = res2.data
+        self.assertEqual(res2.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(data1['breed']['id'], data2['breed']['id'])
+
+    def test_update_pet_data_with_breed(self):
+        """breedと当時にpetデータをアップデートするテスト"""
+
+        defaults = {'name': 'testpet1', 'sex': True, 'birth': '2022-11-12',
+                    'customer': self.customer}
+
+        pet = create_pet(**defaults)
+
+        payload = {'name': 'testpet2', 'sex': True, 'birth': '2022-11-12',
+                   'breed': {"name": "ホーランドロップ"},
+                   'customer': self.customer.id}
+        url = detail_url(pet.id)
+        res = self.client.put(url, payload, format='json')
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        pet.refresh_from_db()
+        self.assertEqual(res.data['name'], payload['name'])
+        self.assertEqual(res.data['breed']['name'], payload['breed']['name'])

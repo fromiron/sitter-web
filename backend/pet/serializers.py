@@ -6,7 +6,7 @@ class PetTypeSerializer(serializers.ModelSerializer):
     """Serializer for type."""
     class Meta:
         model = PetType
-        fields = ['name']
+        fields = ['id', 'name']
         read_only_fields = ['id']
 
 
@@ -14,17 +14,28 @@ class PetBreedSerializer(serializers.ModelSerializer):
     """Serializer for breed."""
     class Meta:
         model = PetBreed
-        fields = ['name']
+        fields = ['id', 'name']
         read_only_fields = ['id']
 
 
 class PetMemoSerializer(serializers.ModelSerializer):
     """Serializer for pet memo."""
+    pet_id = serializers.PrimaryKeyRelatedField(
+        many=False, queryset=Pet.objects.filter())
 
     class Meta:
         model = PetMemo
-        fields = ['id', 'memo']
+        fields = ['id', 'memo', 'pet_id']
         read_only_fields = ['id']
+
+    def create(self, validated_data):
+        """Pet Memoデータ生成"""
+        # petインスタンスで変換されたデータをPet.idに
+        pet = validated_data.pop('pet_id', None)
+        if pet:
+            validated_data['pet_id'] = pet.id
+        memo = PetMemo.objects.create(**validated_data)
+        return memo
 
 
 class PetSerializer(serializers.ModelSerializer):
@@ -84,5 +95,4 @@ class PetDetailSerializer(PetSerializer):
     memos = PetMemoSerializer(many=True, required=False)
 
     class Meta(PetSerializer.Meta):
-        model = Pet
         fields = PetSerializer.Meta.fields + ['memos']
