@@ -1,5 +1,5 @@
 """test case用のデータ生成"""
-from core.models import Pet, Customer, PetBreed, PetType
+from core.models import Pet, Customer, PetBreed, PetLike, PetType
 from django.contrib.auth import get_user_model
 
 
@@ -40,7 +40,14 @@ def create_pet_type(**params):
 
 
 def create_pet_breed(**params):
-    """petタイプ生成"""
+    """petbreed生成"""
     defaults = {'name': 'うさぎ'}
     defaults.update(params)
     return PetBreed.objects.create(**defaults)
+
+
+def create_pet_like(**params):
+    """pet like生成"""
+    defaults = {'name': 'りんご'}
+    defaults.update(params)
+    return PetLike.objects.create(**defaults)

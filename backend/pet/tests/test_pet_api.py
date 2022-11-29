@@ -106,6 +106,23 @@ class PrivatePetApiTestsForStaff(TestCase):
         self.assertEqual(data['birth'], payload['birth'])
         self.assertEqual(data['customer'], payload['customer'])
 
+    def test_create_pet_with_weight(self):
+        """pet生成テスト"""
+        payload = {'name': 'testpet1', 'sex': True, 'birth': '2022-11-15',
+                   'customer': self.customer.id, 'weight': 99}
+
+        res = self.client.post(PET_URL, payload)
+        data = res.data
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(data['name'], payload['name'])
+        self.assertEqual(data['sex'], payload['sex'])
+        self.assertEqual(data['birth'], payload['birth'])
+        self.assertEqual(data['customer'], payload['customer'])
+        url = detail_url(data['id'])
+        res2 = res = self.client.get(url)
+        data2 = res2.data
+        self.assertEqual(data2['weight'], payload['weight'])
+
     def test_delete_pet(self):
         """ペットデータ削除テスト"""
         customer = create_customer()

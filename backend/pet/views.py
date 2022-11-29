@@ -1,5 +1,6 @@
 from pet.serializers import (
-    PetSerializer, PetTypeSerializer,
+    PetLikeSerializer,
+    PetDislikeSerializer, PetSerializer, PetTypeSerializer,
     PetBreedSerializer, PetDetailSerializer, PetMemoSerializer
 )
 from core.models import Pet, PetType, PetBreed, PetMemo, PetLike, PetDislike
@@ -54,10 +55,10 @@ class PetMemoViewSet(BasePetViewSet):
 class PetLikeViewSet(BasePetViewSet):
     """pet like view set"""
     queryset = PetLike.objects.all()
-    serializer_class = PetMemoSerializer
+    serializer_class = PetLikeSerializer
 
 
 class PetDislikeViewSet(BasePetViewSet):
     """pet dislike view set"""
     queryset = PetDislike.objects.all()
-    serializer_class = PetMemoSerializer
+    serializer_class = PetDislikeSerializer

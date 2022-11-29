@@ -99,6 +99,22 @@ class PetBreed(models.Model):
         return self.name
 
 
+class PetLike(models.Model):
+    """tag for filtering recipes"""
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+
+class PetDislike(models.Model):
+    """tag for filtering recipes"""
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+
 class Pet(models.Model):
     """Pet model"""
     name = models.CharField(max_length=40, help_text='名前')
@@ -121,28 +137,12 @@ class Pet(models.Model):
     customer = models.ForeignKey(
         Customer, on_delete=models.CASCADE, help_text='顧客ナンバー')
     weight = models.IntegerField(blank=True, null=True, help_text='体重')
-    like = models.ManyToManyField(
-        'PetLike', blank=True, help_text='好きなこと')
-    dislike = models.ManyToManyField(
-        'PetDislike', blank=True, help_text='苦手なこと')
+    likes = models.ManyToManyField(
+        PetLike, blank=True, help_text='好きなこと')
+    dislikes = models.ManyToManyField(
+        PetDislike, blank=True, help_text='苦手なこと')
     birth = models.DateField(null=True, help_text='誕生日')
     death = models.DateField(blank=True, null=True, help_text='死亡日')
-
-    def __str__(self):
-        return self.name
-
-
-class PetLike(models.Model):
-    """tag for filtering recipes"""
-    name = models.CharField(max_length=255)
-
-    def __str__(self):
-        return self.name
-
-
-class PetDislike(models.Model):
-    """tag for filtering recipes"""
-    name = models.CharField(max_length=255)
 
     def __str__(self):
         return self.name

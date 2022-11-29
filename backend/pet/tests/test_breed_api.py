@@ -71,7 +71,7 @@ class PrivatePetBreedApiTestsForStaff(TestCase):
         res = self.client.get(PET_BREED_URL)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-    def test_get_pet_type_list(self):
+    def test_get_pet_breed_list(self):
         """petデータが正しく取得できるかの確認テスト"""
         pets = [
             {'name': '柴犬'},
@@ -91,28 +91,31 @@ class PrivatePetBreedApiTestsForStaff(TestCase):
         self.assertEqual(res.data[1]['name'], pets[1]['name'])
         self.assertEqual(res.data[2]['name'], pets[2]['name'])
 
-    def test_create_pet_type(self):
+    def test_create_pet_breed(self):
         """pet breed生成テスト"""
         payload = {'name': 'ネザーランドドワーフ'}
         res = self.client.post(PET_BREED_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         self.assertEqual(res.data['name'], payload['name'])
 
-    def test_delete_pet_type(self):
+    def test_delete_pet_breed(self):
         """pet breed削除テスト"""
-        type = PetBreed.objects.create(name="ネザーランドドワーフ")
-        url = detail_url(type.id)
+        breed = PetBreed.objects.create(name="ネザーランドドワーフ")
+        url = detail_url(breed.id)
         res = self.client.delete(url)
         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
-        types = PetBreed.objects.all()
-        self.assertFalse(types.exists())
+        breeds = PetBreed.objects.all()
+        self.assertFalse(breeds.exists())
 
     def test_update_breed(self):
         """"pet breed修正テスト"""
-        type = PetBreed.objects.create(name="ネザーランドドワーフ")
+        breed = PetBreed.objects.create(name="ネザーランドドワーフ")
         payload = {'name': 'ホーランドロップ'}
-        url = detail_url(type.id)
+        url = detail_url(breed.id)
         res = self.client.patch(url, payload)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        type.refresh_from_db()
-        self.assertEqual(type.name, payload['name'])
+        breed.refresh_from_db()
+        self.assertEqual(breed.name, payload['name'])
+
+
+# TODO create test cake (search)

@@ -117,3 +117,5 @@ class PrivatePetTypeApiTestsForStaff(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         type.refresh_from_db()
         self.assertEqual(type.name, payload['name'])
+
+# TODO create test cake (search)
