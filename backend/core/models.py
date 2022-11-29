@@ -118,9 +118,31 @@ class Pet(models.Model):
     )
     sex = models.BooleanField(
         help_text='オス=True、メス=False', blank=True, null=True)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    customer = models.ForeignKey(
+        Customer, on_delete=models.CASCADE, help_text='顧客ナンバー')
+    weight = models.IntegerField(blank=True, null=True, help_text='体重')
+    like = models.ManyToManyField(
+        'PetLike', blank=True, help_text='好きなこと')
+    dislike = models.ManyToManyField(
+        'PetDislike', blank=True, help_text='苦手なこと')
     birth = models.DateField(null=True, help_text='誕生日')
     death = models.DateField(blank=True, null=True, help_text='死亡日')
+
+    def __str__(self):
+        return self.name
+
+
+class PetLike(models.Model):
+    """tag for filtering recipes"""
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+
+class PetDislike(models.Model):
+    """tag for filtering recipes"""
+    name = models.CharField(max_length=255)
 
     def __str__(self):
         return self.name
@@ -136,3 +158,13 @@ class PetMemo(models.Model):
 
     def __str__(self):
         return self.memo
+
+
+# TODO karteモデル作成
+# class Karte(models.Model):
+#     """Sitting karte"""
+#     feed_place = models.CharField(help_text='食事する場所')
+#     feed_dishe = models.CharField(help_text='食器の場所')
+#     food_place = models.CharField(help_text='フードの場所')
+#     food_amount = models.CharField(help_text='フードの量')
+#     water_type = models.CharField(help_text='水のタイプ')

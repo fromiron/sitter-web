@@ -12,6 +12,8 @@ router.register('pets', views.PetViewSet)
 router.register('types', views.PetTypeViewSet)
 router.register('breeds', views.PetBreedViewSet)
 router.register('memos', views.PetMemoViewSet)
+router.register('like', views.PetLikeViewSet)
+router.register('dislike', views.PetDislikeViewSet)
 
 app_name = 'pet'
 

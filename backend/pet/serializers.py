@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from core.models import Pet, PetType, PetBreed, PetMemo
+from core.models import Pet, PetType, PetBreed, PetMemo, PetLike, PetDislike
 
 
 class PetTypeSerializer(serializers.ModelSerializer):
@@ -14,6 +14,24 @@ class PetBreedSerializer(serializers.ModelSerializer):
     """Serializer for breed."""
     class Meta:
         model = PetBreed
+        fields = ['id', 'name']
+        read_only_fields = ['id']
+
+
+class PetLikeSerializer(serializers.ModelSerializer):
+    """Serializer for like."""
+
+    class Meta:
+        model = PetLike
+        fields = ['id', 'name']
+        read_only_fields = ['id']
+
+
+class PetDislikeSerializer(serializers.ModelSerializer):
+    """Serializer for dislike."""
+
+    class Meta:
+        model = PetDislike
         fields = ['id', 'name']
         read_only_fields = ['id']
 
