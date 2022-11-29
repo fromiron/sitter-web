@@ -17,6 +17,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: BackendTest
-        run: docker-compose run --rm dev-app sh -c "python manage.py wait_for_db && python manage.py makemigrations && python manage.py migrate && python manage.py test"
+        run: docker-compose run --rm backend sh -c "python manage.py wait_for_db && python manage.py makemigrations && python manage.py migrate && python manage.py test"
       - name: BackendTest
-        run: docker-compose run --rm dev-app sh -c "flake8"
+        run: docker-compose run --rm backend sh -c "flake8"
