@@ -64,7 +64,7 @@ class PetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pet
         fields = [
-            'id', 'name', 'sex', 'birth', 'death', 'breed', 'customer', 'type',
+            'id', 'name', 'sex', 'birth', 'death', 'type', 'breed', 'customer'
         ]
         read_only_fields = ['id']
 
@@ -111,6 +111,9 @@ class PetSerializer(serializers.ModelSerializer):
 class PetDetailSerializer(PetSerializer):
     """Serializer for recipe detail view."""
     memos = PetMemoSerializer(many=True, required=False)
+    like = PetLikeSerializer(many=True, required=False)
+    dislike = PetDislikeSerializer(many=True, required=False)
 
     class Meta(PetSerializer.Meta):
-        fields = PetSerializer.Meta.fields + ['memos']
+        fields = PetSerializer.Meta.fields + \
+            ['memos', 'like', 'dislike', 'weight']
