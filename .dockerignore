@@ -1,19 +1,23 @@
-# python virtualenv
-.venv/
+# git
+.git
+.gitignore
+.github
 
 # jetbrains
-.idea/
+.idea
 
-# vscode
-.vscode/
+# docker
+.dockerignore
 
-# python cache
+# python
 backend/__pycache__/
 backend/*/__pycache__/
 backend/*/*/__pycache__/
 backend/*/*/*/__pycache__/
+.venv
 
 # environment
-backend/.env
-frontend/.env
 .env
+
+# vscode
+.vscode

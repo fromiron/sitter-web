@@ -16,9 +16,11 @@ services:
              python manage.py runserver 0.0.0.0:8000"
     environment:
       - DB_HOST=database
-      - DB_NAME=sitter-devdb
-      - DB_USER=dbuser
-      - DB_PASSWORD=password
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DEBUG=1
+      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
     depends_on:
       - database
 
@@ -36,9 +38,9 @@ services:
     volumes:
       - sitter-web-database:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=sitter-devdb
-      - POSTGRES_USER=dbuser
-      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
       - "5432:5432"
 
