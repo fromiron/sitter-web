@@ -4,6 +4,9 @@
 ##jetbrains
 .idea/
 
+##vscode
+.vscode/
+
 ##python cache
 backend/__pycache__/
 backend/*/__pycache__/
