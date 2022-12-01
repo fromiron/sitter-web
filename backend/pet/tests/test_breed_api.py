@@ -72,7 +72,7 @@ class PrivatePetBreedApiTestsForStaff(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
     def test_get_pet_breed_list(self):
-        """petデータが正しく取得できるかの確認テスト"""
+        """pet breedデータが正しく取得できるかの確認テスト"""
         pets = [
             {'name': '柴犬'},
             {'name': 'ネザーランドドワーフ'},
@@ -84,12 +84,14 @@ class PrivatePetBreedApiTestsForStaff(TestCase):
             PetBreed.objects.create(**data)
 
         res = self.client.get(PET_BREED_URL)
+        data = res.data['results']
+        pets.reverse()
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(res.data), len(pets))
-        self.assertEqual(res.data[0]['name'], pets[0]['name'])
-        self.assertEqual(res.data[1]['name'], pets[1]['name'])
-        self.assertEqual(res.data[2]['name'], pets[2]['name'])
+        self.assertEqual(len(data), len(pets))
+        self.assertEqual(data[0]['name'], pets[0]['name'])
+        self.assertEqual(data[1]['name'], pets[1]['name'])
+        self.assertEqual(data[2]['name'], pets[2]['name'])
 
     def test_create_pet_breed(self):
         """pet breed生成テスト"""
@@ -131,7 +133,7 @@ class PrivatePetBreedApiTestsForStaff(TestCase):
 
         search_url = PET_BREED_URL + '?name=ネザーランドドワーフ'
         res = self.client.get(search_url)
-
+        data = res.data['results']
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(res.data), 1)
-        self.assertEqual(res.data[0]['name'], 'ネザーランドドワーフ')
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]['name'], 'ネザーランドドワーフ')

@@ -85,12 +85,14 @@ class PrivatePetMemoApiTestsForStaff(TestCase):
             PetMemo.objects.create(**data)
 
         res = self.client.get(PET_MEMO_URL)
+        data = res.data['results']
+        memos.reverse()
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(res.data), len(memos))
-        self.assertEqual(res.data[0]['memo'], memos[0]['memo'])
-        self.assertEqual(res.data[1]['memo'], memos[1]['memo'])
-        self.assertEqual(res.data[2]['memo'], memos[2]['memo'])
+        self.assertEqual(len(data), len(memos))
+        self.assertEqual(data[0]['memo'], memos[0]['memo'])
+        self.assertEqual(data[1]['memo'], memos[1]['memo'])
+        self.assertEqual(data[2]['memo'], memos[2]['memo'])
 
     def test_create_memo(self):
         """pet memo生成テスト"""

@@ -103,12 +103,13 @@ class PrivateCustomerApiTestsForStaff(TestCase):
             Customer.objects.create(**data)
 
         res = self.client.get(CUSTOMER_URL)
-
+        data = res.data['results']
+        customers.reverse()
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(res.data), len(customers))
-        self.assertEqual(res.data[0]['name'], customers[0]['name'])
-        self.assertEqual(res.data[1]['name_kana'], customers[1]['name_kana'])
-        self.assertEqual(res.data[2]['tel'], customers[2]['tel'])
+        self.assertEqual(len(data), len(customers))
+        self.assertEqual(data[0]['name'], customers[0]['name'])
+        self.assertEqual(data[1]['name_kana'], customers[1]['name_kana'])
+        self.assertEqual(data[2]['tel'], customers[2]['tel'])
 
     def test_create_customer(self):
         """顧客生成テスト"""

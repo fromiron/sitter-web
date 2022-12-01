@@ -82,12 +82,14 @@ class PrivatePetLikeApiTestsForStaff(TestCase):
             create_pet_like(**data)
 
         res = self.client.get(PET_LIKE_URL)
+        data = res.data['results']
+        likes.reverse()
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(res.data), len(likes))
-        self.assertEqual(res.data[0]['name'], likes[0]['name'])
-        self.assertEqual(res.data[1]['name'], likes[1]['name'])
-        self.assertEqual(res.data[2]['name'], likes[2]['name'])
-        self.assertEqual(res.data[3]['name'], likes[3]['name'])
+        self.assertEqual(len(data), len(likes))
+        self.assertEqual(data[0]['name'], likes[0]['name'])
+        self.assertEqual(data[1]['name'], likes[1]['name'])
+        self.assertEqual(data[2]['name'], likes[2]['name'])
+        self.assertEqual(data[3]['name'], likes[3]['name'])
 
     def test_create_pet_like(self):
         """pet like生成テスト"""

@@ -87,12 +87,14 @@ class PrivatePetApiTestsForStaff(TestCase):
             Pet.objects.create(**data)
 
         res = self.client.get(PET_URL)
+        data = res.data['results']
+        pets.reverse()
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(res.data), len(pets))
-        self.assertEqual(res.data[0]['name'], pets[0]['name'])
-        self.assertEqual(res.data[1]['name'], pets[1]['name'])
-        self.assertEqual(res.data[2]['name'], pets[2]['name'])
+        self.assertEqual(len(data), len(pets))
+        self.assertEqual(data[0]['name'], pets[0]['name'])
+        self.assertEqual(data[1]['name'], pets[1]['name'])
+        self.assertEqual(data[2]['name'], pets[2]['name'])
 
     def test_create_pet(self):
         """pet生成テスト"""
@@ -260,7 +262,7 @@ class PrivatePetApiTestsForStaff(TestCase):
                 "weight": 44
             },
             {
-                "name": "TESTPET111",
+                "name": "リス1",
                 "sex": True,
                 "birth": "2022-12-01",
                 "type": {
@@ -283,7 +285,11 @@ class PrivatePetApiTestsForStaff(TestCase):
 
         res = self.client.get(search_url)
 
-        data = res.data
+        def type_match(pet):
+            return pet['type']['name'] == 'モモンガ'
+        data = res.data['results']
+        pets = [pet for pet in pets if pet["type"]['name'] == 'モモンガ']
+        pets.reverse()
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(data), 2)
         self.assertEqual(data[0]['type']['id'], pet_type_id[0])
@@ -344,7 +350,10 @@ class PrivatePetApiTestsForStaff(TestCase):
 
         res = self.client.get(search_url)
 
-        data = res.data
+        data = res.data['results']
+        pets = [pet for pet in pets if pet["breed"]
+                ['name'] == 'パプアフクロモモンガ']
+        pets.reverse()
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]['breed']['id'], pet_breed_id[0])
