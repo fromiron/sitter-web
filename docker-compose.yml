@@ -22,6 +22,13 @@ services:
     depends_on:
       - database
 
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
   database:
     image: postgres:13-alpine
     volumes:
