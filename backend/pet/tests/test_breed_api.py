@@ -129,10 +129,9 @@ class PrivatePetBreedApiTestsForStaff(TestCase):
         for data in pets:
             PetBreed.objects.create(**data)
 
-        res = self.client.get(PET_BREED_URL)
+        search_url = PET_BREED_URL + '?name=ネザーランドドワーフ'
+        res = self.client.get(search_url)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(res.data), len(pets))
-        self.assertEqual(res.data[0]['name'], pets[0]['name'])
-        self.assertEqual(res.data[1]['name'], pets[1]['name'])
-        self.assertEqual(res.data[2]['name'], pets[2]['name'])
+        self.assertEqual(len(res.data), 1)
+        self.assertEqual(res.data[0]['name'], 'ネザーランドドワーフ')
