@@ -2,7 +2,6 @@ import NextAuth, { Session } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import axios from "axios";
 import { NextApiRequest } from "next/types";
-import { JWT } from "next-auth/jwt";
 
 const API_URL = process.env.BACKEND_API_URL ?? "http://backend:8000";
 
@@ -23,7 +22,6 @@ async function handleLogin(loginFormData: LoginFormData) {
       return response.data;
     })
     .catch((error) => {
-      console.log(error);
       throw new Error("ログインに失敗しました。");
     });
 }
@@ -45,7 +43,7 @@ export default NextAuth({
           throw new Error("login error");
         }
         const loginFormData: LoginFormData = {
-          email: email,
+          email: email.toLowerCase(),
           password: password,
         };
 
@@ -65,4 +63,19 @@ export default NextAuth({
       return token;
     },
   },
+  logger: {
+    error(code, metadata) {
+      console.error(code, metadata);
+    },
+    warn(code) {
+      console.warn(code);
+    },
+    debug(code, metadata) {
+      console.debug(code, metadata);
+    },
+  },
+  session: {
+    strategy: "jwt",
+  },
+  debug: true,
 });

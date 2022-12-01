@@ -1,9 +1,21 @@
-export default function Dashboard(){
+import { signOut, useSession } from "next-auth/react";
 
-    return (
+import Layout from "../components/Layout";
+
+
+export default function Dashboard() {
+
+
+  return (
+    <Layout>
+ 
         <div>
-Dashboard
-
+        Dashboard
         </div>
-    )
+
+    </Layout>
+  );
 }
+
+
+
