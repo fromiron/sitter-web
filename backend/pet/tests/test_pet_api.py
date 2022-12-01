@@ -10,7 +10,8 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from core.helper.create_dummy_pack import (
-    create_user, create_staff, create_customer, create_pet
+    create_user, create_staff,
+    create_customer, create_pet
 )
 
 PET_URL = reverse('pet:pet-list')
@@ -227,3 +228,124 @@ class PrivatePetApiTestsForStaff(TestCase):
         pet.refresh_from_db()
         self.assertEqual(res.data['name'], payload['name'])
         self.assertEqual(res.data['breed']['name'], payload['breed']['name'])
+
+    def test_get_pet_type_filter(self):
+        """pet type filterでデータが正しく取得できるかの確認テスト"""
+
+        pets = [
+            {
+                "name": "モモンガ1",
+                "sex": True,
+                "birth": "2022-12-01",
+                "type": {
+                    "name": "モモンガ"
+                },
+                "breed": {
+                    "name": "パプアフクロモモンガ"
+                },
+                "customer": self.customer.id,
+                "weight": 44
+            },
+            {
+                "name": "モモンガ2",
+                "sex": True,
+                "birth": "2022-12-01",
+                "type": {
+                    "name": "モモンガ"
+                },
+                "breed": {
+                    "name": "オブトフクロモモンガ"
+                },
+                "customer": self.customer.id,
+                "weight": 44
+            },
+            {
+                "name": "TESTPET111",
+                "sex": True,
+                "birth": "2022-12-01",
+                "type": {
+                    "name": "リス"
+                },
+                "breed": {
+                    "name": "エゾリス"
+                },
+                "customer": self.customer.id,
+                "weight": 44
+            }
+        ]
+
+        pet_type_id = []
+        for payload in pets:
+            res = self.client.post(PET_URL, payload, format='json')
+            pet_type_id.append(res.data['type']['id'])
+
+        search_url = f"{PET_URL}?type_id={pet_type_id[0]}"
+
+        res = self.client.get(search_url)
+
+        data = res.data
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(data), 2)
+        self.assertEqual(data[0]['type']['id'], pet_type_id[0])
+        self.assertEqual(data[0]['name'], pets[0]['name'])
+        self.assertEqual(data[1]['name'], pets[1]['name'])
+
+    def test_get_pet_breed_filter(self):
+        """pet breed filterでデータが正しく取得できるかの確認テスト"""
+
+        pets = [
+            {
+                "name": "モモンガ1",
+                "sex": True,
+                "birth": "2022-12-01",
+                "type": {
+                    "name": "モモンガ"
+                },
+                "breed": {
+                    "name": "パプアフクロモモンガ"
+                },
+                "customer": self.customer.id,
+                "weight": 44
+            },
+            {
+                "name": "モモンガ2",
+                "sex": True,
+                "birth": "2022-12-01",
+                "type": {
+                    "name": "モモンガ"
+                },
+                "breed": {
+                    "name": "オブトフクロモモンガ"
+                },
+                "customer": self.customer.id,
+                "weight": 44
+            },
+            {
+                "name": "TESTPET111",
+                "sex": True,
+                "birth": "2022-12-01",
+                "type": {
+                    "name": "モモンガ"
+                },
+                "breed": {
+                    "name": "オブトフクロモモンガ"
+                },
+                "customer": self.customer.id,
+                "weight": 44
+            }
+        ]
+
+        pet_breed_id = []
+        for payload in pets:
+            res = self.client.post(PET_URL, payload, format='json')
+            pet_breed_id.append(res.data['breed']['id'])
+
+        search_url = f"{PET_URL}?breed_id={pet_breed_id[0]}"
+
+        res = self.client.get(search_url)
+
+        data = res.data
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]['breed']['id'], pet_breed_id[0])
+        self.assertEqual(data[0]['name'], pets[0]['name'])

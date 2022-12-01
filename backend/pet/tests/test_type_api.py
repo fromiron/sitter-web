@@ -118,4 +118,21 @@ class PrivatePetTypeApiTestsForStaff(TestCase):
         type.refresh_from_db()
         self.assertEqual(type.name, payload['name'])
 
-# TODO create test cake (search)
+    def test_pet_type_filter(self):
+        """pet typeの検索結果が正しく取得できるかの確認テスト"""
+        pets = [
+            {'name': 'いぬ'},
+            {'name': 'ねこ'},
+            {'name': 'うさぎ'},
+            {'name': 'とり'},
+        ]
+
+        for data in pets:
+            PetType.objects.create(**data)
+
+        search_url = PET_TYPE_URL + '?name=うさぎ'
+        res = self.client.get(search_url)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res.data), 1)
+        self.assertEqual(res.data[0]['name'], 'うさぎ')

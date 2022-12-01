@@ -117,7 +117,7 @@ class PrivatePetBreedApiTestsForStaff(TestCase):
         breed.refresh_from_db()
         self.assertEqual(breed.name, payload['name'])
 
-    def test_pet_breed_search(self):
+    def test_pet_breed_filter(self):
         """pet breedの検索結果が正しく取得できるかの確認テスト"""
         pets = [
             {'name': '柴犬'},

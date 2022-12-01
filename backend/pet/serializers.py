@@ -89,7 +89,7 @@ class PetSerializer(serializers.ModelSerializer):
             self._get_or_create_type(type, pet)
         if breed is not None:
             self._get_or_create_breed(breed, pet)
-
+        pet.save()
         return pet
 
     def update(self, instance, validated_data):

@@ -7,17 +7,12 @@ from pet.serializers import (
 )
 from core.models import Pet, PetType, PetBreed, PetMemo, PetLike, PetDislike
 
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAdminUser
 
 
-class BasePetViewSet(mixins.DestroyModelMixin,
-                     mixins.UpdateModelMixin,
-                     mixins.ListModelMixin,
-                     mixins.RetrieveModelMixin,
-                     mixins.CreateModelMixin,
-                     viewsets.GenericViewSet):
+class BasePetViewSet(viewsets.ModelViewSet):
     """base viewset for pet attributes"""
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAdminUser]
