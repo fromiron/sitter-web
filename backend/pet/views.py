@@ -1,3 +1,5 @@
+import django_filters.rest_framework
+
 from pet.serializers import (
     PetLikeSerializer,
     PetDislikeSerializer, PetSerializer, PetTypeSerializer,
@@ -19,6 +21,7 @@ class BasePetViewSet(mixins.DestroyModelMixin,
     """base viewset for pet attributes"""
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAdminUser]
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
 
 
 class PetViewSet(BasePetViewSet):

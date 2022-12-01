@@ -117,5 +117,22 @@ class PrivatePetBreedApiTestsForStaff(TestCase):
         breed.refresh_from_db()
         self.assertEqual(breed.name, payload['name'])
 
+    def test_pet_breed_search(self):
+        """pet breedの検索結果が正しく取得できるかの確認テスト"""
+        pets = [
+            {'name': '柴犬'},
+            {'name': 'ネザーランドドワーフ'},
+            {'name': 'シベリアンハスキー'},
+            {'name': 'ブリティッシュショートヘア'},
+        ]
 
-# TODO create test cake (search)
+        for data in pets:
+            PetBreed.objects.create(**data)
+
+        res = self.client.get(PET_BREED_URL)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res.data), len(pets))
+        self.assertEqual(res.data[0]['name'], pets[0]['name'])
+        self.assertEqual(res.data[1]['name'], pets[1]['name'])
+        self.assertEqual(res.data[2]['name'], pets[2]['name'])
