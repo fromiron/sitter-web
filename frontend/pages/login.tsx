@@ -1,6 +1,8 @@
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/router";
 
 export default function login() {
+  const router = useRouter();
   const login = async (e: any) => {
     // 원래 실행되는 이벤트 취소
     e.preventDefault();
@@ -12,6 +14,9 @@ export default function login() {
       password,
       redirect: false,
     });
+    if (response?.ok) {
+      await router.push("/dashboard");
+    }
   };
 
   return (

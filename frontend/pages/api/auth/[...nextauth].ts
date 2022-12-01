@@ -1,7 +1,8 @@
-import NextAuth from "next-auth";
+import NextAuth, { Session } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import axios from "axios";
 import { NextApiRequest } from "next/types";
+import { JWT } from "next-auth/jwt";
 
 const API_URL = process.env.BACKEND_API_URL ?? "http://backend:8000";
 
@@ -9,26 +10,21 @@ interface LoginFormData {
   email: string;
   password: string;
 }
-async function getToken(loginFormData: LoginFormData) {
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  access_token: string;
+}
+async function handleLogin(loginFormData: LoginFormData) {
   return await axios
     .post(`${API_URL}/api/user/token/`, loginFormData)
     .then((response) => {
-      return response.data.token;
+      return response.data;
     })
     .catch((error) => {
       console.log(error);
       throw new Error("ログインに失敗しました。");
-    });
-}
-async function getMe(token: string) {
-  return await axios
-    .get(`${API_URL}/api/user/me/`, {
-      headers: {
-        Authorization: `Token ${token}`,
-      },
-    })
-    .then((response) => {
-      return response.data;
     });
 }
 
@@ -53,16 +49,20 @@ export default NextAuth({
           password: password,
         };
 
-        const token = await getToken(loginFormData);
-        const me = await getMe(token);
-
-        console.log(me);
-
-        return me;
+        const user = await handleLogin(loginFormData);
+        return user;
       },
     }),
   ],
   pages: {
     signIn: "/login",
+  },
+  callbacks: {
+    async session({ session, user, token }) {
+      return session;
+    },
+    async jwt({ token, user }) {
+      return token;
+    },
   },
 });
