@@ -111,7 +111,7 @@ class PublicUserApiTests(TestCase):
         res = self.client.post(TOKEN_USER_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertIn('token', res.data)
+        self.assertIn('access_token', res.data)
 
     def test_create_token_incorrect_password_error(self):
         """ユーザーtoken生成時間違ったパスワードエラー発生テスト"""

@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+from datetime import timedelta
 import os
 from pathlib import Path
 
@@ -33,29 +34,58 @@ ALLOWED_HOSTS.extend(
         os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
     )
 )
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_WHITELIST = []
+CORS_ORIGIN_WHITELIST.extend(
+    filter(
+        None,
+        os.environ.get('DJANGO_CORS_ALLOWED_ORIGINS', '').split(',')
+    )
+)
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get(
+    'SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', 'GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get(
+    'SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET', 'GOOGLE_OAUTH2_SECRET')
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    # cors heareds
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # django_filters
     'django_filters',
+    # django-rest-framework
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_simplejwt.token_blacklist',
+    # dj-rest-auth
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+    # django-allauth
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    # drf_spectacular
     'drf_spectacular',
+    # apps,
     'core',
     'user',
     'pet',
     'customer',
-    'karte'
+    'karte',
+    'social'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -144,6 +174,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'core.User'
 
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+    ],
     # drfのschemaをdrf-specacularのAutoSchemaに自動変換.
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     # DjangoFilterBackendフィルタ適用
@@ -152,3 +187,45 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
 }
+
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('JWT'),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=2),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'UPDATE_LAST_LOGIN': True,
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+}
+
+ACCOUNT_AUTHENTICATION_METHOD = 'email'  # 認証方法をメールアドレスにする
+ACCOUNT_USER_MODEL_USERNAME_FIELD = 'name'  # Userモデルにusernameは無い
+ACCOUNT_EMAIL_REQUIRED = True  # メールアドレスを要求する
+ACCOUNT_USERNAME_REQUIRED = False  # ユーザー名を要求しない
+
+# allauth google provider settings
+# https://django-allauth.readthedocs.io/en/latest/providers.html
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
+# dj-rest-auth settings
+# https://dj-rest-auth.readthedocs.io/en/latest/configuration.html?highlight=USER_DETAILS_SERIALIZER#configuration
+REST_USE_JWT = True
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAILS_SERIALIZER': 'user.serializers.UserSerializer',
+}
+
+
+# allauth設定
+# https://django-allauth.readthedocs.io/en/latest/configuration.html
+SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
+SOCIALACCOUNT_EMAIL_REQUIRED = True
