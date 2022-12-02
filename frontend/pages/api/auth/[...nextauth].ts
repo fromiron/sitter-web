@@ -102,20 +102,6 @@ export default NextAuth({
       return token;
     },
   },
-  logger: {
-    error(code, metadata) {
-      console.log("=========error=======");
-      console.error(code, metadata);
-    },
-    warn(code) {
-      console.log("=========warn=======");
-      console.warn(code);
-    },
-    debug(code, metadata) {
-      console.log("=========debug=======");
-      console.debug(code, metadata);
-    },
-  },
   session: {
     strategy: "jwt",
   },

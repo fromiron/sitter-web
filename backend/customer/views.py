@@ -5,7 +5,7 @@ from customer.serializers import CustomerSerializer
 from core.models import Customer
 
 from rest_framework import viewsets
-from rest_framework.authentication import TokenAuthentication, SessionAuthentication
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAdminUser
 
 

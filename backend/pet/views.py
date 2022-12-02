@@ -9,13 +9,13 @@ from pet.serializers import (
 from core.models import Pet, PetType, PetBreed, PetMemo, PetLike, PetDislike
 
 from rest_framework import viewsets
-from rest_framework.authentication import TokenAuthentication
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAdminUser
 
 
 class BasePetViewSet(viewsets.ModelViewSet):
     """base viewset for pet attributes"""
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAdminUser]
     filter_backends = [DjangoFilterBackend]
     pagination_class = ListPageNumberPagination

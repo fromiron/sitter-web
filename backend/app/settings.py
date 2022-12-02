@@ -200,8 +200,9 @@ SIMPLE_JWT = {
 }
 
 ACCOUNT_AUTHENTICATION_METHOD = 'email'  # 認証方法をメールアドレスにする
-ACCOUNT_USER_MODEL_USERNAME_FIELD = 'name'  # Userモデルにusernameは無い
+ACCOUNT_USER_MODEL_USERNAME_FIELD = 'name'
 ACCOUNT_EMAIL_REQUIRED = True  # メールアドレスを要求する
+ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False  # ユーザー名を要求しない
 
 # allauth google provider settings

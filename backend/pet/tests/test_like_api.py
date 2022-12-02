@@ -29,7 +29,7 @@ class PublicPetLikeAPITests(TestCase):
     def test_auth_required(self):
         """認証が必要なことを確認するテスト"""
         res = self.client.get(PET_LIKE_URL)
-        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class PrivatePetLikeApiTests(TestCase):

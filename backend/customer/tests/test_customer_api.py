@@ -49,7 +49,7 @@ class PublicCustomerAPITests(TestCase):
         """認証が必要なことを確認するテスト"""
         res = self.client.get(CUSTOMER_URL)
 
-        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class PrivateCustomerApiTests(TestCase):
