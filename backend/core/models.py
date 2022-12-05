@@ -8,6 +8,7 @@ from django.contrib.auth.models import (
     BaseUserManager,
     PermissionsMixin
 )
+from django.utils import timezone
 
 
 class UserManager(BaseUserManager):
@@ -15,12 +16,15 @@ class UserManager(BaseUserManager):
 
     def create_user(self, email, name, password=None, **extra_filed):
         """ユーザー登録"""
+        now = timezone.now()
         if not email:
             raise ValueError('メールアドレスが必要です。')
         if not name:
             raise ValueError('ネーム指定が必要です。')
         user = self.model(email=self.normalize_email(
-            email), name=name, **extra_filed)
+            email), name=name, **extra_filed, last_login=now,
+            date_joined=now,)
+
         user.set_password(password)
         user.save(using=self._db)
 
@@ -52,11 +56,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    last_login = models.DateTimeField(null=True, blank=True)
+    date_joined = models.DateTimeField(auto_now_add=True)
 
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name']
+    REQUIRED_FIELDS = []
 
 
 class Customer(models.Model):

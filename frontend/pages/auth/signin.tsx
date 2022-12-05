@@ -5,10 +5,10 @@ export default function login() {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
-    await signIn("email-password-credential", {
+    await signIn("credential", {
       email,
       password,
-      callbackUrl: `${window.location.origin}/dashboard`,
+      callbackUrl: `${window.location.origin}`,
     });
   };
 
@@ -55,7 +55,6 @@ export default function login() {
             </div>
           </form>
         </div>
-    
       </div>
     </div>
   );

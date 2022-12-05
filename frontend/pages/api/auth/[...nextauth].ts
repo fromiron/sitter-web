@@ -1,52 +1,46 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions, RequestInternal, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import axios from "axios";
-import { NextApiRequest } from "next/types";
-import { signIn } from "next-auth/react";
 
-const API_URL = process.env.BACKEND_API_URL ?? "http://backend:8000";
+const API_URL = "http://backend:8000";
 
 interface LoginFormData {
   email: string;
   password: string;
 }
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  access_token: string;
-}
 
-interface GoogleToken {
-  accessToken: string;
-  idToken: string;
+function showLog(location: string, log: any) {
+  console.log(`================${location}=========================`);
+  console.log(log);
+  console.log(`==================================================`);
 }
-
 async function handleLogin(loginFormData: LoginFormData) {
-  return await axios
-    .post(`${API_URL}/api/user/token/`, loginFormData)
-    .then((response) => {
-      return response.data;
-    })
+  const res = await axios
+    .post(`${API_URL}/api/auth/login/`, loginFormData)
     .catch((error) => {
       throw new Error("ログインに失敗しました。");
     });
+
+  if (res.status === 200) {
+    return res.data;
+  }
+  throw new Error("ログインに失敗しました。");
 }
 
-export default NextAuth({
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
-      id: "email-password-credential",
+      id: "credential",
       name: "Credentials",
       type: "credentials",
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials: Record<any, any>, req: NextApiRequest) {
-        const { email, password } = credentials;
 
+      async authorize(credentials, _) {
+        const { email, password } = credentials;
         if (email === undefined || password.length < 8) {
           throw new Error("login error");
         }
@@ -56,54 +50,84 @@ export default NextAuth({
         };
 
         const user = await handleLogin(loginFormData);
-        return user;
+        if (user) {
+          return user;
+        }
+        return null;
       },
     }),
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: process.env.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY ?? "clientId",
+      clientSecret:
+        process.env.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET ?? "clientSecret",
     }),
   ],
+  secret: "SECRET_KEY",
   pages: {
-    signIn: "/auth/login",
+    signIn: "/auth/signin",
   },
   callbacks: {
-    async signIn(user, account, profile) {
+    async signIn({ user, account }) {
+      if (account?.provider === "credential") {
+        return true;
+      }
       if (account?.provider === "google") {
-        const { accessToken, idToken } = account;
         try {
-          const res = await axios.post(`${API_URL}/api/social/login/google/`, {
-            access_token: accessToken,
-            id_token: idToken,
-          });
-          const { access_token } = res.data;
-          user.accessToken = access_token;
-          return true;
-        } catch (error) {
+          const res: any = await axios
+            .post(`${API_URL}/api/social/google/`, {
+              access_token: account.access_token,
+              id_token: account.id_token,
+            })
+            .catch((error) => console.log(error));
+
+          if (res.status === 200 || res.status === 201) {
+            const data = res.data;
+            user.accessToken = data.access_token;
+            return true;
+          }
+          console.error("signin error", res.status);
           return false;
-        }
-      } else {
-        if (user) {
-          return true;
+        } catch (error) {
+          console.error(error);
+          return false;
         }
       }
 
       return false;
     },
-    async session({ session, token }) {
-      session.accessToken = token.accessToken;
-      return session;
-    },
-    async jwt({ token, user, account }) {
-      if (account) {
-        token.accessToken = user.access_token;
-        console.log(`account:${JSON.stringify(user)}`);
+    async jwt({ token, account, user }) {
+      if (account && account.provider === "credential") {
+        showLog("jwt token", token);
+        showLog("jwt account", token);
+        showLog("jwt user", user);
+
+        if (user) {
+          const { access_token, user: tokenUser } = user;
+          token.user = tokenUser;
+          token.accessToken = access_token;
+        }
+        token.provider = "credential";
       }
+      if (account && account.provider === "google") {
+        const { accessToken } = user;
+        token.provider = "google";
+        token.user = account.user;
+        token.accessToken = accessToken;
+      }
+
+      showLog("jwt final", token);
+
       return token;
     },
+    async session({ session, token }) {
+      if (token.provider === "credential") {
+        session.user = token.user;
+      }
+      session.accessToken = token.accessToken;
+
+      return session;
+    },
   },
-  session: {
-    strategy: "jwt",
-  },
-  debug: true,
-});
+};
+
+export default NextAuth(authOptions);

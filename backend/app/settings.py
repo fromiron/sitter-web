@@ -34,7 +34,8 @@ ALLOWED_HOSTS.extend(
         os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
     )
 )
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ALLOW_CREDENTIAL = True
 CORS_ORIGIN_WHITELIST = []
 CORS_ORIGIN_WHITELIST.extend(
     filter(
@@ -47,11 +48,13 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get(
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get(
     'SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET', 'GOOGLE_OAUTH2_SECRET')
 
+SITE_ID = 1
+
 
 # Application definition
 
 INSTALLED_APPS = [
-    # cors heareds
+    # cors header
     'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -76,8 +79,8 @@ INSTALLED_APPS = [
     # drf_spectacular
     'drf_spectacular',
     # apps,
-    'core',
     'user',
+    'core',
     'pet',
     'customer',
     'karte',
@@ -174,9 +177,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'core.User'
 
 REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
     ],
     # drfのschemaをdrf-specacularのAutoSchemaに自動変換.
@@ -214,13 +218,16 @@ SOCIALACCOUNT_PROVIDERS = {
             'email',
         ],
         'AUTH_PARAMS': {
-            'access_type': 'online',
-        }
+            'access_type': 'offline',
+        },
+        'OAUTH_PKCE_ENABLED': True,
     }
 }
 # dj-rest-auth settings
 # https://dj-rest-auth.readthedocs.io/en/latest/configuration.html?highlight=USER_DETAILS_SERIALIZER#configuration
 REST_USE_JWT = True
+JWT_AUTH_COOKIE = 'jwt-auth'
+
 REST_AUTH_SERIALIZERS = {
     'USER_DETAILS_SERIALIZER': 'user.serializers.UserSerializer',
 }
