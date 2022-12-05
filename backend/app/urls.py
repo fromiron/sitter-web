@@ -11,6 +11,7 @@ urlpatterns = [
          name='api-docs'),
     path('api/customer/', include('customer.urls')),
     path('api/pet/', include('pet.urls')),
-    path("api/auth/", include("dj_rest_auth.urls")),  # 追加
-    path("api/social/", include("social.urls")),  # 追加
+    path("api/auth/", include("dj_rest_auth.urls"), name='auth'),
+    path("api/social/", include("social.urls")),
+    path("api/user/", include("user.urls"))
 ]

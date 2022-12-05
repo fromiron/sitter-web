@@ -9,6 +9,7 @@ from rest_framework import generics, authentication, permissions
 class CreateUserView(generics.CreateAPIView):
     """ユーザー生成"""
     serializer_class = UserSerializer
+    permission_classes = []
 
 
 class ManageUserView(generics.RetrieveUpdateAPIView):

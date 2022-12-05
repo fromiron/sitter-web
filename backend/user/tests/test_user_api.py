@@ -11,8 +11,10 @@ from rest_framework import status
 
 
 CREATE_USER_URL = reverse('user:create')
-TOKEN_USER_URL = reverse('user:token')
-ME_URL = reverse('user:me')
+# https://github.com/iMerica/dj-rest-auth/blob/master/dj_rest_auth/urls.py
+# url reverse name参照
+TOKEN_USER_URL = reverse('rest_login')
+ME_URL = reverse('rest_user_details')
 
 
 def create_user(**params):
@@ -187,5 +189,4 @@ class PrivateUserApiTests(TestCase):
 
         self.user.refresh_from_db()
         self.assertEqual(self.user.name, payload['name'])
-        self.assertTrue(self.user.check_password(payload['password']))
         self.assertEqual(res.status_code, status.HTTP_200_OK)

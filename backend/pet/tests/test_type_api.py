@@ -32,7 +32,7 @@ class PublicPetTypeAPITests(TestCase):
         """認証が必要なことを確認するテスト"""
         res = self.client.get(PET_TYPE_URL)
 
-        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class PrivatePetTypeApiTests(TestCase):
