@@ -10,11 +10,6 @@ interface LoginFormData {
   password: string;
 }
 
-function showLog(location: string, log: any) {
-  console.log(`================${location}=========================`);
-  console.log(log);
-  console.log(`==================================================`);
-}
 async function handleLogin(loginFormData: LoginFormData) {
   const res = await axios
     .post(`${API_URL}/api/auth/login/`, loginFormData)
@@ -97,10 +92,6 @@ export const authOptions: NextAuthOptions = {
     },
     async jwt({ token, account, user }) {
       if (account && account.provider === "credential") {
-        showLog("jwt token", token);
-        showLog("jwt account", token);
-        showLog("jwt user", user);
-
         if (user) {
           const { access_token, user: tokenUser } = user;
           token.user = tokenUser;
@@ -114,8 +105,6 @@ export const authOptions: NextAuthOptions = {
         token.user = account.user;
         token.accessToken = accessToken;
       }
-
-      showLog("jwt final", token);
 
       return token;
     },

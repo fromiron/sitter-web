@@ -3,10 +3,18 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import Layout from "../components/Layout";
 
+import { useQuery } from "react-query";
+
 export default function Home() {
-  const [customers, setCustomers] = useState([]);
+  const {
+    isLoading,
+    isError,
+    data: customers,
+    error,
+    refetch,
+  } = useQuery("customers", getCustomers);
+
   const { data: session, status } = useSession();
-  console.log(session);
 
   const handleGoogleLogin = async () => {
     const API_URL = "http://localhost:8000";
@@ -20,25 +28,42 @@ export default function Home() {
       .catch((error) => console.log(error));
   };
 
-  console.log(session);
+  async function getCustomers() {
+    console.log("asd");
+    if (session.accessToken) {
+      const { accessToken } = session;
+      const token = accessToken;
+      const config = {
+        headers: {
+          Authorization: `JWT ${token}`,
+        },
+      };
 
-  const fetching = async () =>
-    await axios
-      .get("http://localhost:8000/api/customer/customers/")
-      .then((r) => console.log(setCustomers(r.data.results)));
+      const res = await axios.get(
+        "http://localhost:8000/api/customer/customers/",
+        config
+      );
+      console.log(res.data);
+      
+      if (res.status === 200) {
+        return res.data.results;
+      }
+    }
+  }
+
+  if (status === "loading") {
+    return <p>Loading...</p>;
+  }
 
   return (
     <Layout>
       <div>
         <a href="/api/auth/signin">Sign in email</a>
       </div>
-      <div>
-        <button onClick={fetching}>fetching</button>
-      </div>
+
       <div>
         <button onClick={handleGoogleLogin}>google</button>
       </div>
-      {customers && customers.map((customer) => <div>{customer.name}</div>)}
       {session && session.user && session.user.name ? (
         <div>
           <div>{session.user.email}</div>
@@ -48,6 +73,17 @@ export default function Home() {
       ) : (
         <></>
       )}
+
+      <button type="button" onClick={() => refetch}>
+        refetch
+      </button>
+      {customers &&
+       customers.length >0 &&
+        customers.map((customer: any) => (
+          <div className="my-4 bg-red-300" key={customer.id}>
+            {customer.name}
+          </div>
+        ))}
     </Layout>
   );
 }

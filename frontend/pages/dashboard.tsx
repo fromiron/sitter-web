@@ -7,11 +7,9 @@ export default function Dashboard() {
 
   return (
     <Layout>
- 
         <div>
         Dashboard
         </div>
-
     </Layout>
   );
 }
