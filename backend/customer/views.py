@@ -1,4 +1,4 @@
-from rest_framework.filters import SearchFilter
+from rest_framework.filters import SearchFilter, OrderingFilter
 from core.pagination import ListPageNumberPagination
 
 from customer.serializers import CustomerSerializer
@@ -11,6 +11,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
     """Customer api viewset"""
     queryset = Customer.objects.all().order_by('-pk')
     serializer_class = CustomerSerializer
-    filter_backends = [SearchFilter]
+    filter_backends = [SearchFilter, OrderingFilter]
     search_fields = ['name', 'name_kana', 'address', 'tel', 'tel2']
     pagination_class = ListPageNumberPagination
+    ordering_fields = ['pk, name', 'name_kana', 'address', 'tel', 'tel2']
