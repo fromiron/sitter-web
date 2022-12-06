@@ -38,9 +38,11 @@ services:
       - backend
 
   database:
-    image: postgres:13-alpine
+    build:
+      context: ./database
+      dockerfile: Dockerfile
     volumes:
-      - sitter-web-database:/var/lib/postgresql/data
+      - ./database/data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
