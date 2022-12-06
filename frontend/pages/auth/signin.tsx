@@ -1,3 +1,4 @@
+import axios from "axios";
 import { signIn } from "next-auth/react";
 
 export default function login() {
@@ -8,10 +9,14 @@ export default function login() {
     await signIn("credential", {
       email,
       password,
-      callbackUrl: `${window.location.origin}`,
+      callbackUrl: `${window.location.origin}/dashboard`,
     });
   };
-
+  const handleGoogleLogin = async () => {
+    await signIn("google", {
+      callbackUrl: `${window.location.origin}/dashboard`,
+    });
+  };
   return (
     <div className="min-h-screen hero bg-base-200">
       <div className="flex-col hero-content lg:flex-row-reverse">
@@ -55,6 +60,13 @@ export default function login() {
             </div>
           </form>
         </div>
+        <button
+          type="button"
+          className="btn btn-secondary"
+          onClick={handleGoogleLogin}
+        >
+          google
+        </button>
       </div>
     </div>
   );
