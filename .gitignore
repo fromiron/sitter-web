@@ -17,3 +17,4 @@ backend/*/*/*/__pycache__/
 backend/.env
 frontend/.env
 .env
+/database/data/
