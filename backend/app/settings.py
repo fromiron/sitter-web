@@ -78,7 +78,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     # drf_spectacular
     'drf_spectacular',
-    # apps,
+    # apps
     'user',
     'core',
     'pet',
@@ -86,6 +86,12 @@ INSTALLED_APPS = [
     'karte',
     'social'
 ]
+if DEBUG:
+    INSTALLED_APPS += [
+        # Dev extensions
+        # Seed Data
+        'django_seed',
+    ]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -124,7 +130,7 @@ WSGI_APPLICATION = 'app.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.mysql',
         'HOST': os.environ.get('DB_HOST'),
         'NAME': os.environ.get('DB_NAME'),
         'USER': os.environ.get('DB_USER'),
