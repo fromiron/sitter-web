@@ -1,9 +1,6 @@
-import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import Customers from '../../../pages/customers/index copy';
 
 export default function Navigation() {
-
   return (
     <div className="navbar bg-base-100">
       <div className="navbar-start">
@@ -36,6 +33,9 @@ export default function Navigation() {
             </li>
             <li>
               <Link href="/customers">Customers</Link>
+            </li>
+            <li>
+              <Link href="/pets">Pets</Link>
             </li>
           </ul>
         </div>

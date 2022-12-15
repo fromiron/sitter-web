@@ -17,14 +17,15 @@ export default function Customers({
     session: SessionUserInterface;
 }) {
     const [page, setPage] = useState<number>(1);
-    const [ordering, setOrdering] = useState<string>('-pk');
+    const [sort, setSort] = useState<string>('DESC');
+    const [ordering, setOrdering] = useState<string>('');
     const [search, setSearch] = useState<string>('');
     const [searchTemp, setSearchTemp] = useState<string>('');
     const [pageLength, setPageLength] = useState<number>(1);
 
     const getCustomers = async (page: number) => {
         const res = await axios.get(
-            `http://localhost:8000/api/customer/customers/?ordering=${ordering}&page=${page}&search=${search}`,
+            `http://localhost:8000/api/customer/customers/?ordering=${ordering}&page=${page}&search=${search}&sort=${sort}`,
             {
                 headers: {
                     "Content-Type": "application/json",
@@ -43,7 +44,7 @@ export default function Customers({
         isError,
         data: customers,
         refetch,
-    } = useQuery([CUSTOMERS, page, search, ordering], () => getCustomers(page), {
+    } = useQuery([CUSTOMERS, search, ordering, page, sort], () => getCustomers(page), {
         keepPreviousData: true,
     });
 
@@ -72,6 +73,15 @@ export default function Customers({
         setOrdering(value)
         await refetch()
     };
+    const handleSort = async () => {
+        if (sort === 'ASC') {
+            setSort('DESC')
+        } else {
+            setSort('ASC')
+        }
+
+        await refetch()
+    };
 
     useEffect(() => {
         const PAGE_SIZE: number =
@@ -90,7 +100,7 @@ export default function Customers({
             <CMSLayout>
                 <div>
                     <h1>ログイン情報がありません。</h1>
-                    <p>再度ログ・インしてください。</p>
+                    <p>再度ログインしてください。</p>
                 </div>
             </CMSLayout>
         );
@@ -110,9 +120,10 @@ export default function Customers({
             {isLoading && <div>Loading...</div>}
             {isError && <div>Error...</div>}
             {customers && (
-                <CustomerTable customers={customers} handleOrdering={handleOrdering}/>
+                <CustomerTable customers={customers} handleOrdering={handleOrdering} handleSort={handleSort}/>
             )}
-            <Pagination previous={customers?.previous} next={customers?.next} page={page} pageLength={pageLength} setPage={setPage}/>
+            <Pagination previous={customers?.previous} next={customers?.next} page={page} pageLength={pageLength}
+                        setPage={setPage}/>
         </CMSLayout>
     );
 }
@@ -175,16 +186,17 @@ function Pagination({
 
 }
 
-function CustomerTable({customers, handleOrdering}: {
+function CustomerTable({customers, handleOrdering, handleSort}: {
     customers: CustomersInterface,
-    handleOrdering: (value: string) => void
+    handleOrdering: (value: string) => void,
+    handleSort: () => void
 }) {
     return (
         <div className="overflow-x-auto">
             <table className="table w-full table-compact">
                 <thead>
                 <tr>
-                    <th className='select-none cursor-pointer' onClick={() => handleOrdering('-pk')}>ID</th>
+                    <th className='select-none cursor-pointer' onClick={() => handleSort()}>ID</th>
                     <th className='select-none cursor-pointer' onClick={() => handleOrdering('-name')}>名前</th>
                     <th className='select-none cursor-pointer' onClick={() => handleOrdering('-name_kana')}>かな名</th>
                     <th className='select-none cursor-pointer' onClick={() => handleOrdering('-tel')}>電話</th>
