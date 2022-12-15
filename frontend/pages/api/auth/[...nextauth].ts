@@ -113,7 +113,6 @@ export const authOptions: NextAuthOptions = {
         session.user = token.user;
       }
       session.accessToken = token.accessToken;
-
       return session;
     },
   },

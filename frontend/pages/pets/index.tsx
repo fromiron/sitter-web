@@ -7,7 +7,7 @@ import {
     SessionUserInterface,
 } from "../../interfaces/cmsInterfaces";
 import {useQuery} from "react-query";
-import {PETS} from "../../constants/queryKeys";
+import {PETS} from "@constants/queryKeys";
 import axios from "axios";
 import {Dispatch, SetStateAction, useEffect, useState} from "react";
 
@@ -166,22 +166,3 @@ function PetTable({
         </div>
     );
 }
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    // session dataがない場合はログイン画面にリダイレクト
-    const session = await getSession(context);
-    if (!session) {
-        return {
-            redirect: {
-                destination: "/api/auth/signin",
-                permanent: false,
-            },
-        };
-    }
-
-    return {
-        props: {
-            session: session,
-        },
-    };
-};

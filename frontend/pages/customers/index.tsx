@@ -1,13 +1,13 @@
 import {GetServerSideProps, GetServerSidePropsContext} from "next";
 import {getSession} from "next-auth/react";
-import CMSLayout from "../../components/layout/CMSLayout";
+import CMSLayout from "@components/layout/CMSLayout";
 import {
     CustomerInterface,
     CustomersInterface,
     SessionUserInterface,
 } from "../../interfaces/cmsInterfaces";
 import {useQuery} from "react-query";
-import {CUSTOMERS} from "../../constants/queryKeys";
+import {CUSTOMERS} from "@constants/queryKeys";
 import axios from "axios";
 import {Dispatch, SetStateAction, useEffect, useState} from "react";
 
@@ -225,22 +225,3 @@ function CustomerTable({customers, handleOrdering, handleSort}: {
         </div>
     );
 }
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    // session dataがない場合はログイン画面にリダイレクト
-    const session = await getSession(context);
-    if (!session) {
-        return {
-            redirect: {
-                destination: "/api/auth/signin",
-                permanent: false,
-            },
-        };
-    }
-
-    return {
-        props: {
-            session: session,
-        },
-    };
-};
