@@ -50,9 +50,3 @@ class Command(BaseCommand):
                               )
         seeder.execute()
         self.stdout.write(self.style.SUCCESS(f"{total}顧客データ追加"))
-
-    # name = models.CharField(max_length=40)
-    # name_kana = models.CharField(max_length=40, blank=True, null=True)
-    # tel = models.CharField(max_length=40)
-    # tel2 = models.CharField(max_length=40, blank=True, null=True)
-    # address = models.CharField(max_length=255)

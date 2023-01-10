@@ -31,3 +31,9 @@ bdev:
 
 fdev:
 	docker-compose run --rm frontend -c "npm run dev"
+
+seed_customer:
+	docker-compose run --rm backend sh -c "python manage.py seed_customer --total 50"
+
+seed_pet:
+	docker-compose run --rm backend sh -c "python manage.py seed_pet --total 50"
