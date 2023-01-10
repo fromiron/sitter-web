@@ -1,13 +1,23 @@
 import { GetServerSidePropsContext } from "next/types";
 
 export interface UserInterface {
-  name: string;
-  email: string;
+  user: {
+    name: string;
+    email: string;
+    image: string;
+  };
+  accessToken: string;
+  expires: string;
 }
 
-export interface SessionUserInterface extends GetServerSidePropsContext {
-  user: UserInterface;
-  accessToken: string;
+export interface SessionInterface extends GetServerSidePropsContext {
+  user?: {
+    name: string;
+    email: string;
+    image: string;
+  };
+  accessToken?: string;
+  expires?: string;
 }
 
 export interface CustomerInterface {

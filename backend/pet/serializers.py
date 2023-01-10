@@ -110,7 +110,7 @@ class PetSerializer(serializers.ModelSerializer):
 
 
 class PetDetailSerializer(PetSerializer):
-    """Serializer for recipe detail view."""
+    """Serializer for pet detail view."""
     memos = PetMemoSerializer(many=True, required=False)
     likes = PetLikeSerializer(many=True, required=False)
     dislikes = PetDislikeSerializer(many=True, required=False)

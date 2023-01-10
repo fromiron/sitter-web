@@ -30,4 +30,4 @@ bdev:
 	docker-compose run --rm backend sh -c "python manage.py runserver"
 
 fdev:
-	docker-compose run --rm frontend sh -c "npm run dev"
+	docker-compose run --rm frontend -c "npm run dev"

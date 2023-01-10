@@ -81,7 +81,10 @@ class Customer(models.Model):
 class CustomerMemo(models.Model):
     """customer memo model"""
     memo = models.TextField()
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    customer = models.ForeignKey(
+        Customer,
+        related_name='memos',
+        on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
@@ -141,7 +144,7 @@ class Pet(models.Model):
     sex = models.BooleanField(
         help_text='オス=True、メス=False', blank=True, null=True)
     customer = models.ForeignKey(
-        Customer, on_delete=models.CASCADE, help_text='顧客ナンバー')
+        Customer, related_name='pets', on_delete=models.CASCADE, help_text='顧客ナンバー')
     weight = models.IntegerField(blank=True, null=True, help_text='体重')
     likes = models.ManyToManyField(
         PetLike, blank=True, help_text='好きなこと')

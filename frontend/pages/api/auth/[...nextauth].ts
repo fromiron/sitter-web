@@ -1,4 +1,4 @@
-import NextAuth, { NextAuthOptions, RequestInternal, User } from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import axios from "axios";
@@ -57,7 +57,7 @@ export const authOptions: NextAuthOptions = {
         process.env.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET ?? "clientSecret",
     }),
   ],
-  secret: "SECRET_KEY",
+  secret: process.env.JWT_SECRET ?? "JWT_SECRET",
   pages: {
     signIn: "/auth/signin",
   },
