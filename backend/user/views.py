@@ -1,22 +1,10 @@
-"""
-Views for the user API
-"""
-
-from user.serializers import UserSerializer
-from rest_framework import generics, authentication, permissions
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from dj_rest_auth.registration.views import SocialLoginView
+from rest_framework.permissions import AllowAny
 
 
-class CreateUserView(generics.CreateAPIView):
-    """ユーザー生成"""
-    serializer_class = UserSerializer
-    permission_classes = []
-
-
-class ManageUserView(generics.RetrieveUpdateAPIView):
-    """認証されたユーザー管理"""
-    serializer_class = UserSerializer
-    authentication_classes = [authentication.TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_object(self):
-        return self.request.user
+class GoogleAuthView(SocialLoginView):
+    adapter_class = GoogleOAuth2Adapter
+    permission_classes = [AllowAny]
+    client_class = OAuth2Client

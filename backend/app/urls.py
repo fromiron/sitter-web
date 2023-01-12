@@ -4,6 +4,8 @@ from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularSwaggerView
 )
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/schema/', SpectacularAPIView.as_view(), name='api-schema'),
@@ -11,7 +13,5 @@ urlpatterns = [
          name='api-docs'),
     path('api/customer/', include('customer.urls')),
     path('api/pet/', include('pet.urls')),
-    path("api/auth/", include("dj_rest_auth.urls"), name='auth'),
-    path("api/social/", include("social.urls")),
-    path("api/user/", include("user.urls"))
+    path("api/auth/", include('user.urls')),
 ]

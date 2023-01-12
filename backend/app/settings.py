@@ -79,12 +79,11 @@ INSTALLED_APPS = [
     # drf_spectacular
     'drf_spectacular',
     # apps
-    'user',
     'core',
+    'user',
     'pet',
     'customer',
     'karte',
-    'social'
 ]
 if DEBUG:
     INSTALLED_APPS += [
@@ -213,9 +212,12 @@ SIMPLE_JWT = {
 
 ACCOUNT_AUTHENTICATION_METHOD = 'email'  # 認証方法をメールアドレスにする
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'name'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_EMAIL_REQUIRED = True  # メールアドレスを要求する
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False  # ユーザー名を要求しない
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True  # ユーザー登録後メールから確認ボタンを押したら登録済にする
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
 
 # allauth google provider settings
 # https://django-allauth.readthedocs.io/en/latest/providers.html
@@ -241,11 +243,6 @@ JWT_AUTH_HTTPONLY = True
 JWT_AUTH_RETURN_EXPIRATION = True  # ログイン時のレスポンスに有効期限を含める
 
 
-REST_AUTH_SERIALIZERS = {
-    'USER_DETAILS_SERIALIZER': 'user.serializers.UserSerializer',
-}
-
-
 # allauth設定
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
@@ -256,3 +253,21 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+# REST_AUTH User 生成用
+
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAILS_SERIALIZER': 'user.serializers.UserSerializer',
+}
+
+# REST_AUTH_REGISTER_SERIALIZERS = {
+#     'REGISTER_SERIALIZER': 'user.serializers.RegisterSerializer'
+# }
+
+# mail settings
+if DEBUG:
+    EMAIL_HOST = 'mailcatcher'
+    EMAIL_HOST_USER = ''
+    EMAIL_HOST_PASSWORD = ''
+    EMAIL_PORT = 1025
+    EMAIL_USE_TLS = False

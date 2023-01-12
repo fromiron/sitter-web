@@ -54,5 +54,12 @@ services:
     volumes:
       - ./database/data:/var/lib/mysql
 
+  mailcatcher:
+    container_name: mailcatcher
+    image: schickling/mailcatcher
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+
 volumes:
   sitter-web-database:
