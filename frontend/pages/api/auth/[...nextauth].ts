@@ -69,7 +69,7 @@ export const authOptions: NextAuthOptions = {
       if (account?.provider === "google") {
         try {
           const res: any = await axios
-            .post(`${API_URL}/api/social/google/`, {
+            .post(`${API_URL}/api/auth/google/`, {
               access_token: account.access_token,
               id_token: account.id_token,
             })
