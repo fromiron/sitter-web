@@ -5,8 +5,6 @@ const exceptions = ["/", "/auth", "/api/auth"];
 
 export async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.JWT_SECRET });
-
-  console.log("token", token);
   
   const { pathname } = req.nextUrl;
   const url = req.nextUrl.clone();

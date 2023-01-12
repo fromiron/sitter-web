@@ -260,9 +260,7 @@ REST_AUTH_SERIALIZERS = {
     'USER_DETAILS_SERIALIZER': 'user.serializers.UserSerializer',
 }
 
-# REST_AUTH_REGISTER_SERIALIZERS = {
-#     'REGISTER_SERIALIZER': 'user.serializers.RegisterSerializer'
-# }
+SOCIALACCOUNT_ADAPTER = 'user.adapter.SocialAdapter'
 
 # mail settings
 if DEBUG:

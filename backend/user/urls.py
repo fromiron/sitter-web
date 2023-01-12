@@ -6,7 +6,7 @@ from django.urls import path, include, re_path
 from user.views import (
     GoogleAuthView
 )
-from dj_rest_auth.registration.views import VerifyEmailView, ConfirmEmailView
+from dj_rest_auth.registration.views import VerifyEmailView, ConfirmEmailView, SocialAccountListView
 
 urlpatterns = [
     path('', include('dj_rest_auth.urls')),
@@ -17,5 +17,7 @@ urlpatterns = [
     # ユーザーがクリックしたリンクを確認
     re_path(r'^account-confirm-email/(?P<key>[-:\w]+)/$',
             ConfirmEmailView.as_view(), name='account_confirm_email'),
-    path("google/", GoogleAuthView.as_view(), name="google"),
+    path("google/", GoogleAuthView.as_view(), name="google_connect"),
+    path("socialaccounts/", SocialAccountListView.as_view(),
+         name="socialaccount_connections",)
 ]
