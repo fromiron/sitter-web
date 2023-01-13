@@ -1,13 +1,15 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
+import NextAuth, { Account, NextAuthOptions } from "next-auth";
+import CredentialsProvider, {
+  CredentialInput,
+} from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import axios from "axios";
-
+import { JWT } from "next-auth/jwt/types";
 const API_URL = "http://backend:8000";
 
 interface LoginFormData {
   email: string;
-  password: string;
+  password?: string;
 }
 
 async function handleLogin(loginFormData: LoginFormData) {
@@ -35,8 +37,9 @@ export const authOptions: NextAuthOptions = {
       },
 
       async authorize(credentials, _) {
-        const { email, password } = credentials;
-        if (email === undefined || password.length < 8) {
+        const email = credentials?.email;
+        const password = credentials?.password;
+        if (!email || !password) {
           throw new Error("login error");
         }
         const loginFormData: LoginFormData = {
@@ -62,7 +65,13 @@ export const authOptions: NextAuthOptions = {
     signIn: "/auth/signin",
   },
   callbacks: {
-    async signIn({ user, account }) {
+    async signIn({
+      account,
+      profile,
+    }: {
+      account: Account | null;
+      profile?: any;
+    }) {
       if (account?.provider === "credential") {
         return true;
       }
@@ -77,7 +86,9 @@ export const authOptions: NextAuthOptions = {
 
           if (res.status === 200 || res.status === 201) {
             const data = res.data;
-            user.accessToken = data.access_token;
+            for (const key in data) {
+              profile[key] = data[key];
+            }
             return true;
           }
           console.error("signin error", res.status);
@@ -90,29 +101,20 @@ export const authOptions: NextAuthOptions = {
 
       return false;
     },
-    async jwt({ token, account, user }) {
-      if (account && account.provider === "credential") {
-        if (user) {
-          const { access_token, user: tokenUser } = user;
-          token.user = tokenUser;
-          token.accessToken = access_token;
+    async jwt({ token, profile }: { token: JWT; profile?: any }) {
+      if (profile) {
+        token = {};
+        for (const key in profile) {
+          token[key] = profile[key];
         }
-        token.provider = "credential";
       }
-      if (account && account.provider === "google") {
-        const { accessToken } = user;
-        token.provider = "google";
-        token.user = account.user;
-        token.accessToken = accessToken;
-      }
-
       return token;
     },
-    async session({ session, token }) {
-      if (token.provider === "credential") {
-        session.user = token.user;
+    async session({ session, token }: { session: any; token: JWT }) {
+      session = {};
+      for (const key in token) {
+        session[key] = token[key];
       }
-      session.accessToken = token.accessToken;
       return session;
     },
   },

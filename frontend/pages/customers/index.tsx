@@ -25,7 +25,7 @@ export default function Customers({ session }: { session: SessionInterface }) {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `JWT ${session.accessToken}`,
+          Authorization: `JWT ${session.access_token}`,
         },
       }
     );
