@@ -1,17 +1,18 @@
 import CMSLayout from "@components/layout/CMSLayout";
-import {
-  CustomerInterface,
-  CustomersInterface,
-  SessionInterface,
-} from "../../interfaces/cmsInterfaces";
+
 import { useQuery } from "react-query";
 import { CUSTOMERS } from "@constants/queryKeys";
 import axios from "axios";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
+import {
+  CustomerInterface,
+  CustomersInterface,
+} from "@interfaces/cmsInterfaces";
+import { Session } from "next-auth/core/types";
 
-export default function Customers({ session }: { session: SessionInterface }) {
+export default function Customers({ session }: { session: Session }) {
   const [page, setPage] = useState<number>(1);
   const [sort, setSort] = useState<string>("DESC");
   const [ordering, setOrdering] = useState<string>("");
@@ -95,7 +96,7 @@ export default function Customers({ session }: { session: SessionInterface }) {
     }
   }, [customers, search]);
 
-  if (!session.user || isError) {
+  if (!session?.user || isError) {
     return (
       // TODO  rendering error page design
       <CMSLayout>
@@ -110,7 +111,7 @@ export default function Customers({ session }: { session: SessionInterface }) {
     <CMSLayout>
       <div>Dashboard</div>
       <div>{pageLength}</div>
-      <div>{session.accessToken}</div>
+      <div>{session.access_token}</div>
       <input
         type="text"
         placeholder="Searching..."

@@ -1,26 +1,8 @@
 import { ReactNode } from "react";
-import { UserInterface } from "../../interfaces/cmsInterfaces";
-import CMSNavigation from "./partial/CMSNavigation";
-import { useSession } from "@lib/next-auth-react-query";
 import Link from "next/link";
 
-export default function CMSLayout(
-  { children }: { children: ReactNode },
-  { user }: { user: UserInterface }
-) {
-  const [session, loading] = useSession({
-    required: true,
-    redirectTo: "http://localhost:3000",
-    queryConfig: {
-      staleTime: 60 * 1000 * 3, // 3hours
-      refetchInterval: 60 * 1000 * 60, // 1hours
-    },
-  });
-  if (loading) {
-    //todo create loading component
-    return <h1>Loading...</h1>;
-  }
 
+export default function CMSLayout({ children }: { children: ReactNode }) {
   const SIDE_MENU_WIDTH = "250px";
   const WIDTH = "w-[250px]";
   const TRANSLATE_X = "translate-x-[250px]";
@@ -58,19 +40,17 @@ export default function CMSLayout(
             <Link href="/api/auth/signout">Sigin out</Link>
           </li>
           <li>
-            <Link href="/customers">Customers</Link>
+            <Link href="/admin/customers">Customers</Link>
           </li>
           <li>
-            <Link href="/pets">Pets</Link>
+            <Link href="/admin/pets">Pets</Link>
           </li>
-          {session?.user?.email}
         </div>
         <div className={"max-w-full "}>
           <div
             id={"content-canvas"}
             className={`${TRANSLATE_X_ZERO} left-0  h-screen w-full bg-base-100  transition fixed duration-500`}
           >
-
             {/* main */}
             <button onClick={sideMenuToggle}>menu</button>
             {children}

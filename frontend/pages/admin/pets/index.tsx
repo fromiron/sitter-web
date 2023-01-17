@@ -1,18 +1,14 @@
-import CMSLayout from "../../components/layout/CMSLayout";
-import {
-  PetInterface,
-  PetsInterface,
-  SessionInterface,
-  UserInterface,
-} from "../../interfaces/cmsInterfaces";
+
 import { useQuery } from "react-query";
 import { PETS } from "@constants/queryKeys";
 import axios from "axios";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { getSession } from "next-auth/react";
 import { GetServerSideProps } from "next";
+import CMSLayout from "@components/layout/CMSLayout";
+import { PetInterface, PetsInterface, SessionUserInterface } from "types/cmsInterfaces";
 
-export default function Pets({ session }: { session: SessionInterface }) {
+export default function Pets({ session }: { session: SessionUserInterface }) {
   const [page, setPage] = useState<number>(1);
   const [pageLength, setPageLength] = useState<number>(1);
 
@@ -22,7 +18,7 @@ export default function Pets({ session }: { session: SessionInterface }) {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `JWT ${session?.accessToken}`,
+          Authorization: `JWT ${session?.access_token}`,
         },
       }
     );
@@ -59,7 +55,7 @@ export default function Pets({ session }: { session: SessionInterface }) {
     <CMSLayout>
       <div>pets</div>
       <div>{pageLength}</div>
-      <div>{session?.accessToken}</div>
+      <div>{session?.access_token}</div>
 
       {isLoading && <div>Loading...</div>}
       {isError && <div>Error...</div>}

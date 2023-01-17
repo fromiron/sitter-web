@@ -1,10 +1,8 @@
-import NextAuth, { Account, NextAuthOptions } from "next-auth";
-import CredentialsProvider, {
-  CredentialInput,
-} from "next-auth/providers/credentials";
+import NextAuth, { NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import axios from "axios";
-import { JWT } from "next-auth/jwt/types";
+import { SessionAuthInterface } from "@interfaces/cmsInterfaces";
 const API_URL = "http://backend:8000";
 
 interface LoginFormData {
@@ -65,13 +63,7 @@ export const authOptions: NextAuthOptions = {
     signIn: "/auth/signin",
   },
   callbacks: {
-    async signIn({
-      account,
-      profile,
-    }: {
-      account: Account | null;
-      profile?: any;
-    }) {
+    async signIn({ account, user }) {
       if (account?.provider === "credential") {
         return true;
       }
@@ -85,10 +77,10 @@ export const authOptions: NextAuthOptions = {
             .catch((error) => console.log(error));
 
           if (res.status === 200 || res.status === 201) {
-            const data = res.data;
-            for (const key in data) {
-              profile[key] = data[key];
-            }
+            const data: SessionAuthInterface = res.data;
+            user.user = data.user;
+            user.access_token = data.access_token;
+            user.access_token_expiration = data.access_token_expiration;
             return true;
           }
           console.error("signin error", res.status);
@@ -101,20 +93,18 @@ export const authOptions: NextAuthOptions = {
 
       return false;
     },
-    async jwt({ token, profile }: { token: JWT; profile?: any }) {
-      if (profile) {
-        token = {};
-        for (const key in profile) {
-          token[key] = profile[key];
-        }
+    async jwt({ token, user }) {
+      if (user) {
+        token.access_token = user.access_token;
+        token.access_token_expiration = user.access_token_expiration;
+        token.user = user.user;
       }
       return token;
     },
-    async session({ session, token }: { session: any; token: JWT }) {
-      session = {};
-      for (const key in token) {
-        session[key] = token[key];
-      }
+    async session({ session, token }) {
+      session.access_token = token.access_token;
+      session.access_token_expiration = token.access_token_expiration;
+      session.user = token.user;
       return session;
     },
   },

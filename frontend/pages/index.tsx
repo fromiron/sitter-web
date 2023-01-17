@@ -8,6 +8,8 @@ export default function Home() {
     <Layout>
       lalala
       <Link href="/api/auth/signin">Sigin in</Link>
+
+      <br/>
       <Link href="/api/auth/signout">Sigin out</Link>
     </Layout>
   );

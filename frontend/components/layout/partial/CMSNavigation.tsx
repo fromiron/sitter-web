@@ -33,10 +33,10 @@ export default function Navigation() {
                                 <Link href="/api/auth/signout">Sigin out</Link>
                             </li>
                             <li>
-                                <Link href="/customers">Customers</Link>
+                                <Link href="/admin/customers">Customers</Link>
                             </li>
                             <li>
-                                <Link href="/pets">Pets</Link>
+                                <Link href="/admin/pets">Pets</Link>
                             </li>
                         </ul>
                     </div>

@@ -1,6 +1,8 @@
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
+import { GetServerSideProps } from "next/types";
 
-export default function login() {
+export default function SignIn() {
+  const CALLBACK_URL = "/admin/dashboard";
   const login = async (e: any) => {
     e.preventDefault();
     const email = e.target.email.value;
@@ -8,12 +10,12 @@ export default function login() {
     await signIn("credential", {
       email,
       password,
-      callbackUrl: `${window.location.origin}/dashboard`,
+      callbackUrl: CALLBACK_URL,
     });
   };
   const handleGoogleLogin = async () => {
     await signIn("google", {
-      callbackUrl: `${window.location.origin}/dashboard`,
+      callbackUrl: CALLBACK_URL,
     });
   };
   return (
@@ -70,3 +72,29 @@ export default function login() {
     </div>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getSession(context);
+
+  if (session?.user?.is_active && session.user.is_staff) {
+    return {
+      redirect: {
+        destination: "/admin/dashboard",
+        permanent: false,
+      },
+    };
+  }
+
+  if (session?.user) {
+    return {
+      redirect: {
+        destination: "/admin/me",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
