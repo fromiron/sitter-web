@@ -21,7 +21,7 @@ export default function Customers({ session }: { session: Session }) {
   const [searchTemp, setSearchTemp] = useState<string>("");
   const [pageLength, setPageLength] = useState<number>(1);
 
-  const BACKEND_API_URL = process.env.BACKEND_API_URL;
+  const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL;
   const getCustomers = async (page: number) => {
     const res = await axiosClient.get(
       `${BACKEND_API_URL}/api/customer/customers/?ordering=${ordering}&page=${page}&search=${search}&sort=${sort}`,
@@ -32,8 +32,6 @@ export default function Customers({ session }: { session: Session }) {
         },
       }
     );
-    console.log(res);
-
     if (res.status === 200) {
       return res.data;
     }

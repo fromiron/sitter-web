@@ -18,7 +18,6 @@ export default function Pets({ session }: { session: SessionAuthInterface }) {
   const [page, setPage] = useState<number>(1);
   const [pageLength, setPageLength] = useState<number>(1);
 
-  console.log("BACKEND_API_UR pets", BACKEND_API_URL);
 
   const getPets = async (page: number) => {
     const res = await axiosClient.get(

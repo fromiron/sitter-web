@@ -13,26 +13,36 @@ import { JWT } from "next-auth/jwt/types";
 const BACKEND_API_URL = process.env.BACKEND_API_URL;
 
 async function refreshAccessToken(tokenObject: JWT) {
-  console.log("BACKEND_API_URL", BACKEND_API_URL);
+  if (!tokenObject.refresh_token) {
+    return { error: "Refresh Token is Null" };
+  }
 
   try {
-    const res = await axiosClient.post(
+    const tokenRes = await axiosClient.post(
       `${BACKEND_API_URL}/api/auth/token/refresh/`,
       {
         refresh: tokenObject.refresh_token,
       }
     );
-    const data: RefreshTokenInterface = res.data;
+
+    const tokenData: RefreshTokenInterface = tokenRes.data;
+
+    const userRes = await axiosClient.get(`${BACKEND_API_URL}/api/auth/user/`, {
+      headers: { Authorization: `JWT ${tokenData.access}` },
+    });
+    console.log(userRes);
+
     return {
       ...tokenObject,
-      access_token: data.access,
-      access_token_expiration: data.access_token_expiration,
-      refresh_token: data.refresh,
+      user: userRes.data,
+      access_token: tokenData.access,
+      access_token_expiration: tokenData.access_token_expiration,
     };
   } catch (error) {
+    console.log(error);
+
     return {
-      ...tokenObject,
-      error: "RefreshAccessTokenError",
+      error: "Refresh Token Error",
     };
   }
 }
@@ -138,14 +148,18 @@ export const authOptions: NextAuthOptions = {
         token.refresh_token_expiration = user.refresh_token_expiration;
         token.user = user.user;
       }
+      const shouldRefreshTime = Math.round(
+        Date.parse(token.access_token_expiration!) - Date.now() - 60 * 59 * 1000
+      );
 
-      if (token.access_token && token.access_token_expiration) {
-        if (Date.now() > Date.parse(token.access_token_expiration)) {
-          // TOKEN有効期限が満了したらリフレッシュ
-          console.log(token);
-
-          return refreshAccessToken(token);
-        }
+      if (!!process.env.DEBUG) {
+        console.log("refreshAccessToken - debug");
+        return refreshAccessToken(token);
+      }
+      if (shouldRefreshTime < 0) {
+        // TOKEN有効期限が満了したらリフレッシュ
+        console.log("refreshAccessToken");
+        return refreshAccessToken(token);
       }
 
       return token;

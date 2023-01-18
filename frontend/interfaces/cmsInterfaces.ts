@@ -16,7 +16,6 @@ export interface UserInterface {
 
 export interface RefreshTokenInterface {
   access?: string;
-  refresh?: string;
   access_token_expiration?: string;
   detail?: string;
   code?: string;

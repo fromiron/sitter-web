@@ -41,14 +41,14 @@ CORS_ALLOWED_ORIGINS.extend(
         os.environ.get('DJANGO_CORS_ALLOWED_ORIGINS', '').split(',')
     )
 )
-CORS_ALLOW_CREDENTIALS = True
-CSRF_TRUSTED_ORIGINS = []
-CSRF_TRUSTED_ORIGINS.extend(
-    filter(
-        None,
-        os.environ.get('DJANGO_CORS_ALLOWED_ORIGINS', '').split(',')
-    )
-)
+# CORS_ALLOW_CREDENTIALS = True
+# CSRF_TRUSTED_ORIGINS = []
+# CSRF_TRUSTED_ORIGINS.extend(
+#     filter(
+#         None,
+#         os.environ.get('DJANGO_CORS_ALLOWED_ORIGINS', '').split(',')
+#     )
+# )
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get(
     'SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', 'GOOGLE_OAUTH2_KEY')
@@ -210,9 +210,9 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('JWT'),
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    'ROTATE_REFRESH_TOKENS': True,
+    'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
     'UPDATE_LAST_LOGIN': True,
     'USER_ID_FIELD': 'id',
