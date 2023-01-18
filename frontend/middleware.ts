@@ -1,17 +1,17 @@
-import withAuth from "next-auth/middleware";
-import consoleRender from "@lib/console-helper";
-
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import consoleRender from "./lib/console-helper";
+import { getToken } from "next-auth/jwt";
+import { withAuth } from "next-auth/middleware";
 export default withAuth({
   callbacks: {
-    async authorized({ token }) {
-      if (token?.user?.is_active && token?.user?.is_staff) {
-        consoleRender("authorized");
-        return true;
-      } else {
-        return false;
-      }
+    authorized: async ({ req, token }) => {
+      const session = await getToken({ req });
+      console.log("authorized", token, session);
+      return true;
     },
   },
 });
-
-export const config = { matcher: ["/admin/customers"] };
+export const config = {
+  matcher: ["/admin/customers", "/admin/pets"],
+};

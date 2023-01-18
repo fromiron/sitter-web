@@ -1,4 +1,3 @@
-
 import { useQuery } from "react-query";
 import { PETS } from "@constants/queryKeys";
 import axios from "axios";
@@ -6,9 +5,13 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { getSession } from "next-auth/react";
 import { GetServerSideProps } from "next";
 import CMSLayout from "@components/layout/CMSLayout";
-import { PetInterface, PetsInterface, SessionUserInterface } from "types/cmsInterfaces";
+import {
+  PetInterface,
+  PetsInterface,
+  SessionAuthInterface,
+} from "@interfaces/cmsInterfaces";
 
-export default function Pets({ session }: { session: SessionUserInterface }) {
+export default function Pets({ session }: { session: SessionAuthInterface }) {
   const [page, setPage] = useState<number>(1);
   const [pageLength, setPageLength] = useState<number>(1);
 
@@ -101,7 +104,7 @@ function PetTable({
           </tr>
         </thead>
         <tbody>
-          {pets.results.map((pet: PetInterface, i) => (
+          {pets.results.map((pet: PetInterface, i: number) => (
             <tr key={`row${i}`}>
               <th>{pet.id}</th>
               <td>{pet.name}</td>

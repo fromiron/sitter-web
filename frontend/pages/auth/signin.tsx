@@ -76,23 +76,25 @@ export default function SignIn() {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
 
-  if (session?.user?.is_active && session.user.is_staff) {
-    return {
-      redirect: {
-        destination: "/admin/dashboard",
-        permanent: false,
-      },
-    };
-  }
+  //   console.log('session', session)
 
-  if (session?.user) {
-    return {
-      redirect: {
-        destination: "/admin/me",
-        permanent: false,
-      },
-    };
-  }
+//   if (session?.user?.is_active && session.user.is_staff) {
+//     return {
+//       redirect: {
+//         destination: "/admin/dashboard",
+//         permanent: false,
+//       },
+//     };
+//   }
+
+//   if (session?.user) {
+//     return {
+//       redirect: {
+//         destination: "/admin/me",
+//         permanent: false,
+//       },
+//     };
+//   }
 
   return {
     props: {},

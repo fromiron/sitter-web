@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import axios from "axios";
 import { SessionAuthInterface } from "@interfaces/cmsInterfaces";
+import { axiosClient } from "@lib/axios-client";
 const API_URL = "http://backend:8000";
 
 interface LoginFormData {
@@ -11,7 +12,7 @@ interface LoginFormData {
 }
 
 async function handleLogin(loginFormData: LoginFormData) {
-  const res = await axios
+  const res = await axiosClient
     .post(`${API_URL}/api/auth/login/`, loginFormData)
     .catch((error) => {
       throw new Error("ログインに失敗しました。");
@@ -24,6 +25,10 @@ async function handleLogin(loginFormData: LoginFormData) {
 }
 
 export const authOptions: NextAuthOptions = {
+  debug: process.env.DEBUG === "true",
+  session: {
+    strategy: "jwt",
+  },
   providers: [
     CredentialsProvider({
       id: "credential",
@@ -58,7 +63,7 @@ export const authOptions: NextAuthOptions = {
         process.env.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET ?? "clientSecret",
     }),
   ],
-  secret: process.env.JWT_SECRET ?? "JWT_SECRET",
+  secret: process.env.NEXTAUTH_SECRET ?? "NEXTAUTH_SECRET",
   pages: {
     signIn: "/auth/signin",
   },
