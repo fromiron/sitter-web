@@ -34,15 +34,27 @@ ALLOWED_HOSTS.extend(
         os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
     )
 )
-CORS_ORIGIN_ALLOW_ALL = False
-CORS_ALLOW_CREDENTIAL = True
-CORS_ORIGIN_WHITELIST = []
-CORS_ORIGIN_WHITELIST.extend(
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://frontend:3000",
+    "http://0.0.0.0:3000",
+]
+# CORS_ALLOWED_ORIGINS.extend(
+#     filter(
+#         None,
+#         os.environ.get('DJANGO_CORS_ALLOWED_ORIGINS', '').split(',')
+#     )
+# )
+CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = []
+CSRF_TRUSTED_ORIGINS.extend(
     filter(
         None,
         os.environ.get('DJANGO_CORS_ALLOWED_ORIGINS', '').split(',')
     )
 )
+
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get(
     'SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', 'GOOGLE_OAUTH2_KEY')
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get(
@@ -67,6 +79,7 @@ INSTALLED_APPS = [
     # django-rest-framework
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     # dj-rest-auth
     'dj_rest_auth',
@@ -186,8 +199,9 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAdminUser',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication'
+        # 'rest_framework.authentication.TokenAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication'
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
 
     ],
     # drfのschemaをdrf-specacularのAutoSchemaに自動変換.
@@ -201,8 +215,8 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('JWT'),
-    'ACCESS_TOKEN_LIFETIME': timedelta(hours=2),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
     'UPDATE_LAST_LOGIN': True,
@@ -239,7 +253,7 @@ REST_USE_JWT = True
 JWT_AUTH_COOKIE = 'jwt-token'
 JWT_AUTH_REFRESH_COOKIE = "jwt-refresh-token"
 JWT_AUTH_COOKIE_USE_CSRF = True
-JWT_AUTH_HTTPONLY = True
+JWT_AUTH_HTTPONLY = False
 JWT_AUTH_RETURN_EXPIRATION = True  # ログイン時のレスポンスに有効期限を含める
 
 
@@ -268,3 +282,8 @@ if DEBUG:
     EMAIL_HOST_PASSWORD = ''
     EMAIL_PORT = 1025
     EMAIL_USE_TLS = False
+
+
+SPECTACULAR_SETTINGS = {
+    'COMPONENT_SPLIT_REQUEST': True,
+}

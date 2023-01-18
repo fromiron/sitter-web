@@ -2,14 +2,11 @@ import { SessionAuthInterface } from "@interfaces/cmsInterfaces";
 import { getSession, signOut } from "next-auth/react";
 import { GetServerSideProps } from "next/types";
 import { useRouter } from "next/router";
-import { useSession } from "@lib/next-auth-react-query";
 
 export default function Me({ session }: { session: SessionAuthInterface }) {
   const router = useRouter();
   const handleLogOut = () => signOut();
   const handleLink = (url: string) => router.push(url);
-
-
 
   return (
     <div>

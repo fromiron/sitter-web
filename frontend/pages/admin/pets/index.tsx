@@ -10,15 +10,21 @@ import {
   PetsInterface,
   SessionAuthInterface,
 } from "@interfaces/cmsInterfaces";
+import { axiosClient } from "@lib/axios-client";
 
+
+const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL;
 export default function Pets({ session }: { session: SessionAuthInterface }) {
   const [page, setPage] = useState<number>(1);
   const [pageLength, setPageLength] = useState<number>(1);
 
+  console.log("BACKEND_API_UR pets", BACKEND_API_URL);
+
   const getPets = async (page: number) => {
-    const res = await axios.get(
-      `http://localhost:8000/api/pet/pets/?page=${page}`,
+    const res = await axiosClient.get(
+      `${BACKEND_API_URL}/api/pet/pets/?page=${page}`,
       {
+        withCredentials: true,
         headers: {
           "Content-Type": "application/json",
           Authorization: `JWT ${session?.access_token}`,

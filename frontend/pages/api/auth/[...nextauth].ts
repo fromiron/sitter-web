@@ -4,19 +4,51 @@ import GoogleProvider from "next-auth/providers/google";
 import axios from "axios";
 import { SessionAuthInterface } from "@interfaces/cmsInterfaces";
 import { axiosClient } from "@lib/axios-client";
-const API_URL = "http://backend:8000";
+import { signOut } from "next-auth/react";
+import { JWT } from "next-auth/jwt/types";
 
 interface LoginFormData {
   email: string;
   password?: string;
 }
 
+const BACKEND_API_URL = process.env.BACKEND_API_URL;
+
+async function refreshAccessToken(tokenObject: JWT) {
+  try {
+    const tokenResponse = await axios.post(
+      "http://localhost:3000/server/api/auth/token/refresh",
+      {
+        refresh: tokenObject.refresh_token,
+      }
+    );
+
+    return {
+      ...tokenObject,
+      accessToken: tokenResponse.data.accessToken,
+      accessTokenExpiry: tokenResponse.data.accessTokenExpiry,
+      refreshToken: tokenResponse.data.refreshToken,
+    };
+  } catch (error) {
+    return {
+      ...tokenObject,
+      error: "RefreshAccessTokenError",
+    };
+  }
+}
+
 async function handleLogin(loginFormData: LoginFormData) {
+  console.log(loginFormData);
+
   const res = await axiosClient
-    .post(`${API_URL}/api/auth/login/`, loginFormData)
+    .post(`${BACKEND_API_URL}/api/auth/login/`, loginFormData)
     .catch((error) => {
+      console.log(error);
+
       throw new Error("ログインに失敗しました。");
     });
+
+  console.log("res");
 
   if (res.status === 200) {
     return res.data;
@@ -25,7 +57,7 @@ async function handleLogin(loginFormData: LoginFormData) {
 }
 
 export const authOptions: NextAuthOptions = {
-  debug: process.env.DEBUG === "true",
+  //   debug: process.env.DEBUG === "true",
   session: {
     strategy: "jwt",
   },
@@ -75,7 +107,7 @@ export const authOptions: NextAuthOptions = {
       if (account?.provider === "google") {
         try {
           const res: any = await axios
-            .post(`${API_URL}/api/auth/google/`, {
+            .post(`${BACKEND_API_URL}/api/auth/google/`, {
               access_token: account.access_token,
               id_token: account.id_token,
             })
@@ -104,12 +136,23 @@ export const authOptions: NextAuthOptions = {
         token.access_token_expiration = user.access_token_expiration;
         token.user = user.user;
       }
+
+      //   if (token.access_token && token.access_token_expiration) {
+      //     if (Date.now() > Date.parse(token.access_token_expiration)) {
+      //       // TOKEN有効期限が満了したらリフレッシュ
+      //       console.log("signout");
+
+      //       await signOut();
+      //     }
+      //   }
+
       return token;
     },
     async session({ session, token }) {
       session.access_token = token.access_token;
       session.access_token_expiration = token.access_token_expiration;
       session.user = token.user;
+
       return session;
     },
   },

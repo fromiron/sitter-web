@@ -1,13 +1,14 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import consoleRender from "./lib/console-helper";
-import { getToken } from "next-auth/jwt";
+import consoleRender from "@lib/console-helper";
 import { withAuth } from "next-auth/middleware";
+
 export default withAuth({
   callbacks: {
-    authorized: async ({ req, token }) => {
-      const session = await getToken({ req });
-      console.log("authorized", token, session);
+    authorized: async ({ token }) => {
+      //   const res = await fetch("http://localhost:3000/api/auth/me", {
+      //     body: JSON.stringify({ token: token?.access_token }),
+      //     method: "POST",
+      //   });
+      //   consoleRender("[middleware] res", res);
       return true;
     },
   },

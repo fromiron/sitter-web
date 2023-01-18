@@ -9,7 +9,11 @@ const queryClient = new QueryClient();
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <SessionProvider session={pageProps.session} refetchInterval={5 * 60}>
+    <SessionProvider
+      session={pageProps.session}
+      refetchInterval={5 * 60}
+      refetchOnWindowFocus={true}
+    >
       <QueryClientProvider client={queryClient}>
         <Head>
           <meta
