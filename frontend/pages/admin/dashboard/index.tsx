@@ -16,6 +16,11 @@ export default function Dashboard({
     <CMSLayout>
       <div>Dashboard</div>
       <div>mail {session?.user?.email}</div>
+      <div>token {session?.access_token}</div>
+      <div>expiration {session?.access_token_expiration}</div>
+
+            <div>refresh {session?.refresh_token}</div>
+      <div>refresh expiration {session?.refresh_token_expiration}</div>
       <div>is Active {session?.user?.is_active?.toString()}</div>
       <div>is Staff {session?.user?.is_staff?.toString()}</div>
     </CMSLayout>

@@ -1,6 +1,10 @@
 import { Session } from "next-auth/core/types";
 
-//next-auth interface
+export interface LoginFormInterface {
+  email: string;
+  password: string;
+}
+
 export interface UserInterface {
   id: number | string;
   name: string;
@@ -10,9 +14,19 @@ export interface UserInterface {
   last_login: string;
 }
 
+export interface RefreshTokenInterface {
+  access?: string;
+  refresh?: string;
+  access_token_expiration?: string;
+  detail?: string;
+  code?: string;
+}
+
 export interface SessionAuthInterface {
   access_token?: string;
   access_token_expiration?: string;
+  refresh_token?: string;
+  refresh_token_expiration?: string;
   user?: UserInterface;
 }
 //next-auth interface

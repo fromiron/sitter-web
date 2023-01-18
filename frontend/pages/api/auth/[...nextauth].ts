@@ -2,32 +2,32 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import axios from "axios";
-import { SessionAuthInterface } from "@interfaces/cmsInterfaces";
+import {
+  LoginFormInterface,
+  RefreshTokenInterface,
+  SessionAuthInterface,
+} from "@interfaces/cmsInterfaces";
 import { axiosClient } from "@lib/axios-client";
-import { signOut } from "next-auth/react";
 import { JWT } from "next-auth/jwt/types";
-
-interface LoginFormData {
-  email: string;
-  password?: string;
-}
 
 const BACKEND_API_URL = process.env.BACKEND_API_URL;
 
 async function refreshAccessToken(tokenObject: JWT) {
+  console.log("BACKEND_API_URL", BACKEND_API_URL);
+
   try {
-    const tokenResponse = await axios.post(
-      "http://localhost:3000/server/api/auth/token/refresh",
+    const res = await axiosClient.post(
+      `${BACKEND_API_URL}/api/auth/token/refresh/`,
       {
         refresh: tokenObject.refresh_token,
       }
     );
-
+    const data: RefreshTokenInterface = res.data;
     return {
       ...tokenObject,
-      accessToken: tokenResponse.data.accessToken,
-      accessTokenExpiry: tokenResponse.data.accessTokenExpiry,
-      refreshToken: tokenResponse.data.refreshToken,
+      access_token: data.access,
+      access_token_expiration: data.access_token_expiration,
+      refresh_token: data.refresh,
     };
   } catch (error) {
     return {
@@ -37,7 +37,7 @@ async function refreshAccessToken(tokenObject: JWT) {
   }
 }
 
-async function handleLogin(loginFormData: LoginFormData) {
+async function handleLogin(loginFormData: LoginFormInterface) {
   console.log(loginFormData);
 
   const res = await axiosClient
@@ -48,8 +48,6 @@ async function handleLogin(loginFormData: LoginFormData) {
       throw new Error("ログインに失敗しました。");
     });
 
-  console.log("res");
-
   if (res.status === 200) {
     return res.data;
   }
@@ -57,7 +55,7 @@ async function handleLogin(loginFormData: LoginFormData) {
 }
 
 export const authOptions: NextAuthOptions = {
-  //   debug: process.env.DEBUG === "true",
+  debug: process.env.DEBUG === "true",
   session: {
     strategy: "jwt",
   },
@@ -77,7 +75,7 @@ export const authOptions: NextAuthOptions = {
         if (!email || !password) {
           throw new Error("login error");
         }
-        const loginFormData: LoginFormData = {
+        const loginFormData: LoginFormInterface = {
           email: email.toLowerCase(),
           password: password,
         };
@@ -117,7 +115,9 @@ export const authOptions: NextAuthOptions = {
             const data: SessionAuthInterface = res.data;
             user.user = data.user;
             user.access_token = data.access_token;
+            user.refresh_token = data.refresh_token;
             user.access_token_expiration = data.access_token_expiration;
+            user.refresh_token_expiration = data.refresh_token_expiration;
             return true;
           }
           console.error("signin error", res.status);
@@ -134,23 +134,27 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.access_token = user.access_token;
         token.access_token_expiration = user.access_token_expiration;
+        token.refresh_token = user.refresh_token;
+        token.refresh_token_expiration = user.refresh_token_expiration;
         token.user = user.user;
       }
 
-      //   if (token.access_token && token.access_token_expiration) {
-      //     if (Date.now() > Date.parse(token.access_token_expiration)) {
-      //       // TOKEN有効期限が満了したらリフレッシュ
-      //       console.log("signout");
+      if (token.access_token && token.access_token_expiration) {
+        if (Date.now() > Date.parse(token.access_token_expiration)) {
+          // TOKEN有効期限が満了したらリフレッシュ
+          console.log(token);
 
-      //       await signOut();
-      //     }
-      //   }
+          return refreshAccessToken(token);
+        }
+      }
 
       return token;
     },
     async session({ session, token }) {
       session.access_token = token.access_token;
       session.access_token_expiration = token.access_token_expiration;
+      session.refresh_token = token.refresh_token;
+      session.refresh_token_expiration = token.refresh_token_expiration;
       session.user = token.user;
 
       return session;
