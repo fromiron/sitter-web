@@ -14,7 +14,9 @@ module.exports = {
                 dwarf: {
                     primary: "#5c3cab",
                     "primary-focus": "#42275d",
-                    "primary-content": "#2e1e57",
+                    // darkは使えないけどHEX保存用
+                    // "primary-dark": "#2e1e57",
+                    "primary-content": "#ffffff",
                     secondary: "#ff73be",
                     "secondary-focus": "#b9508a",
                     "secondary-content": "#6a3a54",
@@ -28,6 +30,12 @@ module.exports = {
                     success: "#87d039",
                     warning: "#e2d562",
                     error: "#ff6f6f",
+                    ".input:focus": {
+                        outline: "none",
+                    },
+                    ".btn:focus": {
+                        outline: "none",
+                    },
                 },
             },
         ],

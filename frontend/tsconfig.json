@@ -8,7 +8,8 @@
       "@lib/*": ["lib/*"],
       "@interfaces/*": ["interfaces/*"],
       "@constants/*": ["constants/*"],
-      "@components/*": ["components/*"]
+      "@components/*": ["components/*"],
+      "@images/*": ["public/images/*"]
     },
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],

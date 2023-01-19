@@ -1,6 +1,9 @@
 import { getSession, signIn } from "next-auth/react";
 import { GetServerSideProps } from "next/types";
+import { useForm } from "react-hook-form";
 
+import LogoVertical from "@images/logo_vertical.svg";
+import LogoGoogle from "@images/logo_google.svg";
 export default function SignIn() {
   const CALLBACK_URL = "/admin/dashboard";
   const login = async (e: any) => {
@@ -18,6 +21,15 @@ export default function SignIn() {
       callbackUrl: CALLBACK_URL,
     });
   };
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
+  const onSubmit = (data: any) => console.log(data);
+
   return (
     // <div className="min-h-screen hero bg-base-100">
     //   <div className="flex-col hero-content lg:flex-row-reverse">
@@ -70,12 +82,48 @@ export default function SignIn() {
     //     </button>
     //   </div>
     // </div>
- <div className="min-h-screen hero bg-base-100">
-        <div>
-
-
+    <div className="min-h-screen hero bg-base-100">
+      <div className="flex p-10 bg-white shadow-xl rounded-2xl">
+        <div className="min-w-[200px] h-auto px-10">
+          <LogoVertical />
         </div>
-        
+        <div className="divider divider-horizontal before:bg-base-100 after:bg-base-100" />
+        <div className="flex flex-col justify-center px-10">
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+            <div className="w-full max-w-xs form-control">
+              <label className="label">
+                <span className="label-text">■ Mail</span>
+              </label>
+              <input
+                type="text"
+                placeholder="user@example.com"
+                className="w-full max-w-xs border-2 input focus:border-primary"
+              />
+            </div>
+
+            <div className="w-full max-w-xs form-control">
+              <label className="label">
+                <span className="label-text">✿ Password</span>
+              </label>
+              <input
+                type="text"
+                placeholder="*******"
+                className="w-full max-w-xs border-2 input focus:border-primary"
+              />
+            </div>
+
+            <button type="submit" className="mt-4 btn btn-primary">
+              SIGN IN
+            </button>
+            <button
+              type="button"
+              className="mt-4 btn btn-outline border-base-300"
+            >
+              <LogoGoogle className="mr-2" /> Google
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }
