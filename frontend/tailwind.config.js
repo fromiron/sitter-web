@@ -1,27 +1,38 @@
 /** @type {import('tailwindcss').Config} */
 
-const PRIMARY_COLOR = "#fa8072"
-const PRIMARY_COLOR_FOCUS = "#c8665b"
-
 module.exports = {
-    content: ["./pages/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}",], theme: {
+    content: [
+        "./pages/**/*.{js,ts,jsx,tsx}",
+        "./components/**/*.{js,ts,jsx,tsx}",
+    ],
+    theme: {
         extend: {},
-    }, daisyui: {
-        themes: [{
-            dwarf: {
-                primary: "#fa8072",
-                "primary-accent": "#fa8072",
-                secondary: "#5C6AC4",
-                accent: "#FFEC00",
-                neutral: "#161D25",
-                "base-100": "#fffcfa",
-                "base-200": "#D2D2D2",
-                "base-300": "#919EAB",
-                info: "#3ABFF8",
-                success: "#36D399",
-                warning: "#FBBD23",
-                error: "#F87272",
+    },
+    daisyui: {
+        themes: [
+            {
+                dwarf: {
+                    primary: "#5c3cab",
+                    "primary-focus": "#42275d",
+                    "primary-content": "#2e1e57",
+                    secondary: "#ff73be",
+                    "secondary-focus": "#b9508a",
+                    "secondary-content": "#6a3a54",
+                    accent: "#37cdbe",
+                    "accent-focus": "#2aa79b",
+                    "accent-content": "#ffffff",
+                    neutral: "#110f1c",
+                    "base-100": "#3d4451",
+                    "base-200": "#2a2e37",
+                    "base-300": "#16181d",
+                    "base-content": "#ebecf0",
+                    info: "#66c6ff",
+                    success: "#87d039",
+                    warning: "#e2d562",
+                    error: "#ff6f6f",
+                },
             },
-        },],
-    }, plugins: [require("daisyui")],
+        ],
+    },
+    plugins: [require("daisyui")],
 };
