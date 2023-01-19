@@ -105,7 +105,7 @@ function PetTable({
             <th>タイプ</th>
             <th>品種</th>
             <th>体重</th>
-            <th>飼い主</th>
+            <th className="text-2xl">飼い主</th>
           </tr>
         </thead>
         <tbody>
