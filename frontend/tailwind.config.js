@@ -30,6 +30,9 @@ module.exports = {
                     success: "#87d039",
                     warning: "#e2d562",
                     error: "#ff6f6f",
+                    ".input": {
+                        "transition-duration": "500ms",
+                    },
                     ".input:focus": {
                         outline: "none",
                     },
