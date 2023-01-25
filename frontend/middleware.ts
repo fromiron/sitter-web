@@ -4,7 +4,6 @@ import { withAuth } from "next-auth/middleware";
 export default withAuth({
   callbacks: {
     authorized: async ({ token }) => {
-      console.log(token);
       if (token?.user?.is_active && token?.user.is_staff) {
         return true;
       }

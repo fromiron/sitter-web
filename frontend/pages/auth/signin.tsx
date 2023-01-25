@@ -1,21 +1,27 @@
-import { getSession, signIn } from "next-auth/react";
+import { getSession, signIn, useSession } from "next-auth/react";
 import { GetServerSideProps } from "next/types";
 import { useForm } from "react-hook-form";
-
+import { getCsrfToken } from "next-auth/react";
 import { FaLock, FaEnvelope, FaSignInAlt } from "react-icons/fa";
 
 import LogoVertical from "@images/logo_vertical.svg";
 import LogoGoogle from "@images/logo_google.svg";
 import { TextInput } from "@components/inputs";
-import { FieldValues, SubmitHandler } from "react-hook-form/dist/types";
+import { SubmitHandler } from "react-hook-form/dist/types";
 import Link from "next/link";
+import { LoginFormInterface } from "@interfaces/cmsInterfaces";
+import { useRouter } from "next/router";
+import { toast } from "react-toastify";
+import { useState } from "react";
 
-interface LoginValuesInterface extends FieldValues {
-  email: string;
-  password: string;
-}
+export default function SignIn({
+  csrfToken,
+}: {
+  csrfToken: string | undefined;
+}) {
+  const [signInDisabled, setSignInDisabled] = useState<boolean>(false);
 
-export default function SignIn() {
+  const router = useRouter();
   const CALLBACK_URL = "/admin/dashboard";
 
   const handleGoogleLogin = async () => {
@@ -28,15 +34,23 @@ export default function SignIn() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginValuesInterface>();
-  const onSubmit: SubmitHandler<LoginValuesInterface> = async (
-    data: LoginValuesInterface
+  } = useForm<LoginFormInterface>();
+  const onSubmit: SubmitHandler<LoginFormInterface> = async (
+    data: LoginFormInterface
   ) => {
-    await signIn("credential", {
+    setSignInDisabled(true);
+    const res = await signIn("credential", {
       email: data.email,
       password: data.password,
-      callbackUrl: CALLBACK_URL,
+      redirect: false,
     });
+    if (res?.status !== 200) {
+      toast.error(res?.error);
+    }
+    if (res?.ok === true) {
+      router.push("/admin/dashboard");
+    }
+    setTimeout(() => setSignInDisabled(false), 1000);
   };
   return (
     <div className="min-h-screen hero bg-base-100">
@@ -47,6 +61,7 @@ export default function SignIn() {
         <div className="divider divider-horizontal before:bg-base-100 after:bg-base-100" />
         <div className="flex flex-col justify-center px-10">
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+            <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
             <TextInput
               label="Mail"
               placeholder="admin@example.com"
@@ -59,7 +74,7 @@ export default function SignIn() {
                   message: "正しいメールを入力してください。",
                 },
               })}
-              errorMsg={errors.mail?.message}
+              errorMsg={errors.email?.message}
             />
             <TextInput
               label="Password"
@@ -76,7 +91,11 @@ export default function SignIn() {
               errorMsg={errors.password?.message}
             />
 
-            <button type="submit" className="mt-4 btn btn-primary">
+            <button
+              type="submit"
+              className="mt-4 btn btn-primary"
+              disabled={signInDisabled}
+            >
               <FaSignInAlt className="mr-2 text-2xl" />
               SIGN IN
             </button>
@@ -105,8 +124,27 @@ export default function SignIn() {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
 
-  //    TODO session ユーザーデータでログインを判断しリダイレクト（ページも作成必要）
+  if (session?.user?.is_active && session.user?.is_staff) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/admin/dashboard",
+      },
+    };
+  }
+
+  if (session?.user?.is_active && !session.user?.is_staff) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/admin/me",
+      },
+    };
+  }
+
   return {
-    props: {},
+    props: {
+      csrfToken: await getCsrfToken(context),
+    },
   };
 };

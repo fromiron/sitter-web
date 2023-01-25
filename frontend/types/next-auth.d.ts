@@ -6,7 +6,9 @@ declare module "next-auth" {
   /**
    * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
    */
-  interface Session extends SessionAuthInterface {}
+  interface Session extends SessionAuthInterface {
+    user: UserInterface;
+  }
   interface User extends SessionAuthInterface {}
 }
 

@@ -30,7 +30,6 @@ async function refreshAccessToken(tokenObject: JWT) {
     const userRes = await axiosClient.get(`${BACKEND_API_URL}/api/auth/user/`, {
       headers: { Authorization: `JWT ${tokenData.access}` },
     });
-    console.log(userRes);
 
     return {
       ...tokenObject,
@@ -39,8 +38,6 @@ async function refreshAccessToken(tokenObject: JWT) {
       access_token_expiration: tokenData.access_token_expiration,
     };
   } catch (error) {
-    console.log(error);
-
     return {
       error: "Refresh Token Error",
     };
@@ -48,24 +45,20 @@ async function refreshAccessToken(tokenObject: JWT) {
 }
 
 async function handleLogin(loginFormData: LoginFormInterface) {
-  console.log(loginFormData);
-
   const res = await axiosClient
     .post(`${BACKEND_API_URL}/api/auth/login/`, loginFormData)
-    .catch((error) => {
-      console.log(error);
-
+    .catch((_) => {
       throw new Error("ログインに失敗しました。");
     });
-
   if (res.status === 200) {
     return res.data;
+  } else {
+    throw new Error("ログインに失敗しました。");
   }
-  throw new Error("ログインに失敗しました。");
 }
 
 export const authOptions: NextAuthOptions = {
-  debug: process.env.DEBUG === "true",
+  //   debug: process.env.DEBUG === "true",
   session: {
     strategy: "jwt",
   },
@@ -153,12 +146,10 @@ export const authOptions: NextAuthOptions = {
       );
 
       if (!!process.env.DEBUG) {
-        console.log("refreshAccessToken - debug");
         return refreshAccessToken(token);
       }
       if (shouldRefreshTime < 0) {
         // TOKEN有効期限が満了したらリフレッシュ
-        console.log("refreshAccessToken");
         return refreshAccessToken(token);
       }
 
