@@ -14,7 +14,7 @@ import { axiosClient } from "@lib/axios-client";
 
 
 const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL;
-export default function Pets({ session }: { session: SessionAuthInterface }) {
+export default function Pet({ session }: { session: SessionAuthInterface }) {
   const [page, setPage] = useState<number>(1);
   const [pageLength, setPageLength] = useState<number>(1);
 
@@ -63,7 +63,7 @@ export default function Pets({ session }: { session: SessionAuthInterface }) {
     <CMSLayout>
       <div>pets</div>
       <div>{pageLength}</div>
-      <div>{session?.access_token}</div>
+      <div className="bg-red-300">{session?.access_token}</div>
 
       {isLoading && <div>Loading...</div>}
       {isError && <div>Error...</div>}
@@ -95,7 +95,7 @@ function PetTable({
 }) {
   return (
     <div className="overflow-x-auto">
-      <table className="table w-full table-compact">
+      <table className="table table-compact">
         <thead>
           <tr>
             <th>ID</th>

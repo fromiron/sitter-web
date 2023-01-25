@@ -7,6 +7,7 @@ import { ReactQueryDevtools } from "react-query/devtools";
 import { Slide, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ThemeProvider } from "next-themes";
+import { WideModeProvider } from "context/WideModeContext";
 
 const queryClient = new QueryClient();
 
@@ -25,13 +26,15 @@ export default function App({ Component, pageProps }: AppProps) {
           />
         </Head>
         <ThemeProvider>
-          <ToastContainer
-            position="top-center"
-            autoClose={1000}
-            transition={Slide}
-            hideProgressBar
-          />
-          <Component {...pageProps} />
+          <WideModeProvider>
+            <ToastContainer
+              position="top-center"
+              autoClose={1000}
+              transition={Slide}
+              hideProgressBar
+            />
+            <Component {...pageProps} />
+          </WideModeProvider>
         </ThemeProvider>
         <ReactQueryDevtools initialIsOpen={true} />
       </QueryClientProvider>

@@ -111,9 +111,8 @@ export default function Customers({ session }: { session: Session }) {
   }
   return (
     <CMSLayout>
-      <div>Dashboard</div>
       <div>{pageLength}</div>
-      <div>{session.access_token}</div>
+      <div className="overflow-ellipsis">{session.access_token}</div>
       <input
         type="text"
         placeholder="Searching..."
