@@ -1,62 +1,83 @@
-import { ReactNode } from "react";
-import Link from "next/link";
-
+import { MouseEventHandler, ReactNode, useEffect, useState } from "react";
+import {
+  FaTablet,
+  FaUser,
+  FaFile,
+  FaBookmark,
+  FaCalendar,
+  FaCalculator,
+  FaCog,
+  FaSun,
+  FaMoon,
+} from "react-icons/fa";
+import RabbitIcon from "@images/rabbit_icon.svg";
+import { IconType } from "react-icons";
+import { useTheme } from "next-themes";
 
 export default function CMSLayout({ children }: { children: ReactNode }) {
-  const SIDE_MENU_WIDTH = "250px";
-  const WIDTH = "w-[250px]";
-  const TRANSLATE_X = "translate-x-[250px]";
-  const TRANSLATE_X_ZERO = "translate-x-0";
-  const NEGATIVE_TRANSLATE_X = "-translate-x-[250px]";
-
-  const sideMenuToggle = () => {
-    const sideMenu = document.getElementById("side-menu");
-    const contentCanvas = document.getElementById("content-canvas");
-    if (sideMenu?.className.includes(NEGATIVE_TRANSLATE_X)) {
-      console.log("menu on");
-      sideMenu?.classList.remove(NEGATIVE_TRANSLATE_X);
-      sideMenu?.classList.add(TRANSLATE_X_ZERO);
-      contentCanvas?.classList.remove(TRANSLATE_X_ZERO);
-      contentCanvas?.classList.add(TRANSLATE_X);
-    } else {
-      console.log("menu off");
-      sideMenu?.classList.add(NEGATIVE_TRANSLATE_X);
-      sideMenu?.classList.remove(TRANSLATE_X_ZERO);
-      contentCanvas?.classList.add(TRANSLATE_X_ZERO);
-      contentCanvas?.classList.remove(TRANSLATE_X);
-    }
-  };
   return (
-    <div>
-      <div className={"flex bg-base-100"}>
-        <div
-          id={"side-menu"}
-          className={`${NEGATIVE_TRANSLATE_X} ${WIDTH} px-4 pt-20 h-screen bg-white transition duration-500`}
+    <div className={"flex w-full h-screen overflow-hidden"}>
+      {/* <div className="w-24 bg-neutral"></div> */}
+      <SideBar />
+      <div className={"container"}>{children}</div>
+    </div>
+  );
+}
+
+function MenuIconContainer({ Icon }: { Icon: IconType }) {
+  return (
+    <div className="flex flex-col items-center justify-center my-2 btn btn-square">
+      <Icon />
+    </div>
+  );
+}
+
+function SideBar() {
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+  const { theme, setTheme } = useTheme();
+  function handleToggle() {
+    setIsDarkMode(!isDarkMode);
+    if (theme === "lop") {
+      setTheme("dwarf");
+    } else {
+      setTheme("lop");
+    }
+  }
+
+  return (
+    <div className="flex flex-col items-center justify-between w-16 h-full bg-neutral text-neutral-content">
+      <div className="flex items-center justify-center w-full bg-neutral-focus aspect-square">
+        <label
+          className={`w-full h-full swap swap-rotate relative ${
+            isDarkMode ? "swap-active" : ""
+          }`}
+          onClick={handleToggle}
         >
-          <li>
-            <Link href="/api/auth/signin">Sigin in</Link>
-          </li>
-          <li>
-            <Link href="/api/auth/signout">Sigin out</Link>
-          </li>
-          <li>
-            <Link href="/admin/customers">Customers</Link>
-          </li>
-          <li>
-            <Link href="/admin/pets">Pets</Link>
-          </li>
+          <FaSun className={"swap-off"} size={"1.5em"} color={"#ffd82e"} />
+          <FaMoon className={"swap-on"} size={"1.5em"} color={"#d9e7fb"} />
+        </label>
+      </div>
+      <div className="grid grid-cols-1 divide-y divide-neutral-focus">
+        <div>
+          <MenuIconContainer Icon={FaTablet} />
         </div>
-        <div className={"max-w-full "}>
-          <div
-            id={"content-canvas"}
-            className={`${TRANSLATE_X_ZERO} left-0  h-screen w-full bg-base-100  transition fixed duration-500`}
-          >
-            {/* main */}
-            <button onClick={sideMenuToggle}>menu</button>
-            {children}
-          </div>
+        <div>
+          <MenuIconContainer Icon={RabbitIcon} />
+          <MenuIconContainer Icon={FaUser} />
+        </div>
+        <div>
+          <MenuIconContainer Icon={FaFile} />
+          <MenuIconContainer Icon={FaCalendar} />
+        </div>
+        <div>
+          <MenuIconContainer Icon={FaCalculator} />
+          <MenuIconContainer Icon={FaBookmark} />
+        </div>
+        <div>
+          <MenuIconContainer Icon={FaCog} />
         </div>
       </div>
+      <div></div>
     </div>
   );
 }

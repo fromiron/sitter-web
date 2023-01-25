@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { Slide, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ThemeProvider } from "next-themes";
 
 const queryClient = new QueryClient();
 
@@ -23,13 +24,15 @@ export default function App({ Component, pageProps }: AppProps) {
             content="initial-scale=1.0, width=device-width"
           />
         </Head>
-        <ToastContainer
-          position="top-center"
-          autoClose={1000}
-          transition={Slide}
-          hideProgressBar
-        />
-        <Component {...pageProps} />
+        <ThemeProvider>
+          <ToastContainer
+            position="top-center"
+            autoClose={1000}
+            transition={Slide}
+            hideProgressBar
+          />
+          <Component {...pageProps} />
+        </ThemeProvider>
         <ReactQueryDevtools initialIsOpen={true} />
       </QueryClientProvider>
     </SessionProvider>
