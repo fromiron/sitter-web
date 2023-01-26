@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 const WideModeContext = createContext({
   isWideMode: false,
@@ -17,6 +17,11 @@ const WideModeProvider = ({ children }: Props): JSX.Element => {
     localStorage.setItem("wideMode", value.toString());
     setIsWideMode(value);
   };
+
+  useEffect(() => {
+    const wideMode = localStorage.getItem("wideMode") === "true";
+    setIsWideMode(wideMode);
+  }, []);
 
   return (
     <WideModeContext.Provider

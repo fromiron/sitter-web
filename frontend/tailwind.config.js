@@ -6,7 +6,18 @@ module.exports = {
         "./components/**/*.{js,ts,jsx,tsx}",
     ],
     theme: {
-        extend: {},
+        extend: {
+            dropShadow: {
+                glow: [
+                    "1px 2px 2px rgba( 	255, 115, 190, 0.3)",
+                    "0 0 4px rgb(92,60,171, 0.3)",
+                ],
+                "glow-hover": [
+                    "1px 2px 3px rgba( 	255, 115, 190, 0.9)",
+                    "-10px -4px 4px rgb(92,60,171, 0.7)",
+                ],
+            },
+        },
     },
     daisyui: {
         themes: [
@@ -44,26 +55,23 @@ module.exports = {
                 },
 
                 lop: {
-                    primary: "#b9508a",
-                    "primary-focus": "#42275d",
+                    primary: "#42275d",
                     // darkは使えないけどHEX保存用
                     // "primary-dark": "#2e1e57",
                     "primary-content": "#ffffff",
                     secondary: "#ff73be",
                     "secondary-focus": "#b9508a",
                     "secondary-content": "#6a3a54",
-                    accent: "#6a3a54",
+                    accent: "#ffe999",
                     "accent-focus": "#2aa79b",
                     "accent-content": "#ffffff",
-                    neutral: "#6a3a54",
-                    "neutral-focus": "#b9508a",
-                    "neutral-content": "#ff6f6f",
+                    neutral: "#4c516d",
                     "base-100": "#110f1c",
                     "base-content": "#F4F4F5",
-                    info: "#66c6ff",
-                    success: "#87d039",
-                    warning: "#e2d562",
-                    error: "#ff6f6f",
+                    info: "#2563eb",
+                    success: "#16a34a",
+                    warning: "#d97706",
+                    error: "#dc2626",
                     ".input": {
                         "transition-duration": "500ms",
                     },

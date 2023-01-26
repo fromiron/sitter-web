@@ -36,7 +36,7 @@ export default function App({ Component, pageProps }: AppProps) {
             <Component {...pageProps} />
           </WideModeProvider>
         </ThemeProvider>
-        <ReactQueryDevtools initialIsOpen={true} />
+        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
       </QueryClientProvider>
     </SessionProvider>
   );
