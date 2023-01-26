@@ -1,4 +1,4 @@
-import { memo, ReactNode, useContext, useEffect, useState } from "react";
+import { ReactNode, useContext, useState } from "react";
 import {
   FaTablet,
   FaUser,
@@ -21,8 +21,16 @@ import { WideModeContext } from "context/WideModeContext";
 
 import CircleLogo from "@images/circle_logo.svg";
 import CircleLogoDark from "@images/circle_logo_dark.svg";
+import { useSession } from "@lib/next-auth-react-query";
 
 export default function CMSLayout({ children }: { children: ReactNode }) {
+  const sessionOption = {
+    required: true,
+    redirectTo: "/api/auth/signin?error=SessionExpired",
+    queryConfig: {},
+  };
+  useSession(sessionOption);
+
   return (
     <div className={"flex w-screen h-screen"}>
       <SideBar />

@@ -145,9 +145,9 @@ export const authOptions: NextAuthOptions = {
         Date.parse(token.access_token_expiration!) - Date.now() - 60 * 59 * 1000
       );
 
-      if (!!process.env.DEBUG) {
-        return refreshAccessToken(token);
-      }
+      //   if (!!process.env.DEBUG) {
+      //     return refreshAccessToken(token);
+      //   }
       if (shouldRefreshTime < 0) {
         // TOKEN有効期限が満了したらリフレッシュ
         return refreshAccessToken(token);

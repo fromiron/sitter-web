@@ -1,4 +1,3 @@
-import consoleRender from "@lib/console-helper";
 import { withAuth } from "next-auth/middleware";
 
 export default withAuth({

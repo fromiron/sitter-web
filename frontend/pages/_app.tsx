@@ -2,14 +2,13 @@ import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
 import Head from "next/head";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { Slide, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ThemeProvider } from "next-themes";
 import { WideModeProvider } from "context/WideModeContext";
-
-const queryClient = new QueryClient();
+import { queryClient } from "@lib/react-query-client";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -36,7 +35,7 @@ export default function App({ Component, pageProps }: AppProps) {
             <Component {...pageProps} />
           </WideModeProvider>
         </ThemeProvider>
-        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </SessionProvider>
   );

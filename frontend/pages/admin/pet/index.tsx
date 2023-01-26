@@ -63,7 +63,7 @@ export default function Pet({ session }: { session: SessionAuthInterface }) {
     <CMSLayout>
       <div>pets</div>
       <div>{pageLength}</div>
-      <div className="bg-red-300">{session?.access_token}</div>
+      <div className="break-words bg-red-300 w-96">{session?.access_token}</div>
 
       {isLoading && <div>Loading...</div>}
       {isError && <div>Error...</div>}
