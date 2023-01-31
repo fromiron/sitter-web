@@ -3,21 +3,20 @@ from customer.serializers import CustomerDetailSerializer, CustomerMemoSerialize
 from core.models import Customer, CustomerMemo
 
 from rest_framework import viewsets
-from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 
 
-class BasePetViewSet(viewsets.ModelViewSet):
-    """base viewset for pet attributes"""
-    filter_backends = [DjangoFilterBackend]
+class BaseCustomerViewSet(viewsets.ModelViewSet):
+    """base viewset for customer attributes"""
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     pagination_class = ListPageNumberPagination
 
 
-class CustomerViewSet(BasePetViewSet):
+class CustomerViewSet(BaseCustomerViewSet):
     """Customer api viewset"""
-    queryset = Customer.objects.all().order_by('-pk')
+    queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
     search_fields = ['id', 'name', 'name_kana', 'address', 'tel', 'tel2']
-    ordering_fields = ['id, name', 'name_kana', 'address', 'tel', 'tel2']
 
     def get_serializer_class(self):
         """actionにあうserializerをリターンする"""
@@ -27,15 +26,8 @@ class CustomerViewSet(BasePetViewSet):
         else:
             return CustomerSerializer
 
-    def get_queryset(self):
-        sort = self.request.query_params.get("sort", None)
-        if sort == 'ASC':
-            return Customer.objects.all()
-        else:
-            return Customer.objects.all().order_by('-pk')
 
-
-class CustomerMemoViewSet(BasePetViewSet):
+class CustomerMemoViewSet(BaseCustomerViewSet):
     """pet memo view set"""
     queryset = CustomerMemo.objects.all().order_by('-pk')
     serializer_class = CustomerMemoSerializer

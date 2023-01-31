@@ -1,4 +1,4 @@
-from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 from core.pagination import ListPageNumberPagination
 
 from pet.serializers import (
@@ -13,13 +13,13 @@ from rest_framework import viewsets
 
 class BasePetViewSet(viewsets.ModelViewSet):
     """base viewset for pet attributes"""
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     pagination_class = ListPageNumberPagination
 
 
 class PetViewSet(BasePetViewSet):
     """Pet api viewset"""
-    queryset = Pet.objects.all().order_by('-pk')
+    queryset = Pet.objects.all()
     serializer_class = PetSerializer
     filterset_fields = ['name', 'sex', 'birth',
                         'breed_id', 'customer_id', 'type_id']

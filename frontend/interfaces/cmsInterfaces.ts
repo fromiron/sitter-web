@@ -35,7 +35,21 @@ export interface CustomerInterface {
   name_kana: string;
   tel: string;
   tel2: string;
-  address: "ㅁㄴㅇㅁㄴㄻ";
+  address: string;
+  memos: CustomerMemoInterface[];
+  pets: PetInterface[];
+}
+export interface CustomerMemoInterface extends MemoInterface {
+  customer_id: number;
+}
+
+export interface MemoInterface {
+  id: number;
+  memo: string;
+}
+export interface MemoInterface {
+  id: number;
+  memo: string;
 }
 
 export interface CustomersInterface {

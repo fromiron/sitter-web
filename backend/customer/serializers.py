@@ -3,15 +3,6 @@ from pet.serializers import PetSerializer
 from core.models import Customer, CustomerMemo
 
 
-class CustomerSerializer(serializers.ModelSerializer):
-    """Customer Serializer"""
-
-    class Meta:
-        model = Customer
-        fields = ['id', 'name', 'name_kana', 'tel', 'tel2', 'address']
-        read_only_fields = ['id']
-
-
 class CustomerMemoSerializer(serializers.ModelSerializer):
     """Serializer for customer memo."""
     customer_id = serializers.PrimaryKeyRelatedField(
@@ -32,11 +23,21 @@ class CustomerMemoSerializer(serializers.ModelSerializer):
         return memo
 
 
-class CustomerDetailSerializer(CustomerSerializer):
-    """Serializer for customer detail view."""
+class CustomerSerializer(serializers.ModelSerializer):
+    """Customer Serializer"""
     memos = CustomerMemoSerializer(many=True, required=False)
     pets = PetSerializer(many=True, required=False)
 
+    class Meta:
+        model = Customer
+        fields = ['id', 'name', 'name_kana', 'tel',
+                  'tel2', 'address', 'memos', 'pets']
+        read_only_fields = ['id']
+
+
+class CustomerDetailSerializer(CustomerSerializer):
+    """Serializer for customer detail view."""
+    # todo karte追加後Fields追加
+
     class Meta(CustomerSerializer.Meta):
-        fields = CustomerSerializer.Meta.fields + \
-            ['memos', 'pets']
+        fields = CustomerSerializer.Meta.fields

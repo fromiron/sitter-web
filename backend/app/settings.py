@@ -34,21 +34,34 @@ ALLOWED_HOSTS.extend(
         os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
     )
 )
-CORS_ALLOWED_ORIGINS = []
-CORS_ALLOWED_ORIGINS.extend(
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
+
+CORS_ORIGIN_WHITELIST = []
+CORS_ORIGIN_WHITELIST.extend(
     filter(
         None,
         os.environ.get('DJANGO_CORS_ALLOWED_ORIGINS', '').split(',')
     )
 )
-# CORS_ALLOW_CREDENTIALS = True
-# CSRF_TRUSTED_ORIGINS = []
-# CSRF_TRUSTED_ORIGINS.extend(
-#     filter(
-#         None,
-#         os.environ.get('DJANGO_CORS_ALLOWED_ORIGINS', '').split(',')
-#     )
-# )
+
+CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = []
+CSRF_TRUSTED_ORIGINS.extend(
+    filter(
+        None,
+        os.environ.get('DJANGO_CORS_ALLOWED_ORIGINS', '').split(',')
+    )
+)
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get(
     'SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', 'GOOGLE_OAUTH2_KEY')
@@ -101,9 +114,9 @@ if DEBUG:
     ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -205,7 +218,7 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     # pagination base settings
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 20,
+    'PAGE_SIZE': 10,
 }
 
 SIMPLE_JWT = {

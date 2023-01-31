@@ -1,7 +1,8 @@
 import { CUSTOMERS } from "@constants/queryKeys";
 import { CustomersInterface } from "@interfaces/cmsInterfaces";
 import { axiosClient } from "@lib/axios-client";
-import { Dispatch, SetStateAction, useCallback, useState } from "react";
+import { useSession } from "next-auth/react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useQuery } from "react-query";
 
 const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL;
@@ -27,12 +28,30 @@ async function getCustomer({
 interface UseCustomer {
   data?: CustomersInterface;
   query: string;
-  isLoading:boolean;
+  isLoading: boolean;
   setQuery: Dispatch<SetStateAction<string>>;
+  handlePage: (page: number) => void;
+  page: number;
 }
 
-export function useCustomer({ token }: { token?: string }): UseCustomer {
-  const [query, setQuery] = useState<string>("");
-  const { data, isLoading } = useQuery(CUSTOMERS, () => getCustomer({ query, token }));
-  return { data, isLoading, query, setQuery };
+export function useCustomer(): UseCustomer {
+  const session = useSession();
+  const token = session.data?.access_token;
+  const [page, setPage] = useState<number>(1);
+
+  const [query, setQuery] = useState<string>("?ordering=-id");
+
+  const { data, isLoading, refetch } = useQuery(CUSTOMERS, () =>
+    getCustomer({ query, token })
+  );
+
+  const handlePage = (page: number) => {
+    setPage(page);
+    setQuery(`${query}&page=${page}`);
+  };
+
+  useEffect(() => {
+    refetch();
+  }, [query, refetch]);
+  return { data, isLoading, query, setQuery, handlePage, page };
 }

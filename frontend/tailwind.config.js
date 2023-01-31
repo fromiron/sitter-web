@@ -1,5 +1,23 @@
 /** @type {import('tailwindcss').Config} */
 
+const componentsCustomConfig = {
+    ".input": {
+        "transition-duration": "500ms",
+    },
+    ".input:focus": {
+        outline: "none",
+    },
+    ".btn": {
+        outline: "none",
+    },
+    ".btn:focus": {
+        outline: "none",
+    },
+    ".btn:hover": {
+        outline: "none",
+    },
+};
+
 module.exports = {
     content: [
         "./pages/**/*.{js,ts,jsx,tsx}",
@@ -25,8 +43,6 @@ module.exports = {
                 dwarf: {
                     primary: "#5c3cab",
                     "primary-focus": "#42275d",
-                    // darkは使えないけどHEX保存用
-                    // "primary-dark": "#2e1e57",
                     "primary-content": "#ffffff",
                     secondary: "#ff73be",
                     "secondary-focus": "#b9508a",
@@ -36,51 +52,33 @@ module.exports = {
                     "accent-content": "#ffffff",
                     neutral: "#32303d",
                     "neutral-focus": "#110f1c",
-                    "neutral-content": "#f2f1f6",
+                    "neutral-content": "#ffffff",
                     "base-100": "#F4F4F5",
                     "base-content": "#110f1c",
                     info: "#66c6ff",
                     success: "#87d039",
                     warning: "#e2d562",
                     error: "#ff6f6f",
-                    ".input": {
-                        "transition-duration": "500ms",
-                    },
-                    ".input:focus": {
-                        outline: "none",
-                    },
-                    ".btn:focus": {
-                        outline: "none",
-                    },
+                    ...componentsCustomConfig,
                 },
 
                 lop: {
                     primary: "#42275d",
-                    // darkは使えないけどHEX保存用
-                    // "primary-dark": "#2e1e57",
                     "primary-content": "#ffffff",
-                    secondary: "#ff73be",
-                    "secondary-focus": "#b9508a",
-                    "secondary-content": "#6a3a54",
+                    secondary: "#b9508a",
                     accent: "#ffe999",
                     "accent-focus": "#2aa79b",
                     "accent-content": "#ffffff",
-                    neutral: "#4c516d",
+                    neutral: "#535353",
                     "base-100": "#110f1c",
+                    "base-200": "#56555f",
+                    "base-300": "#d2d2d4",
                     "base-content": "#F4F4F5",
                     info: "#2563eb",
                     success: "#16a34a",
                     warning: "#d97706",
                     error: "#dc2626",
-                    ".input": {
-                        "transition-duration": "500ms",
-                    },
-                    ".input:focus": {
-                        outline: "none",
-                    },
-                    ".btn:focus": {
-                        outline: "none",
-                    },
+                    ...componentsCustomConfig,
                 },
             },
         ],
