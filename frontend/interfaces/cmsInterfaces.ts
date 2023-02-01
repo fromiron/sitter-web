@@ -103,4 +103,5 @@ export interface SearchInputInterface {
 
 export interface CustomerTableInterface extends SearchInputInterface {
   customers: CustomersInterface | undefined;
+  isLoading: boolean;
 }

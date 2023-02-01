@@ -4,6 +4,7 @@ import { axiosClient } from "@lib/axios-client";
 import { useSession } from "next-auth/react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useQuery } from "react-query";
+import async from "../pages/api/auth/me";
 
 const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL;
 
@@ -32,9 +33,8 @@ interface UseCustomer {
   query: QueryInterface;
 }
 
-export function useCustomer(): UseCustomer {
+export function useCustomer({token}:{token?:string}): UseCustomer {
   const session = useSession();
-  const token = session.data?.access_token;
   const [query, setQuery] = useState<{
     search: string;
     ordering: string;
@@ -44,6 +44,8 @@ export function useCustomer(): UseCustomer {
     ordering: "-id",
     page: 1,
   });
+
+  console.log(session.data?.access_token);
 
   const { data, isLoading } = useQuery([CUSTOMERS, query], () =>
     getCustomer({ query, token })

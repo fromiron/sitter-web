@@ -16,6 +16,12 @@ const componentsCustomConfig = {
     ".btn:hover": {
         outline: "none",
     },
+    select: {
+        "-webkit-appearance": "none",
+        "-moz-appearance": "none",
+        appearance: "none",
+    },
+
 };
 
 module.exports = {
