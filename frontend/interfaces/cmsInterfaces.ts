@@ -1,4 +1,5 @@
 import { Session } from "next-auth/core/types";
+import { Dispatch, SetStateAction } from "react";
 
 export interface LoginFormInterface {
   email: string;
@@ -82,4 +83,24 @@ export interface PetsInterface {
   next: number | null;
   previous: number | null;
   results: PetInterface[];
+}
+
+export interface QueryInterface {
+  search: string;
+  ordering: string;
+  page: number;
+}
+
+export interface SearchValuesInterface {
+  ordering?: string;
+  search?: string;
+}
+
+export interface SearchInputInterface {
+  setQuery: Dispatch<SetStateAction<QueryInterface>>;
+  query: QueryInterface;
+}
+
+export interface CustomerTableInterface extends SearchInputInterface {
+  customers: CustomersInterface | undefined;
 }

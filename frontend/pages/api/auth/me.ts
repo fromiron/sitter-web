@@ -1,6 +1,6 @@
 import { axiosClient } from "@lib/axios-client";
 import { NextApiRequest, NextApiResponse } from "next/types";
-import consoleRender from "../../../lib/console-helper";
+import consoleRender from "../../../helpers/console-helper";
 import { UserInterface } from "../../../interfaces/cmsInterfaces";
 
 export default async function userHandler(

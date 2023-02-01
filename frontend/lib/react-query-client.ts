@@ -1,14 +1,29 @@
+import { AxiosError } from "axios";
 import { QueryClient } from "react-query";
 import { toast } from "react-toastify";
+import { signOut } from "next-auth/react";
 
 function queryErrorHandler(error: unknown): void {
+  const axiosError = error as AxiosError;
   const id = "react-query-error";
   const title =
     error instanceof Error
       ? // remove the initial 'Error: ' that accompanies many errors
         error.toString().replace(/^Error:\s*/, "")
       : "error connecting to server";
-  toast.error(title);
+
+  if (axiosError.response?.status === 401) {
+    toast.error("再ログインしてください");
+    setTimeout(
+      () =>
+        signOut().then(
+          () => (window.location.href = `${window.location.origin}/auth/signin`)
+        ),
+      2000
+    );
+  } else {
+    toast.error(title);
+  }
 }
 
 export const queryClient = new QueryClient({

@@ -4,54 +4,54 @@ import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
-import { CustomersInterface, PetInterface } from "@interfaces/cmsInterfaces";
-import { Session } from "next-auth/core/types";
+import {
+  CustomersInterface,
+  CustomerTableInterface,
+  PetInterface,
+  SearchInputInterface,
+  SearchValuesInterface,
+} from "@interfaces/cmsInterfaces";
 import { useCustomer } from "@hooks/useCustomer";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { ImSearch } from "react-icons/im";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { Query } from "react-query";
+import { copyToClipboard } from "@helpers/copy-helper";
 
-export default function Customers({ session }: { session: Session }) {
-  const [page, setPage] = useState<number>(1);
-
-  //     'http://localhost:8000/api/customer/customers/?page=2' \
-  //  'http://localhost:8000/api/customer/customers/?ordering=name_kana' \
-
-  const { data: customers, isLoading } = useCustomer();
-
-  if (isLoading) {
-    <CMSLayout>Loading...</CMSLayout>;
-  }
+export default function Customers() {
+  const { data: customers, isLoading, query, setQuery } = useCustomer();
 
   return (
     <CMSLayout>
-      <CustomerCounterBanner customerCountOrigin={customers?.count} />
-      <SearchInput />
-      {customers && <CustomerTable customers={customers} />}
+      <CustomerCounterBanner customerCountOrigin={51} />
+      <SearchInput query={query} setQuery={setQuery} />
+      {isLoading ? (
+        <div>Loading...</div>
+      ) : (
+        <CustomerTable
+          customers={customers}
+          query={query}
+          setQuery={setQuery}
+        />
+      )}
     </CMSLayout>
   );
 }
 
-interface SearchValuesInterface {
-  ordering?: string;
-  search?: string;
-}
-
-function SearchInput() {
-  const { setQuery } = useCustomer();
+function SearchInput({ setQuery, query }: SearchInputInterface) {
   const { register, handleSubmit } = useForm();
   const onSubmit: SubmitHandler<SearchValuesInterface> = (values) => {
-    console.log(values);
-    console.log(values.ordering);
-    const query = `?ordering=${values.ordering}&search=${values.search}`;
-    console.log(query);
-    setQuery(query);
+    const { ordering, search } = values;
+    setQuery({
+      ...query,
+      ordering: ordering ?? "-id",
+      search: search ?? "",
+    });
   };
-  //   'http://localhost:8000/api/customer/customers/?ordering=-id&search=%E5%B1%B1%E5%8F%A3'
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)} onChange={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex items-center justify-between max-w-xl p-2 mb-4 overflow-hidden transition duration-500 border border-opacity-50 rounded-lg focus-within:border-primary hover:border-primary group border-base-200 bg-neutral-content">
           <ImSearch className="mx-2 transition duration-500 text-base-300 group-hover:text-primary group-focus-within:text-primary" />
           <input
@@ -60,6 +60,8 @@ function SearchInput() {
             placeholder="Search for customer"
           />
         </div>
+      </form>
+      <form onChange={handleSubmit(onSubmit)}>
         <select {...register("ordering")}>
           <option value="-id">登録日↓</option>
           <option value="id">登録日↑</option>
@@ -137,22 +139,15 @@ function PetAvatarBadge({ pets }: { pets: PetInterface[] }) {
   );
 }
 
-function CustomerTable({ customers }: { customers: CustomersInterface }) {
-  function telNumCopy(tel: string) {
-    navigator.clipboard
-      .writeText(tel)
-      .then(() => {
-        toast.success(`コピー済 「${tel}」`);
-      })
-      .catch(() => {
-        toast.success("コピーに失敗しました。");
-      });
-  }
+function CustomerTable({ customers, query, setQuery }: CustomerTableInterface) {
 
-  const { handlePage, page } = useCustomer();
-  const count = customers.count;
+  const count = customers?.count ? customers.count : 0;
   const pageRowCount = 10;
   const totalPage = Math.ceil(count / pageRowCount);
+
+  if (!customers) {
+    return <div>loading...</div>;
+  }
 
   return (
     <div className="w-full overflow-x-auto border border-opacity-50 rounded-lg max-w-7xl border-base-200 text-neutral">
@@ -185,7 +180,7 @@ function CustomerTable({ customers }: { customers: CustomersInterface }) {
                 <br />
                 <span
                   className="text-sm cursor-pointer badge badge-ghost badge-sm"
-                  onClick={() => telNumCopy(customer.tel)}
+                  onClick={() => copyToClipboard(customer.tel)}
                 >
                   <span className="mr-1 scale-75">
                     <BsFillTelephoneFill />
@@ -214,7 +209,7 @@ function CustomerTable({ customers }: { customers: CustomersInterface }) {
                 </div>
                 <ul className="flex text-2x">
                   <li
-                    onClick={() => handlePage(page - 1)}
+                    onClick={() => setQuery({ ...query, page: query.page - 1 })}
                     className={`btn btn-ghost btn-sm btn-square ${
                       customers.previous ? null : "btn-disabled bg-base-100"
                     }`}
@@ -222,15 +217,18 @@ function CustomerTable({ customers }: { customers: CustomersInterface }) {
                     <MdNavigateBefore />
                   </li>
 
+                  {}
                   <li
-                    className={"btn btn-ghost btn-sm btn-square"}
-                    onClick={() => handlePage(1)}
+                    className={`btn btn-ghost btn-sm btn-square ${
+                      query.page === 1 ? "bg-base-300" : ""
+                    }`}
+                    onClick={() => setQuery({ ...query, page: 1 })}
                   >
                     1
                   </li>
                   <li
                     className={"btn btn-ghost btn-sm btn-square"}
-                    onClick={() => handlePage(2)}
+                    onClick={() => setQuery({ ...query, page: 1 })}
                   >
                     2
                   </li>
@@ -243,7 +241,7 @@ function CustomerTable({ customers }: { customers: CustomersInterface }) {
                   </li>
 
                   <li
-                    onClick={() => handlePage(page + 1)}
+                    onClick={() => setQuery({ ...query, page: query.page + 1 })}
                     className={`btn btn-ghost btn-sm btn-square ${
                       customers.next ? null : "btn-disabled bg-base-100"
                     }`}
@@ -261,6 +259,11 @@ function CustomerTable({ customers }: { customers: CustomersInterface }) {
 }
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
+  console.log("asdsad");
+
+  console.log(session);
+  console.log("asdsad");
+
   return {
     props: {
       session: session,

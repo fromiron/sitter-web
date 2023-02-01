@@ -1,5 +1,5 @@
 import { CUSTOMERS } from "@constants/queryKeys";
-import { CustomersInterface } from "@interfaces/cmsInterfaces";
+import { CustomersInterface, QueryInterface } from "@interfaces/cmsInterfaces";
 import { axiosClient } from "@lib/axios-client";
 import { useSession } from "next-auth/react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
@@ -11,11 +11,11 @@ async function getCustomer({
   query,
   token,
 }: {
-  query: string;
+  query: { ordering: string; search: string; page: number };
   token?: string;
 }): Promise<CustomersInterface> {
   const { data } = await axiosClient.get(
-    `${BACKEND_API_URL}/api/customer/customers/${query}`,
+    `${BACKEND_API_URL}/api/customer/customers/?page=${query.page}&ordering=${query.ordering}&search=${query.search}`,
     {
       headers: {
         Authorization: `JWT ${token}`,
@@ -27,31 +27,27 @@ async function getCustomer({
 
 interface UseCustomer {
   data?: CustomersInterface;
-  query: string;
   isLoading: boolean;
-  setQuery: Dispatch<SetStateAction<string>>;
-  handlePage: (page: number) => void;
-  page: number;
+  setQuery: Dispatch<SetStateAction<QueryInterface>>;
+  query: QueryInterface;
 }
 
 export function useCustomer(): UseCustomer {
   const session = useSession();
   const token = session.data?.access_token;
-  const [page, setPage] = useState<number>(1);
+  const [query, setQuery] = useState<{
+    search: string;
+    ordering: string;
+    page: number;
+  }>({
+    search: "",
+    ordering: "-id",
+    page: 1,
+  });
 
-  const [query, setQuery] = useState<string>("?ordering=-id");
-
-  const { data, isLoading, refetch } = useQuery(CUSTOMERS, () =>
+  const { data, isLoading } = useQuery([CUSTOMERS, query], () =>
     getCustomer({ query, token })
   );
 
-  const handlePage = (page: number) => {
-    setPage(page);
-    setQuery(`${query}&page=${page}`);
-  };
-
-  useEffect(() => {
-    refetch();
-  }, [query, refetch]);
-  return { data, isLoading, query, setQuery, handlePage, page };
+  return { data, isLoading, setQuery, query };
 }
