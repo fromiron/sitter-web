@@ -76,6 +76,8 @@ export interface PetInterface {
   };
   customer: number;
   weight: number;
+  image: string | null;
+  thumbnail: string | null;
 }
 
 export interface PetsInterface {

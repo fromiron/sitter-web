@@ -10,6 +10,8 @@ import {
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 import { useEffect, useState } from "react";
+import Image from "next/image";
+import RabbitIcon from "@images/rabbit_icon.svg";
 
 export function Table({
   customers,
@@ -138,7 +140,6 @@ function PetAvatarBadge({ pets }: { pets: PetInterface[] }) {
   if (pets.length === 0) return null;
   const count = pets.length;
   const renderingLimit = 3;
-  //   todo pet avatar image
   return (
     <>
       {pets.slice(0, renderingLimit).map((pet) => (
@@ -147,14 +148,25 @@ function PetAvatarBadge({ pets }: { pets: PetInterface[] }) {
             className="text-xs text-neutral-content tooltip tooltip-primary tooltip-top"
             data-tip={pet.name}
           >
-            <div className="w-12 h-12 border-4 rounded-full border-neutral-content bg-base-200"></div>
+            <div className="relative flex items-center justify-center w-12 h-12 border-4 rounded-full bg-base-200 border-neutral-content">
+              {pet.thumbnail ? (
+                <Image
+                  src={pet.thumbnail}
+                  unoptimized={true}
+                  fill
+                  alt="pet image"
+                />
+              ) : (
+                <RabbitIcon />
+              )}
+            </div>
           </div>
         </div>
       ))}
       {count > renderingLimit ? (
         <div className="z-10 w-12 h-12">
           <div className="flex items-center justify-center w-12 h-12 font-bold border-4 rounded-full border-neutral-content bg-primary text-primary-content">
-            more
+            +{count-renderingLimit}
           </div>
         </div>
       ) : null}
