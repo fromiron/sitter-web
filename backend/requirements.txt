@@ -8,3 +8,4 @@ djangorestframework-simplejwt>=5.2.2,<5.3
 dj-rest-auth>=2.2.5,<2.3
 django-allauth>=0.51.0,<0.52
 mysqlclient>=2.1.1,<2.2.0
+Pillow>=9.2.0,<9.3.0

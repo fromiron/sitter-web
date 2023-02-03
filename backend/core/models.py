@@ -1,7 +1,8 @@
 """
 Models
 """
-
+import os
+import uuid
 from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -9,6 +10,14 @@ from django.contrib.auth.models import (
     PermissionsMixin
 )
 from django.utils import timezone
+
+
+def pet_image_file_path(instance, filename):
+    """generate file path for new recipe image"""
+    ext = os.path.splitext(filename)[1]
+    filename = f'{uuid.uuid4()}{ext}'
+
+    return os.path.join('uploads', 'pet', filename)
 
 
 class UserManager(BaseUserManager):
@@ -152,6 +161,7 @@ class Pet(models.Model):
         PetDislike, blank=True, help_text='苦手なこと')
     birth = models.DateField(null=True, help_text='誕生日')
     death = models.DateField(blank=True, null=True, help_text='死亡日')
+    image = models.ImageField(null=True, upload_to=pet_image_file_path)
 
     def __str__(self):
         return self.name

@@ -4,6 +4,7 @@ LABEL maintainer="github.com/fromiron"
 ENV PYTHONUNBUFFERED 1
 
 COPY ./ /backend
+COPY ./scripts /scripts
 WORKDIR /backend
 EXPOSE 8000
 
@@ -22,7 +23,14 @@ RUN python -m venv /py && \
     adduser \
         --disabled-password \
         --no-create-home \
-        django-user
+        django-user && \
+    mkdir -p /volumes/media && \
+    mkdir -p /volumes/static && \
+    chown -R django-user:django-user /volumes/ && \
+    chmod -R 755 /volumes/ && \
+    chmod -R 755 /backend/core/migrations && \
+    chmod -R +x /scripts
+
 
 ENV PATH="$PATH"
 

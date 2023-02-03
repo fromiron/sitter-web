@@ -295,3 +295,12 @@ if DEBUG:
 SPECTACULAR_SETTINGS = {
     'COMPONENT_SPLIT_REQUEST': True,
 }
+
+# image file path settings
+STATIC_URL = '/static/static/'
+STATIC_ROOT = '/volumes/static'
+MEDIA_URL = '/static/media/'
+MEDIA_ROOT = '/volumes/media'
+
+# The number of GET/POST parameters exceeded settings.DATA_UPLOAD_MAX_NUMBER_FIELDS error 対策
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 4000
