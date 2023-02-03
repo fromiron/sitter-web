@@ -74,14 +74,14 @@ function SideBar() {
           <CategoryRender category={"Management"} />
           <MenuIconContainer
             Icon={RabbitIcon}
-            isOpened={isOpened("pet")}
-            url={"/admin/pet"}
+            isOpened={isOpened("pets")}
+            url={"/admin/pets"}
             name={"ペット"}
           />
           <MenuIconContainer
             Icon={FaUser}
-            isOpened={isOpened("customer")}
-            url={"/admin/customer"}
+            isOpened={isOpened("customers")}
+            url={"/admin/customers"}
             name={"カスタマー"}
           />
           <MenuIconContainer

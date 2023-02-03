@@ -1,5 +1,7 @@
 import { SetStateAction } from "react";
 
+const PAGE_SIZE = 10;
+
 export function paginationNumGenerator(
   totalPageCount: number,
   pageNum: number
@@ -35,9 +37,13 @@ export function showColumRangeGenerator(
   dataLength: number,
   pageNum: number
 ): SetStateAction<{ from: number; to: number }> {
-  const pageSize: number = 10;
-  const from: number = dataLength - pageSize * (pageNum - 1);
+  const from: number = dataLength - PAGE_SIZE * (pageNum - 1);
   const to: number =
-    from - pageSize > 0 ? from - pageSize : dataLength > 0 ? 1 : 0;
+    from - PAGE_SIZE > 0 ? from - PAGE_SIZE : dataLength > 0 ? 1 : 0;
   return { from, to };
+}
+
+export function totalPageCountGenerator(pageCount: number | undefined) {
+  const count = pageCount ? pageCount : 0;
+  return Math.ceil(count / PAGE_SIZE);
 }

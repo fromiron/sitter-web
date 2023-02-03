@@ -107,3 +107,11 @@ export interface CustomerTableInterface extends SearchInputInterface {
   customers: CustomersInterface | undefined;
   isLoading: boolean;
 }
+export interface PetTableInterface extends SearchInputInterface {
+  pets: PetsInterface | undefined;
+  isLoading: boolean;
+}
+export interface TableDataInterface extends SearchInputInterface {
+  data: PetsInterface | CustomersInterface;
+  isLoading: boolean;
+}
