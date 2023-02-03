@@ -99,6 +99,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     # drf_spectacular
     'drf_spectacular',
+    # django-cleanup
+    'django_cleanup.apps.CleanupConfig',
     # apps
     'core',
     'user',
