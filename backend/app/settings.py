@@ -101,6 +101,8 @@ INSTALLED_APPS = [
     'drf_spectacular',
     # django-cleanup
     'django_cleanup.apps.CleanupConfig',
+    # django-imagekit
+    'imagekit',
     # apps
     'core',
     'user',

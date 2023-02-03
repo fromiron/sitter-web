@@ -60,14 +60,26 @@ class PetSerializer(serializers.ModelSerializer):
     """Pet Serializer"""
     type = PetTypeSerializer(many=False, required=False)
     breed = PetBreedSerializer(many=False, required=False)
+    image = serializers.SerializerMethodField()
+    thumbnail = serializers.SerializerMethodField()
 
     class Meta:
         model = Pet
         fields = [
             'id', 'name', 'sex', 'birth', 'death',
-            'type', 'breed', 'customer', 'weight', 'image'
+            'type', 'breed', 'customer', 'weight', 'image', 'thumbnail'
         ]
         read_only_fields = ['id']
+
+    def get_image(self, obj):
+        if bool(obj.image):
+            return self.context['request'].build_absolute_uri(obj.image.url)
+        return None
+
+    def get_thumbnail(self, obj):
+        if bool(obj.thumbnail):
+            return self.context['request'].build_absolute_uri(obj.thumbnail.url)
+        return None
 
     def _get_or_create_type(self, type, pet):
         """同じTypeがあったらリターン、なかったら生成してリターン"""

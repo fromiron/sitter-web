@@ -10,6 +10,9 @@ from django.contrib.auth.models import (
     PermissionsMixin
 )
 from django.utils import timezone
+from imagekit.models import ImageSpecField
+from imagekit.processors import SmartResize, ResizeToFit
+from imagekit.models import ProcessedImageField
 
 
 def pet_image_file_path(instance, filename):
@@ -67,7 +70,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_superuser = models.BooleanField(default=False)
     last_login = models.DateTimeField(null=True, blank=True)
     date_joined = models.DateTimeField(auto_now_add=True)
-
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
@@ -82,6 +86,8 @@ class Customer(models.Model):
     tel = models.CharField(max_length=40)
     tel2 = models.CharField(max_length=40, blank=True, null=True)
     address = models.CharField(max_length=255)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
@@ -161,7 +167,16 @@ class Pet(models.Model):
         PetDislike, blank=True, help_text='苦手なこと')
     birth = models.DateField(null=True, help_text='誕生日')
     death = models.DateField(blank=True, null=True, help_text='死亡日')
-    image = models.ImageField(null=True, upload_to=pet_image_file_path)
+    image = ProcessedImageField(blank=True, null=True, upload_to=pet_image_file_path,
+                                processors=[ResizeToFit(500, 500)],
+                                format='PNG',
+                                options={'quality': 80})
+    thumbnail = ImageSpecField(source='image',
+                               processors=[SmartResize(100, 100)],
+                               format='PNG',
+                               options={'quality': 60})
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
