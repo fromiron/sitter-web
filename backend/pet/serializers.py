@@ -1,5 +1,12 @@
 from rest_framework import serializers
-from core.models import Pet, PetType, PetBreed, PetMemo, PetLike, PetDislike
+from core.models import Customer, Pet, PetType, PetBreed, PetMemo, PetLike, PetDislike
+
+
+class CustomerIdNameSerializer(serializers.ModelSerializer):
+    """Customer IdName Serializer"""
+    class Meta:
+        model = Customer
+        fields = ['id', 'name', 'name_kana']
 
 
 class PetTypeSerializer(serializers.ModelSerializer):
@@ -60,6 +67,7 @@ class PetSerializer(serializers.ModelSerializer):
     """Pet Serializer"""
     type = PetTypeSerializer(many=False, required=False)
     breed = PetBreedSerializer(many=False, required=False)
+    customer = CustomerIdNameSerializer(many=False, required=False)
     image = serializers.SerializerMethodField()
     thumbnail = serializers.SerializerMethodField()
 
@@ -88,7 +96,8 @@ class PetSerializer(serializers.ModelSerializer):
 
     def _get_or_create_breed(self, breed, pet):
         """同じbreedがあったらリターン、なかったら生成してリターン"""
-        obj, _ = PetBreed.objects.get_or_create(**breed)
+        type_id = pet.type.id
+        obj, _ = PetBreed.objects.get_or_create(type_id=type_id, **breed)
         pet.breed = obj
 
     def create(self, validated_data):

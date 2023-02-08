@@ -9,10 +9,9 @@ import {
   PetInterface,
 } from "@interfaces/cmsInterfaces";
 import { BsFillTelephoneFill } from "react-icons/bs";
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import RabbitIcon from "@images/rabbit_icon.svg";
-import { TableLayout } from "@components/layout/TableLayout";
+import { TableLayout } from "@components/layout/cms/TableLayout";
 
 export function Table({
   customers,
@@ -20,20 +19,9 @@ export function Table({
   setQuery,
   isLoading,
 }: CustomerTableInterface) {
-  const [pageArray, setPageArray] = useState<Array<string | number>>([]);
-  const [columRange, setColumRange] = useState({ from: 0, to: 0 });
-
+  const columRange = showColumRangeGenerator(customers?.count ?? 0, query.page);
   const totalPageCount = totalPageCountGenerator(customers?.count);
-
-  useEffect(() => {
-    const array = paginationNumGenerator(totalPageCount, query.page);
-    setPageArray(array);
-    const columRange = showColumRangeGenerator(
-      customers?.count ?? 0,
-      query.page
-    );
-    setColumRange(columRange);
-  }, [query.page]);
+  const pageArray = paginationNumGenerator(totalPageCount, query.page);
 
   if (!customers) {
     return <div>loading...</div>;

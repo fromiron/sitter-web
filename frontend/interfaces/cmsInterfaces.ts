@@ -74,7 +74,11 @@ export interface PetInterface {
     id: number;
     name: "string";
   };
-  customer: number;
+  customer: {
+    id: number;
+    name: string;
+    name_kana?: string;
+  };
   weight: number;
   image: string | null;
   thumbnail: string | null;
@@ -101,17 +105,27 @@ export interface SearchValuesInterface {
 export interface SearchInputInterface {
   setQuery: Dispatch<SetStateAction<QueryInterface>>;
   query: QueryInterface;
+  options: SearchSelectOptionInterface;
+  placeholder?: string;
 }
 
-export interface CustomerTableInterface extends SearchInputInterface {
+export interface BaseTableInterface {
+  setQuery: Dispatch<SetStateAction<QueryInterface>>;
+  query: QueryInterface;
+  isLoading: boolean;
+}
+export interface CustomerTableInterface extends BaseTableInterface {
   customers: CustomersInterface | undefined;
-  isLoading: boolean;
 }
-export interface PetTableInterface extends SearchInputInterface {
+export interface PetTableInterface extends BaseTableInterface {
   pets: PetsInterface | undefined;
-  isLoading: boolean;
 }
-export interface TableDataInterface extends SearchInputInterface {
-  data: PetsInterface | CustomersInterface;
-  isLoading: boolean;
+
+export interface SearchSelectOptionInterface {
+  [key: string]: { query: string; string: string };
+}
+
+export interface PetTypeInterface {
+  id: number;
+  name: string;
 }

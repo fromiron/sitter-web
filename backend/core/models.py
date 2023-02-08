@@ -118,6 +118,8 @@ class PetType(models.Model):
 class PetBreed(models.Model):
     """pet 品種 model"""
     name = models.CharField(max_length=40)
+    type = models.ForeignKey(
+        PetType, related_name='pet_type', on_delete=models.CASCADE, help_text='ペットタイプ')
 
     def __str__(self):
         return self.name

@@ -1,8 +1,6 @@
 import {
-  SearchInputInterface,
-  SearchValuesInterface,
-} from "@interfaces/cmsInterfaces";
-import { SubmitHandler, useForm } from "react-hook-form";
+  SearchInputInterface} from "@interfaces/cmsInterfaces";
+import { useForm } from "react-hook-form";
 import { ImSearch } from "react-icons/im";
 import { useEffect, useState } from "react";
 import {
@@ -13,39 +11,14 @@ import {
 import { IoIosRadioButtonOn, IoIosRadioButtonOff } from "react-icons/io";
 import { AiOutlineSortAscending } from "react-icons/ai";
 
-interface SearchSelectOptionInterface {
-  [key: string]: { query: string; string: string };
-}
 
-const OPTIONS: SearchSelectOptionInterface = {
-  idDESC: {
-    query: "-id",
-    string: "登録日",
-  },
-  idASC: {
-    query: "id",
-    string: "登録日",
-  },
-  nameDESC: {
-    query: "-name",
-    string: "漢字名",
-  },
-  nameASC: {
-    query: "name",
-    string: "漢字名",
-  },
-  kanaDESC: {
-    query: "-name_kana",
-    string: "カナ名",
-  },
-  kanaASC: {
-    query: "name_kana",
-    string: "カナ名",
-  },
-};
-
-export function SearchInput({ setQuery, query }: SearchInputInterface) {
-  const [selected, setSelected] = useState(OPTIONS.idDESC);
+export default function SearchInput({
+  setQuery,
+  query,
+  options,
+  placeholder
+}: SearchInputInterface) {
+  const [selected, setSelected] = useState(options.idDESC);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { register, handleSubmit, getValues } = useForm();
   const onSubmit = () => {
@@ -69,7 +42,7 @@ export function SearchInput({ setQuery, query }: SearchInputInterface) {
             <input
               {...register("search")}
               className="w-full transition duration-500 focus:outline-none bg-neutral-content text-neutral"
-              placeholder="Search for customer"
+              placeholder={placeholder}
             />
           </div>
         </form>
@@ -107,25 +80,25 @@ export function SearchInput({ setQuery, query }: SearchInputInterface) {
               isOpen ? "opacity-100 scale-y-100" : " opacity-0 scale-y-0"
             } cursor-pointer  overflow-hidden divide-y rounded-lg drop-shadow-lg left-0 right-0 mt-2`}
           >
-            {Object.keys(OPTIONS).map((key) => (
+            {Object.keys(options).map((key) => (
               <div
                 onClick={() => {
-                  setSelected(OPTIONS[key]);
+                  setSelected(options[key]);
                 }}
                 key={key}
                 className={`flex items-center justify-between px-4 py-2 transition duration-500 ${
-                  OPTIONS[key].query === selected.query
+                  options[key].query === selected.query
                     ? "bg-primary hover:bg-primary-focus text-primary-content"
                     : "bg-primary-content  hover:bg-primary hover:text-primary-content"
                 } text-neutral `}
               >
-                {OPTIONS[key].query === selected.query ? (
+                {options[key].query === selected.query ? (
                   <IoIosRadioButtonOn />
                 ) : (
                   <IoIosRadioButtonOff />
                 )}
-                {OPTIONS[key].string}
-                {OPTIONS[key].query.includes("-") ? (
+                {options[key].string}
+                {options[key].query.includes("-") ? (
                   <RiArrowDownSFill />
                 ) : (
                   <RiArrowUpSFill />

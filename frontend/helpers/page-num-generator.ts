@@ -36,7 +36,7 @@ export function paginationNumGenerator(
 export function showColumRangeGenerator(
   dataLength: number,
   pageNum: number
-): SetStateAction<{ from: number; to: number }> {
+): { from: number; to: number } {
   const from: number = dataLength - PAGE_SIZE * (pageNum - 1);
   const to: number =
     from - PAGE_SIZE > 0 ? from - PAGE_SIZE : dataLength > 0 ? 1 : 0;

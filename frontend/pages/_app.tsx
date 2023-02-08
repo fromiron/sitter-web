@@ -9,6 +9,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { ThemeProvider } from "next-themes";
 import { WideModeProvider } from "context/WideModeContext";
 import { queryClient } from "@lib/react-query-client";
+import "/node_modules/react-grid-layout/css/styles.css";
+import "/node_modules/react-resizable/css/styles.css";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (

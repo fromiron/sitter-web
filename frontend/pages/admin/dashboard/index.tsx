@@ -1,4 +1,4 @@
-import CMSLayout from "@components/layout/CMSLayout";
+import CMSLayout from "@components/layout/cms/CMSLayout";
 
 import { getSession } from "next-auth/react";
 import { NextPageContext } from "next/types";

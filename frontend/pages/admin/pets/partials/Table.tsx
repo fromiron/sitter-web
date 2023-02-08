@@ -3,28 +3,29 @@ import {
   showColumRangeGenerator,
   totalPageCountGenerator,
 } from "@helpers/page-num-generator";
-import { PetInterface, PetTableInterface } from "@interfaces/cmsInterfaces";
 
-import { useEffect, useState } from "react";
+import { PetTableInterface } from "@interfaces/cmsInterfaces";
+import { IoMale, IoFemale } from "react-icons/io5";
+
 import Image from "next/image";
 
-import { TableLayout } from "@components/layout/TableLayout";
+import { TableLayout } from "@components/layout/cms/TableLayout";
+import { ReactElement } from "react";
+import dayjs, { Dayjs } from "dayjs";
+import duration from "dayjs/plugin/duration";
+dayjs.extend(duration);
 
-const booleanToSexString = (boolean: boolean): string =>
-  boolean ? "オス" : "めす";
+const booleanToSexString = (boolean: boolean): ReactElement =>
+  !!boolean ? (
+    <IoMale className="text-info" />
+  ) : (
+    <IoFemale className="text-error" />
+  );
 
 export function Table({ pets, query, setQuery, isLoading }: PetTableInterface) {
-  const [pageArray, setPageArray] = useState<Array<string | number>>([]);
-  const [columRange, setColumRange] = useState({ from: 0, to: 0 });
-
+  const columRange = showColumRangeGenerator(pets?.count ?? 0, query.page);
   const totalPageCount = totalPageCountGenerator(pets?.count);
-
-  useEffect(() => {
-    const array = paginationNumGenerator(totalPageCount, query.page);
-    setPageArray(array);
-    const columRange = showColumRangeGenerator(pets?.count ?? 0, query.page);
-    setColumRange(columRange);
-  }, [query.page]);
+  const pageArray = paginationNumGenerator(totalPageCount, query.page);
 
   if (!pets) {
     return <div>loading...</div>;
@@ -35,36 +36,91 @@ export function Table({ pets, query, setQuery, isLoading }: PetTableInterface) {
 
   const theadList = [
     "IDX",
-    "Name",
-    "Sex",
-    "Type",
-    "Breed",
-    "weight",
-    "Thumbnail",
+    "名前",
+    "性別",
+    "タイプ",
+    "品種",
+    "体重",
+    "誕生日",
+    "飼い主",
   ];
+  const today = dayjs();
+
+  function DayRender({ birth, death }: { birth: string; death: string }) {
+    const afterBirth = dayjs.duration(today.diff(birth));
+    const afterDeath = dayjs.duration(today.diff(birth));
+
+    return (
+      <div className="grid grid-cols-2 text-xs text-end gap-y-1 gap-x-3">
+        {birth && (
+          <>
+            <div className="w-full badge badge-sm">誕生日</div>
+            <div>{dayjs(birth).format("YYYY年M月D日")}</div>
+          </>
+        )}
+        {birth && !death && (
+          <>
+            <div className="w-full badge badge-sm">年齢</div>
+            <div>{afterBirth.format("Y歳(M月D日)")}</div>
+          </>
+        )}
+        {death && (
+          <>
+            <div className="w-full badge badge-sm">虹の橋</div>
+            <div>{dayjs(death).format("YYYY年M月D日")}</div>
+          </>
+        )}
+        {death && (
+          <>
+            <div className="w-full badge badge-sm">その後</div>
+            <div>{afterDeath.format("Y年MM月DD日")}</div>
+          </>
+        )}
+      </div>
+    );
+  }
 
   function TbodyRow() {
     return (
       <>
         {pets?.results.map((pet) => (
-          <tr key={pet.id}>
+          <tr key={pet.id} className="text-center">
             <td className="text-sm text-center">{pet.id}</td>
-            <td>{pet.name}</td>
-            <td>{pet.sex}</td>
+            <td className="flex items-center">
+              <div className="avatar">
+                <div className="relative w-24 mr-4 mask mask-squircle bg-slate-200">
+                  {pet.thumbnail ? (
+                    <Image
+                      className="object-cover"
+                      src={pet.thumbnail}
+                      alt={"pet image"}
+                      fill
+                      unoptimized
+                    />
+                  ) : null}
+                </div>
+              </div>
+              <div>{pet.name}</div>
+            </td>
+            <td>
+              <div className="flex justify-center">
+                {booleanToSexString(pet.sex)}
+              </div>
+            </td>
             <td>{pet.type?.name}</td>
             <td>{pet.breed?.name}</td>
-            <td>{pet.weight}</td>
+            <td>{pet.weight}g</td>
             <td>
-              <div className="relative w-16 h-16 bg-red-300">
-                {pet.thumbnail ? (
-                  <Image
-                    className="object-cover"
-                    src={pet.thumbnail}
-                    alt={"pet image"}
-                    fill
-                    unoptimized
-                  />
-                ) : null}
+              <div className="flex justify-center">
+                <DayRender birth={pet.birth} death={pet.death} />
+              </div>
+            </td>
+            <td>
+              <div>
+                <div className="font-bold">{pet.customer.name}</div>
+                <div className="text-sm opacity-50">
+                  {pet.customer.name_kana}
+                </div>
               </div>
             </td>
           </tr>

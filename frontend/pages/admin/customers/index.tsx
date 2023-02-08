@@ -1,13 +1,43 @@
-import CMSLayout from "@components/layout/CMSLayout";
+import CMSLayout from "@components/layout/cms/CMSLayout";
 
 import { useEffect, useState } from "react";
 import { useCustomer } from "@hooks/useCustomer";
 import { RiUserAddLine } from "react-icons/ri";
-import { SearchInput } from "./partials/SearchInput";
 import { Table } from "./partials/Table";
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
-import { SessionAuthInterface } from "@interfaces/cmsInterfaces";
+import {
+  SearchSelectOptionInterface,
+  SessionAuthInterface,
+} from "@interfaces/cmsInterfaces";
+import SearchInput from "@components/layout/cms/SearchInput";
+
+const options: SearchSelectOptionInterface = {
+  idDESC: {
+    query: "-id",
+    string: "登録日",
+  },
+  idASC: {
+    query: "id",
+    string: "登録日",
+  },
+  nameDESC: {
+    query: "-name",
+    string: "漢字名",
+  },
+  nameASC: {
+    query: "name",
+    string: "漢字名",
+  },
+  kanaDESC: {
+    query: "-name_kana",
+    string: "カナ名",
+  },
+  kanaASC: {
+    query: "name_kana",
+    string: "カナ名",
+  },
+};
 
 export default function Customers({
   session,
@@ -27,10 +57,15 @@ export default function Customers({
         <CustomerCounterBanner customerCountOrigin={customers?.count} />
 
         <div className="flex items-center justify-center w-24 h-24 mb-4 overflow-hidden text-4xl border border-opacity-50 rounded-lg cursor-pointer text-primary-content bg-primary border-base-200 ">
-          <RiUserAddLine/>
+          <RiUserAddLine />
         </div>
       </div>
-      <SearchInput query={query} setQuery={setQuery} />
+      <SearchInput
+        query={query}
+        setQuery={setQuery}
+        options={options}
+        placeholder={"Search for customer"}
+      />
 
       <Table
         customers={customers}
