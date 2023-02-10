@@ -119,6 +119,8 @@ export interface CustomerTableInterface extends BaseTableInterface {
 }
 export interface PetTableInterface extends BaseTableInterface {
   pets: PetsInterface | undefined;
+  customerFilter: string | number;
+  setCustomerFilter: Dispatch<SetStateAction<string | number>>;
 }
 
 export interface SearchSelectOptionInterface {

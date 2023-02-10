@@ -23,11 +23,17 @@ const booleanToSexString = (boolean: boolean): ReactElement =>
     <IoFemale className="text-error" />
   );
 
-export function Table({ pets, query, setQuery, isLoading }: PetTableInterface) {
+export function Table({
+  pets,
+  query,
+  setQuery,
+  isLoading,
+  customerFilter,
+  setCustomerFilter,
+}: PetTableInterface) {
   const columRange = showColumRangeGenerator(pets?.count ?? 0, query.page);
   const totalPageCount = totalPageCountGenerator(pets?.count);
   const pageArray = paginationNumGenerator(totalPageCount, query.page);
-
   if (!pets) {
     return <div>loading...</div>;
   }
@@ -111,10 +117,18 @@ export function Table({ pets, query, setQuery, isLoading }: PetTableInterface) {
               </div>
             </td>
             <td>
-              <div>
-                <div>{pet.customer.name}</div>
-                <div className="text-xs opacity-50">
-                  {pet.customer.name_kana}
+              <div
+                className="group tooltip hover:tooltip-open tooltip-primary"
+                data-tip={`no.${pet.customer.id}`}
+              >
+                <div
+                  className="cursor-pointer"
+                  onClick={() => setCustomerFilter(pet.customer.id)}
+                >
+                  <div>{pet.customer.name}</div>
+                  <div className="text-xs opacity-50">
+                    {pet.customer.name_kana}
+                  </div>
                 </div>
               </div>
             </td>
@@ -143,7 +157,9 @@ export function Table({ pets, query, setQuery, isLoading }: PetTableInterface) {
       pageArray={pageArray}
       query={query}
       setQuery={setQuery}
-      tableName={'Pets'}
+      tableName={`${
+        typeof customerFilter === "number" ? `顧客No.${customerFilter}` : "Pets"
+      }`}
     />
   );
 }

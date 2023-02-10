@@ -66,6 +66,8 @@ export default function Pet({ session }: { session: SessionAuthInterface }) {
     setBreedFilter,
     breedFilterClear,
     resetQuery,
+    customerFilter,
+    setCustomerFilter,
   } = usePet({ token });
 
   const { data: types } = usePetType({ token });
@@ -110,6 +112,8 @@ export default function Pet({ session }: { session: SessionAuthInterface }) {
             query={query}
             setQuery={setQuery}
             isLoading={isLoading}
+            customerFilter={customerFilter}
+            setCustomerFilter={setCustomerFilter}
           />
         </div>
         <div>

@@ -28,11 +28,13 @@ async function getPets({
   token,
   typeFilter,
   breedFilter,
+  customerFilter,
 }: {
   query: { ordering: string; search: string; page: number };
   token?: string;
   typeFilter: number | string;
   breedFilter: number | string;
+  customerFilter: number | string;
 }): Promise<PetsInterface> {
   let typeFilterString = "";
   if (typeof typeFilter === "number") {
@@ -42,9 +44,12 @@ async function getPets({
   if (typeof breedFilter === "number") {
     breedFilterString += `&breed_id=${breedFilter}`;
   }
-
+  let customerFilterString = "";
+  if (typeof customerFilter === "number") {
+    customerFilterString += `&customer_id=${customerFilter}`;
+  }
   const { data } = await axiosClient.get(
-    `${BACKEND_API_URL}/api/pet/pets/?page=${query.page}&ordering=${query.ordering}&search=${query.search}${typeFilterString}${breedFilterString}`,
+    `${BACKEND_API_URL}/api/pet/pets/?page=${query.page}&ordering=${query.ordering}&search=${query.search}${typeFilterString}${breedFilterString}${customerFilterString}`,
     {
       headers: {
         Authorization: `JWT ${token}`,
@@ -145,6 +150,9 @@ interface UsePetInterface {
   breedFilterClear: () => void;
   setBreedFilter: Dispatch<SetStateAction<string | number>>;
   resetQuery: () => void;
+  customerFilter: number | string;
+  setCustomerFilter: Dispatch<SetStateAction<string | number>>;
+  customerFilterClear: () => void;
 }
 
 export function usePet({ token }: { token?: string }): UsePetInterface {
@@ -160,12 +168,15 @@ export function usePet({ token }: { token?: string }): UsePetInterface {
   }>(defaultQuery);
   const [typeFilter, setTypeFilter] = useState<number | string>("all");
   const [breedFilter, setBreedFilter] = useState<number | string>("all");
+  const [customerFilter, setCustomerFilter] = useState<number | string>("all");
   const typeFilterClear = () => setTypeFilter("all");
   const breedFilterClear = () => setBreedFilter("all");
+  const customerFilterClear = () => setCustomerFilter("all");
 
   const resetQuery = () => {
     typeFilterClear();
     breedFilterClear();
+    customerFilterClear();
     setQuery(defaultQuery);
   };
 
@@ -175,9 +186,15 @@ export function usePet({ token }: { token?: string }): UsePetInterface {
   }, [typeFilter]);
   useEffect(() => setQuery({ ...query, page: 1 }), [breedFilter]);
 
+  useEffect(() => {
+    breedFilterClear();
+    typeFilterClear();
+    setQuery({ ...query, page: 1 });
+  }, [customerFilter]);
+
   const { data, isLoading } = useQuery(
-    [PETS, query, typeFilter, breedFilter],
-    () => getPets({ query, token, typeFilter, breedFilter })
+    [PETS, query, typeFilter, breedFilter, customerFilter],
+    () => getPets({ query, token, typeFilter, breedFilter, customerFilter })
   );
 
   return {
@@ -192,6 +209,9 @@ export function usePet({ token }: { token?: string }): UsePetInterface {
     setBreedFilter,
     breedFilterClear,
     resetQuery,
+    customerFilter,
+    setCustomerFilter,
+    customerFilterClear,
   };
 }
 
