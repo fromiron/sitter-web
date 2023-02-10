@@ -13,6 +13,7 @@ interface TableLayoutInterface {
   next: number | null;
   pageArray: (string | number)[];
   query: QueryInterface;
+  tableName:string
 }
 
 export function TableLayout({
@@ -26,9 +27,17 @@ export function TableLayout({
   next,
   pageArray,
   query,
+  tableName
 }: TableLayoutInterface) {
   return (
-    <div className="w-full max-w-5xl overflow-x-auto border border-opacity-50 rounded-lg border-base-200 text-neutral">
+    <div className="w-full max-w-5xl border border-opacity-50 rounded-md border-base-200 text-neutral">
+      <div className="flex items-center p-4">
+        <div className="text-xl font-medium">{tableName}</div>
+        <div className="divider divider-horizontal" />
+        <div className="text-xs text-base-200">
+          {from} ~ {to} of <span className="text-sm text-base-300">{count}</span>
+        </div>
+      </div>
       <table className="w-full table-compact">
         <thead>
           <tr>
@@ -43,10 +52,7 @@ export function TableLayout({
         <tfoot>
           <tr>
             <th colSpan={100} className="normal-case">
-              <div className="flex items-center justify-between w-full">
-                <div className="text-base-200">
-                  {from}~{to} of {count}
-                </div>
+              <div className="flex justify-center w-full">
                 <ul className="flex text-2x">
                   <li
                     onClick={() => setQuery({ ...query, page: query.page - 1 })}

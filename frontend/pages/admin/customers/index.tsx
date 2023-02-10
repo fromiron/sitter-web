@@ -11,6 +11,7 @@ import {
   SessionAuthInterface,
 } from "@interfaces/cmsInterfaces";
 import SearchInput from "@components/layout/cms/SearchInput";
+import { ResetButton } from "@components/layout/buttons";
 
 const options: SearchSelectOptionInterface = {
   idDESC: {
@@ -49,24 +50,26 @@ export default function Customers({
     isLoading,
     query,
     setQuery,
+    resetQuery,
   } = useCustomer({ token: session.access_token });
 
   return (
     <CMSLayout>
       <div className="grid grid-cols-2 gap-4 w-fit">
         <CustomerCounterBanner customerCountOrigin={customers?.count} />
-
-        <div className="flex items-center justify-center w-24 h-24 mb-4 overflow-hidden text-4xl border border-opacity-50 rounded-lg cursor-pointer text-primary-content bg-primary border-base-200 ">
+        <div className="flex items-center justify-center w-24 h-24 mb-4 overflow-hidden text-4xl border border-opacity-50 rounded-md cursor-pointer text-primary-content bg-primary border-base-200 ">
           <RiUserAddLine />
         </div>
       </div>
-      <SearchInput
-        query={query}
-        setQuery={setQuery}
-        options={options}
-        placeholder={"Search for customer"}
-      />
-
+      <div className="flex">
+        <SearchInput
+          query={query}
+          setQuery={setQuery}
+          options={options}
+          placeholder={"Search for customer"}
+        />
+        <ResetButton onClick={resetQuery} />
+      </div>
       <Table
         customers={customers}
         query={query}
@@ -104,7 +107,7 @@ function CustomerCounterBanner({
     return null;
   }
   return (
-    <div className="w-auto h-24 px-4 flex justify-center flex-col max-w-xs min-w-[10em] mb-4 overflow-hidden border border-opacity-50 rounded-lg bg-neutral-content text-neutral border-base-200">
+    <div className="w-auto h-24 px-4 flex justify-center flex-col max-w-xs min-w-[10em] mb-4 overflow-hidden border border-opacity-50 rounded-md bg-neutral-content text-neutral border-base-200">
       <div className="text-sm">Total Customer</div>
       <div className="text-5xl text-center">{customerCount}</div>
     </div>

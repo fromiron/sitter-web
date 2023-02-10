@@ -19,10 +19,20 @@ class PetTypeSerializer(serializers.ModelSerializer):
 
 class PetBreedSerializer(serializers.ModelSerializer):
     """Serializer for breed."""
+    type_id = serializers.PrimaryKeyRelatedField(
+        many=False, queryset=PetBreed.objects.filter())
+
     class Meta:
         model = PetBreed
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'type_id']
         read_only_fields = ['id']
+
+    def create(self, validated_data):
+        """Pet Breedデータ生成"""
+        type = validated_data.pop('type_id', None)
+        if type:
+            validated_data['type_id'] = type.id
+        return PetBreed.objects.create(**validated_data)
 
 
 class PetLikeSerializer(serializers.ModelSerializer):

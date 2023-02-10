@@ -29,22 +29,25 @@ interface UseCustomer {
   isLoading: boolean;
   setQuery: Dispatch<SetStateAction<QueryInterface>>;
   query: QueryInterface;
+  resetQuery:()=>void;
 }
 
 export function useCustomer({ token }: { token?: string }): UseCustomer {
+  const defaultQuery = {
+    search: "",
+    ordering: "-id",
+    page: 1,
+  };
   const [query, setQuery] = useState<{
     search: string;
     ordering: string;
     page: number;
-  }>({
-    search: "",
-    ordering: "-id",
-    page: 1,
-  });
+  }>(defaultQuery);
 
   const { data, isLoading } = useQuery([CUSTOMERS, query], () =>
     getCustomers({ query, token })
   );
 
-  return { data, isLoading, setQuery, query };
+  const resetQuery = () => setQuery(defaultQuery);
+  return { data, isLoading, setQuery, query,resetQuery };
 }

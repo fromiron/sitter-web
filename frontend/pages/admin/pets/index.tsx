@@ -2,13 +2,25 @@ import { getSession } from "next-auth/react";
 import { GetServerSideProps } from "next";
 import CMSLayout from "@components/layout/cms/CMSLayout";
 import {
+  PetBreedInterface,
   SearchSelectOptionInterface,
   SessionAuthInterface,
 } from "@interfaces/cmsInterfaces";
 import { Table } from "./partials/Table";
-import { usePet, usePetType } from "@hooks/usePet";
+import {
+  usePet,
+  usePetBreed,
+  usePetBreedMutation,
+  usePetType,
+  usePetTypeMutation,
+} from "@hooks/usePet";
 import SearchInput from "@components/layout/cms/SearchInput";
 import { TypeFilter } from "./partials/TypeFilter";
+import { useState } from "react";
+import { TypeControlModal } from "./partials/TypeControlModal";
+import { BreedFilter } from "./partials/BreedFilter";
+import { ResetButton } from "@components/layout/buttons";
+import { BreedControlModal } from "./partials/BreedControlModal";
 
 const options: SearchSelectOptionInterface = {
   idDESC: {
@@ -38,6 +50,10 @@ const options: SearchSelectOptionInterface = {
 };
 
 export default function Pet({ session }: { session: SessionAuthInterface }) {
+  const [isTypeModalOpen, setIsTypeModalOpen] = useState(false);
+  const [isBreedModalOpen, setIsBreedModalOpen] = useState(false);
+
+  const token = session.access_token;
   const {
     data: pets,
     isLoading,
@@ -46,33 +62,72 @@ export default function Pet({ session }: { session: SessionAuthInterface }) {
     typeFilter,
     typeFilterClear,
     setTypeFilter,
-  } = usePet({ token: session.access_token });
+    breedFilter,
+    setBreedFilter,
+    breedFilterClear,
+    resetQuery,
+  } = usePet({ token });
 
-  const { data: types, isLoading: typeLoading } = usePetType({
-    token: session.access_token,
-  });
+  const { data: types } = usePetType({ token });
+  const { data: breeds } = usePetBreed({ token });
+  const petTypeMutation = usePetTypeMutation({ token });
+  const petBreedMutation = usePetBreedMutation({ token });
+  const openTypeModal = () => setIsTypeModalOpen(true);
+  const openBreedModal = () => setIsBreedModalOpen(true);
+
+  const filteredBreeds = breeds?.filter(
+    (breed) => breed.type_id === typeFilter
+  );
 
   return (
     <CMSLayout>
-      <SearchInput
-        query={query}
-        setQuery={setQuery}
-        options={options}
-        placeholder={"Search for pet"}
+      <TypeControlModal
+        isModalOpen={isTypeModalOpen}
+        setIsModalOpen={setIsTypeModalOpen}
+        types={types}
+        mutation={petTypeMutation}
+      />
+      <BreedControlModal
+        isModalOpen={isBreedModalOpen}
+        setIsModalOpen={setIsBreedModalOpen}
+        breeds={breeds}
+        types={types}
+        mutation={petBreedMutation}
       />
       <div className="flex">
-        <Table
-          pets={pets}
+        <SearchInput
           query={query}
           setQuery={setQuery}
-          isLoading={isLoading}
+          options={options}
+          placeholder={"Search for pet"}
         />
-        <TypeFilter
-          types={types}
-          setTypeFilter={setTypeFilter}
-          typeFilter={typeFilter}
-          typeFilterClear={typeFilterClear}
-        />
+        <ResetButton onClick={resetQuery} />
+      </div>
+      <div className="flex gap-4">
+        <div className="flex-1 max-w-5xl">
+          <Table
+            pets={pets}
+            query={query}
+            setQuery={setQuery}
+            isLoading={isLoading}
+          />
+        </div>
+        <div>
+          <TypeFilter
+            types={types}
+            setTypeFilter={setTypeFilter}
+            typeFilter={typeFilter}
+            typeFilterClear={typeFilterClear}
+            openModal={openTypeModal}
+          />
+          <BreedFilter
+            breeds={filteredBreeds}
+            setBreedFilter={setBreedFilter}
+            breedFilter={breedFilter}
+            breedFilterClear={breedFilterClear}
+            openModal={openBreedModal}
+          />
+        </div>
       </div>
     </CMSLayout>
   );

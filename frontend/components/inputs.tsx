@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { FieldError, FieldErrorsImpl, Merge } from "react-hook-form/dist/types";
 import { IconType } from "react-icons";
 
@@ -35,6 +36,35 @@ export function TextInput({
       ) : (
         ""
       )}
+    </div>
+  );
+}
+
+export function SelectInput({
+  label,
+  children,
+  Icon,
+  register,
+}: {
+  label: string;
+  children: ReactNode;
+  Icon: IconType;
+  register: any;
+}) {
+  return (
+    <div className="w-full max-w-xs form-control group">
+      <label className="label">
+        <span className="flex items-center align-bottom label-text group-focus-within:text-primary">
+          <Icon className="mr-2 transition duration-500 text-base-100 group-focus-within:text-primary" />
+          {label}
+        </span>
+      </label>
+      <select
+        className="w-full max-w-xs transition border-2 input group-focus-within:border-primary"
+        {...register}
+      >
+        {children}
+      </select>
     </div>
   );
 }

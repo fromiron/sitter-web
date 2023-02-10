@@ -119,7 +119,7 @@ class PetBreed(models.Model):
     """pet 品種 model"""
     name = models.CharField(max_length=40)
     type = models.ForeignKey(
-        PetType, related_name='pet_type', on_delete=models.CASCADE, help_text='ペットタイプ')
+        PetType, related_name='pet_type', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -146,14 +146,14 @@ class Pet(models.Model):
     name = models.CharField(max_length=40, help_text='名前')
     type = models.ForeignKey(
         PetType,
-        on_delete=models.SET_NULL,
+        on_delete=models.PROTECT,
         blank=True,
         null=True,
         help_text='犬･猫･うさぎなど',
     )
     breed = models.ForeignKey(
         PetBreed,
-        on_delete=models.SET_NULL,
+        on_delete=models.PROTECT,
         blank=True,
         null=True,
         help_text='柴犬･ネザーランドドワーフなど',

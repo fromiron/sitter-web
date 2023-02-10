@@ -129,3 +129,9 @@ export interface PetTypeInterface {
   id: number;
   name: string;
 }
+
+export interface PetBreedInterface {
+  id: number;
+  name: string;
+  type_id: number;
+}

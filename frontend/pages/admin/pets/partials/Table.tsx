@@ -3,6 +3,7 @@ import {
   showColumRangeGenerator,
   totalPageCountGenerator,
 } from "@helpers/page-num-generator";
+import RabbitIcon from "@images/rabbit_icon.svg";
 
 import { PetTableInterface } from "@interfaces/cmsInterfaces";
 import { IoMale, IoFemale } from "react-icons/io5";
@@ -11,7 +12,7 @@ import Image from "next/image";
 
 import { TableLayout } from "@components/layout/cms/TableLayout";
 import { ReactElement } from "react";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
 
@@ -34,46 +35,29 @@ export function Table({ pets, query, setQuery, isLoading }: PetTableInterface) {
     return <div>loading...</div>;
   }
 
-  const theadList = [
-    "IDX",
-    "名前",
-    "性別",
-    "タイプ",
-    "品種",
-    "体重",
-    "誕生日",
-    "飼い主",
-  ];
+  const theadList = ["ペット", "タイプ", "年齢", "飼い主"];
   const today = dayjs();
 
   function DayRender({ birth, death }: { birth: string; death: string }) {
+    const deathDayJs = dayjs(death);
     const afterBirth = dayjs.duration(today.diff(birth));
-    const afterDeath = dayjs.duration(today.diff(birth));
-
+    const ageOfDeath = dayjs.duration(deathDayJs.diff(birth));
     return (
-      <div className="grid grid-cols-2 text-xs text-end gap-y-1 gap-x-3">
-        {birth && (
-          <>
-            <div className="w-full badge badge-sm">誕生日</div>
-            <div>{dayjs(birth).format("YYYY年M月D日")}</div>
-          </>
-        )}
+      <div>
         {birth && !death && (
           <>
-            <div className="w-full badge badge-sm">年齢</div>
-            <div>{afterBirth.format("Y歳(M月D日)")}</div>
+            <div>{afterBirth.format("Y歳")}</div>
+            <div className="px-2 mt-1 font-medium text-green-600 rounded-full text-xxs bg-green-50">
+              {dayjs(birth).format("YYYY年M月D日")}
+            </div>
           </>
         )}
         {death && (
           <>
-            <div className="w-full badge badge-sm">虹の橋</div>
-            <div>{dayjs(death).format("YYYY年M月D日")}</div>
-          </>
-        )}
-        {death && (
-          <>
-            <div className="w-full badge badge-sm">その後</div>
-            <div>{afterDeath.format("Y年MM月DD日")}</div>
+            <div>{ageOfDeath.format("Y歳")}</div>
+            <div className="px-2 mt-1 font-medium text-gray-600 bg-gray-100 rounded-full text-xxs">
+              {dayjs(death).format("YYYY年M月D日")}
+            </div>
           </>
         )}
       </div>
@@ -84,11 +68,14 @@ export function Table({ pets, query, setQuery, isLoading }: PetTableInterface) {
     return (
       <>
         {pets?.results.map((pet) => (
-          <tr key={pet.id} className="text-center">
-            <td className="text-sm text-center">{pet.id}</td>
+          <tr key={pet.id} className="text-center hover:bg-base-100">
             <td className="flex items-center">
-              <div className="avatar">
-                <div className="relative w-24 mr-4 mask mask-squircle bg-slate-200">
+              <div className="hidden avatar sm:block">
+                <div
+                  className={`w-12 mr-4 mask mask-squircle bg-slate-200 ${
+                    pet.death ? "grayscale" : null
+                  }`}
+                >
                   {pet.thumbnail ? (
                     <Image
                       className="object-cover"
@@ -97,19 +84,27 @@ export function Table({ pets, query, setQuery, isLoading }: PetTableInterface) {
                       fill
                       unoptimized
                     />
-                  ) : null}
+                  ) : (
+                    <div className="flex items-center justify-center w-full h-full text-base-100">
+                      <RabbitIcon className={"w-8 h-8"} />
+                    </div>
+                  )}
                 </div>
               </div>
-              <div>{pet.name}</div>
-            </td>
-            <td>
-              <div className="flex justify-center">
-                {booleanToSexString(pet.sex)}
+              <div>
+                <div className="flex items-center">
+                  {pet.name}
+                  {booleanToSexString(pet.sex)}
+                </div>
+                <div className="text-xs text-base-300">({pet.weight}g)</div>
               </div>
             </td>
-            <td>{pet.type?.name}</td>
-            <td>{pet.breed?.name}</td>
-            <td>{pet.weight}g</td>
+            <td className="max-w-[100px] break-all">
+              <div>{pet.type?.name}</div>
+              <div className="text-sm truncate opacity-50">
+                {pet.breed?.name}
+              </div>
+            </td>
             <td>
               <div className="flex justify-center">
                 <DayRender birth={pet.birth} death={pet.death} />
@@ -117,14 +112,21 @@ export function Table({ pets, query, setQuery, isLoading }: PetTableInterface) {
             </td>
             <td>
               <div>
-                <div className="font-bold">{pet.customer.name}</div>
-                <div className="text-sm opacity-50">
+                <div>{pet.customer.name}</div>
+                <div className="text-xs opacity-50">
                   {pet.customer.name_kana}
                 </div>
               </div>
             </td>
           </tr>
         ))}
+        {pets?.count === 0 ? (
+          <tr>
+            <td colSpan={100} className="h-32 text-center">
+              検索結果がありません。
+            </td>
+          </tr>
+        ) : null}
       </>
     );
   }
@@ -141,6 +143,7 @@ export function Table({ pets, query, setQuery, isLoading }: PetTableInterface) {
       pageArray={pageArray}
       query={query}
       setQuery={setQuery}
+      tableName={'Pets'}
     />
   );
 }

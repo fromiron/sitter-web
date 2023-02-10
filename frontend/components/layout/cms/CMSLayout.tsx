@@ -34,7 +34,7 @@ function CategoryRender({ category }: { category: string }) {
 
   return (
     <div
-      className={`truncate rounded-lg ${
+      className={`truncate rounded-md ${
         isWideMode ? "mt-4  mb-2 h-4 text-opacity-100" : "h-0 text-opacity-0"
       }   text-white ml-2 text-xs  max-h-4  select-none duration-1000`}
     >
@@ -149,7 +149,7 @@ function MenuIconContainer({
     <Link
       href={url}
       className={
-        "flex items-center overflow-hidden rounded-lg transition duration-500 hover:bg-secondary px-2 w-full group"
+        "flex items-center overflow-hidden rounded-md transition duration-500 hover:bg-secondary px-2 w-full group"
       }
     >
       <div
@@ -217,7 +217,7 @@ function ThemeToggleButton() {
   return (
     <div
       onClick={handleThemeToggle}
-      className="flex items-center justify-center w-12 h-12 mb-4 cursor-pointer rounded-xl bg-neutral-focus"
+      className="flex items-center justify-center w-12 h-12 mb-4 rounded-md cursor-pointer bg-neutral-focus"
     >
       <label className={`swap swap-rotate ${isDarkMode ? "swap-active" : ""}`}>
         <IoSunny className={"swap-off"} size={"1.5em"} color={"#ffd82e"} />

@@ -9,6 +9,9 @@ const componentsCustomConfig = {
     },
     ".btn": {
         outline: "none",
+        "border-radius": "0.375rem" /* 6px MD */,
+        "text-transform": "none",
+        "font-weight": "normal",
     },
     ".btn:focus": {
         outline: "none",
@@ -16,12 +19,14 @@ const componentsCustomConfig = {
     ".btn:hover": {
         outline: "none",
     },
+    th: {
+        'font-weight': "normal",
+    },
     select: {
         "-webkit-appearance": "none",
         "-moz-appearance": "none",
         appearance: "none",
     },
-
 };
 
 module.exports = {
@@ -31,6 +36,12 @@ module.exports = {
     ],
     theme: {
         extend: {
+            fontSize: {
+                xxs: "0.5rem"
+            },
+            fontFamily: {
+                mpr: ["Libre BaskervilleM PLUS Rounded 1c", "sans-serif"],
+            },
             dropShadow: {
                 glow: [
                     "1px 2px 2px rgba( 	255, 115, 190, 0.3)",

@@ -30,27 +30,22 @@ export function Table({
     return <div>loading...</div>;
   }
 
-  const theadList = ["IDX", "Customer", "Information", "Pet"];
+  const theadList = ["顧客", "情報", "ペット"];
 
   function TbodyRow() {
     return (
       <>
         {customers?.results.map((customer) => (
-          <tr key={customer.id}>
-            <td className="text-sm text-center">{customer.id}</td>
-            <td>
-              <div className="flex items-center space-x-3 ">
-                <div>
-                  <div className="font-bold">{customer.name}</div>
-                  <div className="text-sm opacity-50">{customer.name_kana}</div>
-                </div>
-              </div>
+          <tr key={customer.id} className="hover:bg-base-100">
+            <td className="whitespace-nowrap pl-7 min-w-fit">
+              <div className="font-medium">{customer.name}</div>
+              <div className="opacity-50 text-xxs">{customer.name_kana}</div>
             </td>
-            <td className="max-w-xs truncate">
+            <td className="whitespace-pre-wrap ">
               {customer.address}
               <br />
               <span
-                className="text-sm cursor-pointer badge badge-ghost badge-sm"
+                className="flex items-center px-2 mt-1 text-xs font-medium text-blue-600 rounded-full cursor-pointer bg-blue-50 w-fit"
                 onClick={() => copyToClipboard(customer.tel)}
               >
                 <span className="mr-1 scale-75">
@@ -80,6 +75,7 @@ export function Table({
       pageArray={pageArray}
       query={query}
       setQuery={setQuery}
+      tableName={"Customers"}
     />
   );
 }

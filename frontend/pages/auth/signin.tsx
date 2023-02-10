@@ -54,7 +54,7 @@ export default function SignIn({
   };
   return (
     <div className="min-h-screen hero bg-base-100">
-      <div className="flex p-10 bg-white shadow-xl rounded-2xl">
+      <div className="flex p-10 bg-white rounded-md shadow-xl">
         <div className="min-w-[200px] h-auto px-10">
           <LogoVertical />
         </div>
