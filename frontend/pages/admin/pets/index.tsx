@@ -21,6 +21,10 @@ import { TypeControlModal } from "./partials/TypeControlModal";
 import { BreedFilter } from "./partials/BreedFilter";
 import { ResetButton } from "@components/layout/buttons";
 import { BreedControlModal } from "./partials/BreedControlModal";
+import NumberCountWidget from "@components/widget/NumberCountWidget";
+import { FeatureWidget } from "@components/widget/FeatureWidget";
+import { RiUserAddLine } from "react-icons/ri";
+import NumberRatioWidget from "@components/widget/NumberRaitioWidget";
 
 const options: SearchSelectOptionInterface = {
   idDESC: {
@@ -96,6 +100,16 @@ export default function Pet({ session }: { session: SessionAuthInterface }) {
         types={types}
         mutation={petBreedMutation}
       />
+      <div className="flex gap-4 mb-4 w-fit">
+        <NumberCountWidget count={pets?.count} title={"総登録ペット数"} />
+        <NumberCountWidget count={4} title={"新規顧客"} />
+        <NumberRatioWidget count1={29} count2={undefined} title={"性比"} />
+        <FeatureWidget
+          Icon={RiUserAddLine}
+          onClick={() => console.log("click")}
+        />
+      </div>
+
       <div className="flex">
         <SearchInput
           query={query}

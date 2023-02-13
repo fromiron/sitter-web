@@ -1,6 +1,5 @@
 import CMSLayout from "@components/layout/cms/CMSLayout";
 
-import { useEffect, useState } from "react";
 import { useCustomer } from "@hooks/useCustomer";
 import { RiUserAddLine } from "react-icons/ri";
 import { Table } from "./partials/Table";
@@ -12,6 +11,9 @@ import {
 } from "@interfaces/cmsInterfaces";
 import SearchInput from "@components/layout/cms/SearchInput";
 import { ResetButton } from "@components/layout/buttons";
+import NumberCountWidget from "@components/widget/NumberCountWidget";
+import { IconType } from "react-icons";
+import { FeatureWidget } from "@components/widget/FeatureWidget";
 
 const options: SearchSelectOptionInterface = {
   idDESC: {
@@ -55,11 +57,14 @@ export default function Customers({
 
   return (
     <CMSLayout>
-      <div className="grid grid-cols-2 gap-4 w-fit">
-        <CustomerCounterBanner customerCountOrigin={customers?.count} />
-        <div className="flex items-center justify-center w-24 h-24 mb-4 overflow-hidden text-4xl border border-opacity-50 rounded-md cursor-pointer text-primary-content bg-primary border-base-200 ">
-          <RiUserAddLine />
-        </div>
+      <div className="flex gap-4 mb-4 w-fit">
+        <NumberCountWidget count={customers?.count} title={"総顧客"} />
+        <NumberCountWidget count={4} title={"新規顧客"} />
+        <NumberCountWidget count={2} title={"平均ペット"} />
+        <FeatureWidget
+          Icon={RiUserAddLine}
+          onClick={() => console.log("click")}
+        />
       </div>
       <div className="flex">
         <SearchInput
@@ -77,40 +82,6 @@ export default function Customers({
         isLoading={isLoading}
       />
     </CMSLayout>
-  );
-}
-
-function CustomerCounterBanner({
-  customerCountOrigin,
-}: {
-  customerCountOrigin: number | undefined;
-}) {
-  const [customerCount, setCustomerCount] = useState<number | undefined>(
-    undefined
-  );
-
-  useEffect(() => {
-    if (customerCountOrigin !== undefined && customerCount === undefined) {
-      setCustomerCount(customerCountOrigin - 2);
-    }
-
-    if (
-      customerCountOrigin !== undefined &&
-      customerCount !== undefined &&
-      customerCountOrigin > customerCount
-    ) {
-      setTimeout(() => setCustomerCount(customerCount + 1), 400);
-    }
-  }, [customerCount, customerCountOrigin]);
-
-  if (customerCountOrigin === undefined) {
-    return null;
-  }
-  return (
-    <div className="w-auto h-24 px-4 flex justify-center flex-col max-w-xs min-w-[10em] mb-4 overflow-hidden border border-opacity-50 rounded-md bg-neutral-content text-neutral border-base-200">
-      <div className="text-sm">Total Customer</div>
-      <div className="text-5xl text-center">{customerCount}</div>
-    </div>
   );
 }
 
