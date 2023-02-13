@@ -12,7 +12,6 @@ import {
 import SearchInput from "@components/layout/cms/SearchInput";
 import { ResetButton } from "@components/layout/buttons";
 import NumberCountWidget from "@components/widget/NumberCountWidget";
-import { IconType } from "react-icons";
 import { FeatureWidget } from "@components/widget/FeatureWidget";
 
 const options: SearchSelectOptionInterface = {
