@@ -12,7 +12,7 @@ down:
 
 
 dtest:
-	docker-compose run --rm backend sh -c "python manage.py test && flake8"
+	clear && docker-compose run --rm backend sh -c "python manage.py test && flake8"
 
 dlint:
 	docker-compose run --rm backend sh -c "flake8"
