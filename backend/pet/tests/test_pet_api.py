@@ -11,7 +11,8 @@ from rest_framework.test import APIClient
 
 from core.helper.create_dummy_pack import (
     create_user, create_staff,
-    create_customer, create_pet
+    create_customer, create_pet,
+    create_pet_type
 )
 
 PET_URL = reverse('pet:pet-list')
@@ -66,6 +67,7 @@ class PrivatePetApiTestsForStaff(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
         self.customer = create_customer()
+        self.type = create_pet_type()
 
     def test_is_staff(self):
         """権限不足こと確認するテスト"""
@@ -76,11 +78,11 @@ class PrivatePetApiTestsForStaff(TestCase):
         """petデータが正しく取得できるかの確認テスト"""
         pets = [
             {'name': 'testpet1', 'sex': True, 'birth': '2022-11-15',
-                'customer': self.customer},
+                'customer_id': self.customer.id},
             {'name': 'testpet2', 'sex': False, 'birth': '2022-11-16',
-                'customer': self.customer},
+                'customer_id': self.customer.id},
             {'name': 'testpet3', 'sex': True, 'birth': '2022-11-17',
-                'customer': self.customer}
+                'customer_id': self.customer.id}
         ]
 
         for data in pets:
@@ -88,7 +90,6 @@ class PrivatePetApiTestsForStaff(TestCase):
 
         res = self.client.get(PET_URL)
         data = res.data['results']
-        pets.reverse()
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(data), len(pets))
@@ -99,7 +100,7 @@ class PrivatePetApiTestsForStaff(TestCase):
     def test_create_pet(self):
         """pet生成テスト"""
         payload = {'name': 'testpet1', 'sex': True, 'birth': '2022-11-15',
-                   'customer': self.customer.id}
+                   'customer_id': self.customer.id}
 
         res = self.client.post(PET_URL, payload)
         data = res.data
@@ -107,12 +108,12 @@ class PrivatePetApiTestsForStaff(TestCase):
         self.assertEqual(data['name'], payload['name'])
         self.assertEqual(data['sex'], payload['sex'])
         self.assertEqual(data['birth'], payload['birth'])
-        self.assertEqual(data['customer'], payload['customer'])
+        self.assertEqual(data['customer_id'], payload['customer_id'])
 
     def test_create_pet_with_weight(self):
         """pet生成テスト"""
         payload = {'name': 'testpet1', 'sex': True, 'birth': '2022-11-15',
-                   'customer': self.customer.id, 'weight': 99}
+                   'customer_id': self.customer.id, 'weight': 99}
 
         res = self.client.post(PET_URL, payload)
         data = res.data
@@ -120,7 +121,7 @@ class PrivatePetApiTestsForStaff(TestCase):
         self.assertEqual(data['name'], payload['name'])
         self.assertEqual(data['sex'], payload['sex'])
         self.assertEqual(data['birth'], payload['birth'])
-        self.assertEqual(data['customer'], payload['customer'])
+        self.assertEqual(data['customer_id'], payload['customer_id'])
         url = detail_url(data['id'])
         res2 = res = self.client.get(url)
         data2 = res2.data
@@ -139,7 +140,7 @@ class PrivatePetApiTestsForStaff(TestCase):
         """既存にないタイプを追加してペット情報を生成"""
         payload = {'name': 'testpet122', 'sex': True, 'birth': '2022-11-12',
                    'type': {"name": "うさぎ"},
-                   'customer': self.customer.id}
+                   'customer_id': self.customer.id}
 
         res = self.client.post(PET_URL, payload, format='json')
         data = res.data
@@ -150,18 +151,20 @@ class PrivatePetApiTestsForStaff(TestCase):
     def test_create_pet_withe_same_type(self):
         """既存にあるタイプを追加してペット情報を生成"""
         payload1 = {'name': 'testpet1', 'sex': True, 'birth': '2022-11-12',
-                    'type': {"name": "うさぎ"},
-                    'customer': self.customer.id}
+                    'type': {'name': "うさぎ"},
+                    'customer_id': self.customer.id}
 
         payload2 = {'name': 'testpet2', 'sex': True, 'birth': '2022-11-13',
-                    'type': {"name": "うさぎ"},
-                    'customer': self.customer.id}
+                    'type': {'name': "うさぎ"},
+                    'customer_id': self.customer.id}
 
         res1 = self.client.post(PET_URL, payload1, format='json')
         data1 = res1.data
+        print(data1)
         self.assertEqual(res1.status_code, status.HTTP_201_CREATED)
         res2 = self.client.post(PET_URL, payload2, format='json')
         data2 = res2.data
+        print(data2)
         self.assertEqual(res2.status_code, status.HTTP_201_CREATED)
         self.assertEqual(data1['type']['id'], data2['type']['id'])
 
@@ -169,13 +172,13 @@ class PrivatePetApiTestsForStaff(TestCase):
         """タイプと当時にpetデータをアップデートするテスト"""
 
         defaults = {'name': 'testpet1', 'sex': True, 'birth': '2022-11-12',
-                    'customer': self.customer}
+                    'customer_id': self.customer.id}
 
         pet = create_pet(**defaults)
 
         payload = {'name': 'testpet2', 'sex': True, 'birth': '2022-11-12',
                    'type': {"name": "ホーランドロップ"},
-                   'customer': self.customer.id}
+                   'customer_id': self.customer.id}
         url = detail_url(pet.id)
         res = self.client.put(url, payload, format='json')
         self.assertEqual(res.status_code, status.HTTP_200_OK)
@@ -186,8 +189,8 @@ class PrivatePetApiTestsForStaff(TestCase):
     def test_create_pet_withe_new_breed(self):
         """既存にないbreedを追加してペット情報を生成"""
         payload = {'name': 'testpet122', 'sex': True, 'birth': '2022-11-12',
-                   'breed': {"name": "ネザーランドドワーフ"},
-                   'customer': self.customer.id}
+                   'breed': {"name": "ネザーランドドワーフ", 'type_id':self.type.id},
+                   'customer_id': self.customer.id}
 
         res = self.client.post(PET_URL, payload, format='json')
         data = res.data
@@ -198,12 +201,12 @@ class PrivatePetApiTestsForStaff(TestCase):
     def test_create_pet_withe_same_breed(self):
         """既存にあるbreedを追加してペット情報を生成"""
         payload1 = {'name': 'testpet1', 'sex': True, 'birth': '2022-11-12',
-                    'breed': {"name": "ネザーランドドワーフ"},
-                    'customer': self.customer.id}
+                    'breed':{'name':"ネザーランドドワーフ", 'type_id':self.type.id},
+                    'customer_id': self.customer.id}
 
         payload2 = {'name': 'testpet2', 'sex': True, 'birth': '2022-11-13',
-                    'breed': {"name": "ネザーランドドワーフ"},
-                    'customer': self.customer.id}
+                    'breed': {'name': "ネザーランドドワーフ", 'type_id': self.type.id},
+                    'customer_id': self.customer.id}
 
         res1 = self.client.post(PET_URL, payload1, format='json')
         data1 = res1.data
@@ -217,13 +220,13 @@ class PrivatePetApiTestsForStaff(TestCase):
         """breedと当時にpetデータをアップデートするテスト"""
 
         defaults = {'name': 'testpet1', 'sex': True, 'birth': '2022-11-12',
-                    'customer': self.customer}
+                    'customer_id': self.customer.id}
 
         pet = create_pet(**defaults)
 
         payload = {'name': 'testpet2', 'sex': True, 'birth': '2022-11-12',
-                   'breed': {"name": "ホーランドロップ"},
-                   'customer': self.customer.id}
+                   'breed': {"name": "ホーランドロップ", 'type_id':self.type.id},
+                   'customer_id': self.customer.id}
         url = detail_url(pet.id)
         res = self.client.put(url, payload, format='json')
         self.assertEqual(res.status_code, status.HTTP_200_OK)
@@ -245,7 +248,7 @@ class PrivatePetApiTestsForStaff(TestCase):
                 "breed": {
                     "name": "パプアフクロモモンガ"
                 },
-                "customer": self.customer.id,
+                "customer_id": self.customer.id,
                 "weight": 44
             },
             {
@@ -258,7 +261,7 @@ class PrivatePetApiTestsForStaff(TestCase):
                 "breed": {
                     "name": "オブトフクロモモンガ"
                 },
-                "customer": self.customer.id,
+                "customer_id": self.customer.id,
                 "weight": 44
             },
             {
@@ -271,7 +274,7 @@ class PrivatePetApiTestsForStaff(TestCase):
                 "breed": {
                     "name": "エゾリス"
                 },
-                "customer": self.customer.id,
+                "customer_id": self.customer.id,
                 "weight": 44
             }
         ]
@@ -310,7 +313,7 @@ class PrivatePetApiTestsForStaff(TestCase):
                 "breed": {
                     "name": "パプアフクロモモンガ"
                 },
-                "customer": self.customer.id,
+                "customer_id": self.customer.id,
                 "weight": 44
             },
             {
@@ -323,7 +326,7 @@ class PrivatePetApiTestsForStaff(TestCase):
                 "breed": {
                     "name": "オブトフクロモモンガ"
                 },
-                "customer": self.customer.id,
+                "customer_id": self.customer.id,
                 "weight": 44
             },
             {
@@ -336,7 +339,7 @@ class PrivatePetApiTestsForStaff(TestCase):
                 "breed": {
                     "name": "オブトフクロモモンガ"
                 },
-                "customer": self.customer.id,
+                "customer_id": self.customer.id,
                 "weight": 44
             }
         ]

@@ -85,7 +85,7 @@ class PrivatePetTypeApiTestsForStaff(TestCase):
             PetType.objects.create(**data)
 
         res = self.client.get(PET_TYPE_URL)
-        data = res.data['results']
+        data = res.data
         pets.reverse()
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
@@ -134,7 +134,7 @@ class PrivatePetTypeApiTestsForStaff(TestCase):
 
         search_url = PET_TYPE_URL + '?name=うさぎ'
         res = self.client.get(search_url)
-        data = res.data['results']
+        data = res.data
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]['name'], 'うさぎ')

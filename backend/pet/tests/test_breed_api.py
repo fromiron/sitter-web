@@ -10,7 +10,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from core.helper.create_dummy_pack import (
-    create_user, create_staff, create_customer
+    create_user, create_staff, create_customer, create_pet_type
 )
 
 PET_BREED_URL = reverse('pet:petbreed-list')
@@ -65,6 +65,7 @@ class PrivatePetBreedApiTestsForStaff(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
         self.customer = create_customer()
+        self.type = create_pet_type()
 
     def test_is_staff(self):
         """権限不足こと確認するテスト"""
@@ -84,7 +85,7 @@ class PrivatePetBreedApiTestsForStaff(TestCase):
             PetBreed.objects.create(**data)
 
         res = self.client.get(PET_BREED_URL)
-        data = res.data['results']
+        data = res.data
         pets.reverse()
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
@@ -95,7 +96,7 @@ class PrivatePetBreedApiTestsForStaff(TestCase):
 
     def test_create_pet_breed(self):
         """pet breed生成テスト"""
-        payload = {'name': 'ネザーランドドワーフ'}
+        payload = {'name': 'test', 'type_id': self.type.id}
         res = self.client.post(PET_BREED_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         self.assertEqual(res.data['name'], payload['name'])
@@ -133,7 +134,7 @@ class PrivatePetBreedApiTestsForStaff(TestCase):
 
         search_url = PET_BREED_URL + '?name=ネザーランドドワーフ'
         res = self.client.get(search_url)
-        data = res.data['results']
+        data = res.data
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]['name'], 'ネザーランドドワーフ')

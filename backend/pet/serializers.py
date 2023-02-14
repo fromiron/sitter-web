@@ -11,7 +11,6 @@ class CustomerIdNameSerializer(serializers.ModelSerializer):
         model = Customer
         fields = ['id', 'name', 'name_kana']
 
-
 class PetTypeSerializer(serializers.ModelSerializer):
     """Serializer for type."""
     class Meta:
@@ -23,7 +22,7 @@ class PetTypeSerializer(serializers.ModelSerializer):
 class PetBreedSerializer(serializers.ModelSerializer):
     """Serializer for breed."""
     type_id = serializers.PrimaryKeyRelatedField(
-        many=False, queryset=PetBreed.objects.filter())
+        many=False, queryset=PetType.objects.all())
 
     class Meta:
         model = PetBreed
@@ -32,9 +31,9 @@ class PetBreedSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Pet Breedデータ生成"""
-        type = validated_data.pop('type_id', None)
-        if type:
-            validated_data['type_id'] = type.id
+        pet_type = validated_data.pop('type_id', None)
+        if pet_type:
+            validated_data['type_id'] = pet_type.id
         return PetBreed.objects.create(**validated_data)
 
 
@@ -75,12 +74,12 @@ class PetMemoSerializer(serializers.ModelSerializer):
         memo = PetMemo.objects.create(**validated_data)
         return memo
 
-
 class PetSerializer(serializers.ModelSerializer):
     """Pet Serializer"""
     type = PetTypeSerializer(many=False, required=False)
     breed = PetBreedSerializer(many=False, required=False)
-    customer = CustomerIdNameSerializer(many=False, required=False)
+    customer = CustomerIdNameSerializer(read_only=True)
+    customer_id = serializers.PrimaryKeyRelatedField(queryset=Customer.objects.all(), write_only=True)
     image = serializers.SerializerMethodField()
     thumbnail = serializers.SerializerMethodField()
 
@@ -88,7 +87,7 @@ class PetSerializer(serializers.ModelSerializer):
         model = Pet
         fields = [
             'id', 'name', 'sex', 'birth', 'death',
-            'type', 'breed', 'customer', 'weight', 'image', 'thumbnail'
+            'type', 'breed', 'customer', 'customer_id', 'weight', 'image', 'thumbnail'
         ]
         read_only_fields = ['id']
 
@@ -114,9 +113,13 @@ class PetSerializer(serializers.ModelSerializer):
         obj, _ = PetBreed.objects.get_or_create(type_id=type_id, **breed)
         pet.breed = obj
 
+    def _get_customer(self, customer_id, pet):
+        obj, _ = Customer.objects.get(id=customer_id)
+        pet.customer = obj
+
     def create(self, validated_data):
         """Pet データ生成"""
-
+        customer_id = validated_data.pop('customer_id', None)
         type = validated_data.pop('type', None)
         breed = validated_data.pop('breed', None)
         pet = Pet.objects.create(**validated_data)
@@ -124,19 +127,22 @@ class PetSerializer(serializers.ModelSerializer):
             self._get_or_create_type(type, pet)
         if breed is not None:
             self._get_or_create_breed(breed, pet)
+        if customer_id is not None:
+            self._get_customer(customer_id, pet)
         pet.save()
         return pet
 
     def update(self, instance, validated_data):
         """Pet データ Update."""
-
+        customer_id = validated_data.pop('customer_id', None)
         type = validated_data.pop('type', None)
         breed = validated_data.pop('breed', None)
         if type is not None:
             self._get_or_create_type(type, instance)
         if breed is not None:
             self._get_or_create_breed(breed, instance)
-
+        if customer_id is not None:
+            self._get_customer(customer_id, instance)
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 

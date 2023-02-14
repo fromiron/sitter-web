@@ -82,7 +82,7 @@ class PrivatePetLikeApiTestsForStaff(TestCase):
             create_pet_like(**data)
 
         res = self.client.get(PET_LIKE_URL)
-        data = res.data['results']
+        data = res.data
         likes.reverse()
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(data), len(likes))
