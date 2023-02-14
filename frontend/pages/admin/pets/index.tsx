@@ -101,12 +101,11 @@ export default function Pet({ session }: { session: SessionAuthInterface }) {
       />
       <div className="flex gap-4 mb-4 w-fit">
         <NumberCountWidget count={pets?.count} title={"総登録ペット数"} />
-        <NumberCountWidget count={4} title={"新規顧客"} />
+        <NumberCountWidget count={4} title={"虹の橋"} />
         <NumberRatioWidget count1={29} count2={20} title={"性比"} />
-        <FeatureWidget
-          Icon={AddPetIcon}
-          onClick={() => console.log("click")}
-        />
+        <NumberCountWidget count={4} title={"タイプ"} />
+        <NumberCountWidget count={12} title={"品種"} />
+        <FeatureWidget Icon={AddPetIcon} onClick={() => console.log("click")} />
       </div>
 
       <div className="flex">
