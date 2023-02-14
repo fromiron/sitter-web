@@ -15,8 +15,10 @@ router.register('memos', views.PetMemoViewSet)
 router.register('like', views.PetLikeViewSet)
 router.register('dislike', views.PetDislikeViewSet)
 
+
 app_name = 'pet'
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path('stat', views.PetStatViewSet.as_view())
 ]

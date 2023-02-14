@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from core.models import Customer, Pet, PetType, PetBreed, PetMemo, PetLike, PetDislike
 
 
@@ -149,3 +150,13 @@ class PetDetailSerializer(PetSerializer):
     class Meta(PetSerializer.Meta):
         fields = PetSerializer.Meta.fields + \
             ['memos', 'likes', 'dislikes']
+
+
+class PetStatSerializer(serializers.Serializer):
+    pet_count = serializers.IntegerField()
+    dead_count = serializers.IntegerField()
+    male_count = serializers.IntegerField()
+    female_count = serializers.IntegerField()
+    dead_count = serializers.IntegerField()
+    type_count = serializers.IntegerField()
+    breed_count = serializers.IntegerField()

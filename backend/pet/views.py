@@ -1,15 +1,17 @@
-from rest_framework import filters
+from rest_framework import filters, viewsets, status
 from core.pagination import ListPageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from pet.serializers import (
     PetLikeSerializer,
-    PetDislikeSerializer, PetSerializer, PetTypeSerializer,
+    PetDislikeSerializer, PetSerializer,
+    PetStatSerializer,
+    PetTypeSerializer,
     PetBreedSerializer, PetDetailSerializer, PetMemoSerializer
 )
 from core.models import Pet, PetType, PetBreed, PetMemo, PetLike, PetDislike
-
-from rest_framework import viewsets
 
 
 class BasePetViewSet(viewsets.ModelViewSet):
@@ -70,3 +72,26 @@ class PetDislikeViewSet(BasePetViewSet):
     queryset = PetDislike.objects.all().order_by('-pk')
     serializer_class = PetDislikeSerializer
     filterset_fields = ['name']
+
+
+class PetStatViewSet(APIView):
+    """pet stat view"""
+    serializer_class = PetStatSerializer
+
+    def get(self, request, *args, **kwargs):
+        pet_count = Pet.objects.count()
+        male_count = Pet.objects.filter(sex=True).count()
+        female_count = pet_count - male_count
+        dead_count = Pet.objects.filter(death__isnull=False).count()
+        type_count = PetType.objects.count()
+        breed_count = PetBreed.objects.count()
+        data = {
+            'pet_count': pet_count,
+            'male_count': male_count,
+            'female_count': female_count,
+            'dead_count': dead_count,
+            'type_count': type_count,
+            'breed_count': breed_count,
+        }
+        serializer = PetStatSerializer(data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
