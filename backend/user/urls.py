@@ -8,6 +8,8 @@ from user.views import (
 )
 from dj_rest_auth.registration.views import VerifyEmailView, ConfirmEmailView, SocialAccountListView
 
+app_name = 'user'
+
 urlpatterns = [
     path('', include('dj_rest_auth.urls')),
     path('registration/', include('dj_rest_auth.registration.urls')),
@@ -19,5 +21,5 @@ urlpatterns = [
             ConfirmEmailView.as_view(), name='account_confirm_email'),
     path("google/", GoogleAuthView.as_view(), name="google_connect"),
     path("socialaccounts/", SocialAccountListView.as_view(),
-         name="socialaccount_connections",)
+         name="socialaccount_connections",),
 ]
