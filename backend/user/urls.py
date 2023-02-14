@@ -6,7 +6,8 @@ from django.urls import path, include, re_path
 from user.views import (
     GoogleAuthView
 )
-from dj_rest_auth.registration.views import VerifyEmailView, ConfirmEmailView, SocialAccountListView
+from dj_rest_auth.registration.views import (
+    VerifyEmailView, ConfirmEmailView, SocialAccountListView)
 
 app_name = 'user'
 

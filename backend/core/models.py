@@ -116,7 +116,9 @@ class PetBreed(models.Model):
     """pet 品種 model"""
     name = models.CharField(max_length=40)
     type = models.ForeignKey(
-        PetType, related_name='pet_type', on_delete=models.CASCADE, null=True, blank=True)
+        PetType, related_name='pet_type',
+        on_delete=models.CASCADE,
+        null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -158,7 +160,9 @@ class Pet(models.Model):
     sex = models.BooleanField(
         help_text='オス=True、メス=False', blank=True, null=True)
     customer = models.ForeignKey(
-        Customer, related_name='pets', on_delete=models.CASCADE, help_text='顧客ナンバー')
+        Customer, related_name='pets',
+        on_delete=models.CASCADE,
+        help_text='顧客ナンバー')
     weight = models.IntegerField(blank=True, null=True, help_text='体重')
     likes = models.ManyToManyField(
         PetLike, blank=True, help_text='好きなこと')
@@ -166,7 +170,9 @@ class Pet(models.Model):
         PetDislike, blank=True, help_text='苦手なこと')
     birth = models.DateField(null=True, help_text='誕生日')
     death = models.DateField(blank=True, null=True, help_text='死亡日')
-    image = ProcessedImageField(blank=True, null=True, upload_to=pet_image_file_path,
+    image = ProcessedImageField(blank=True,
+                                null=True,
+                                upload_to=pet_image_file_path,
                                 processors=[ResizeToFit(500, 500)],
                                 format='PNG',
                                 options={'quality': 80})

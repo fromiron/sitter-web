@@ -31,7 +31,8 @@ class Command(BaseCommand):
                 "アフガン・ハウンド", "ウトナーガン", "オーストラリアン・シェパード", "紀州",
                 "北海道犬", "柴犬", "混血犬"]
         cats = ["スコティッシュ・フォールド", "マンチカン", "混血猫",
-                "アメリカン・ショートヘア", "ノルウェージャン・フォレスト・キャット", "ブリティッシュ・ショートヘア", "ラグドール"]
+                "アメリカン・ショートヘア", "ノルウェージャン・フォレスト・キャット",
+                "ブリティッシュ・ショートヘア", "ラグドール"]
         rabbits = ["混血兎", "ネザーランドドワーフ", "ホーランドロップ",
                    "ミニうさぎ", "ロップイヤー", "ミニレッキス", "ライオンラビット"]
         c = 0
@@ -51,19 +52,20 @@ class Command(BaseCommand):
                 breeds = cats
             breed, _ = PetBreed.objects.get_or_create(
                 name=random.choice(breeds), type_id=type.id)
-            seeder.add_entity(Pet,
-                              1,
-                              {
-                                  "name": name,
-                                  "sex": bool(random.getrandbits(1)),
-                                  "birth": faker.date(),
-                                  "death": faker.date() if random.randrange(1, 30) < 2 else None,
-                                  "type": type,
-                                  "breed": breed,
-                                  "customer": random.choice(customers),
-                                  "weight": random.uniform(400, 5000),
-                                  "image": None
-                              }
-                              )
+            seeder.add_entity(
+                Pet, 1, {
+                    "name": name,
+                    "sex": bool(random.getrandbits(1)),
+                    "birth": faker.date(),
+                    "death":
+                        faker.date() if random.randrange(1, 30) < 2
+                        else None,
+                    "type": type,
+                    "breed": breed,
+                    "customer": random.choice(customers),
+                    "weight": random.uniform(400, 5000),
+                    "image": None
+                    }
+                )
         seeder.execute()
         self.stdout.write(self.style.SUCCESS(f"{total}ペットデータ追加"))

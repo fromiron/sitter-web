@@ -104,7 +104,6 @@ class PrivateCustomerApiTestsForStaff(TestCase):
 
         res = self.client.get(CUSTOMER_URL)
         data = res.data['results']
-        customers.reverse()
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(data), len(customers))
         self.assertEqual(data[0]['name'], customers[0]['name'])

@@ -1,6 +1,8 @@
 from rest_framework import serializers
 
-from core.models import Customer, Pet, PetType, PetBreed, PetMemo, PetLike, PetDislike
+from core.models import (
+    Customer, Pet, PetType,
+    PetBreed, PetMemo, PetLike, PetDislike)
 
 
 class CustomerIdNameSerializer(serializers.ModelSerializer):
@@ -97,7 +99,8 @@ class PetSerializer(serializers.ModelSerializer):
 
     def get_thumbnail(self, obj):
         if bool(obj.thumbnail):
-            return self.context['request'].build_absolute_uri(obj.thumbnail.url)
+            return self.context['request']\
+                .build_absolute_uri(obj.thumbnail.url)
         return None
 
     def _get_or_create_type(self, type, pet):

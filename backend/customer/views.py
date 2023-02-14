@@ -1,5 +1,8 @@
 from core.pagination import ListPageNumberPagination
-from customer.serializers import CustomerDetailSerializer, CustomerMemoSerializer, CustomerSerializer
+from customer.serializers import (
+    CustomerDetailSerializer,
+    CustomerMemoSerializer,
+    CustomerSerializer)
 from core.models import Customer, CustomerMemo
 
 from rest_framework import viewsets

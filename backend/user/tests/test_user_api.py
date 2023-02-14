@@ -31,8 +31,7 @@ class PublicUserApiTests(TestCase):
 
     def setUp(self):
         self.client = APIClient()
-        settings.ACCOUNT_EMAIL_VERIFICATION=None
-        # settings.ACCOUNT_EMAIL_REQUIRED=False
+        settings.ACCOUNT_EMAIL_VERIFICATION = None
 
     def test_create_user_success(self):
         """ユーザー生成成功テスト"""
@@ -113,7 +112,6 @@ class PublicUserApiTests(TestCase):
         ).exists()
         self.assertFalse(user_exists)
 
-
     def test_login_not_verified_user(self):
         """認証されてないメールユーザーログインテスト"""
         db_user_data = {
@@ -130,7 +128,6 @@ class PublicUserApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertTrue(res.data['user']['is_active'])
         self.assertFalse(res.data['user']['is_staff'])
-
 
     def test_login_verified_user(self):
         """ユーザーtoken生成テスト"""
@@ -203,8 +200,7 @@ class PrivateUserApiTests(TestCase):
     """Private user apiテスト"""
 
     def setUp(self):
-        settings.ACCOUNT_EMAIL_VERIFICATION=None
-        # settings.ACCOUNT_EMAIL_REQUIRED=False
+        settings.ACCOUNT_EMAIL_VERIFICATION = None
         self.user = create_user(
             email='test@example.com',
             name='testuser',
@@ -220,7 +216,6 @@ class PrivateUserApiTests(TestCase):
         res = self.client.get(ME_URL)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data['email'], self.user.email)
-
 
     def test_me_not_allowed(self):
         """postでの通信に405エラーになるかのテスト"""
