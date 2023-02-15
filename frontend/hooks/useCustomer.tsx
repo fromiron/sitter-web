@@ -1,4 +1,4 @@
-import { CUSTOMERS } from "@constants/queryKeys";
+import {CUSTOMER_STAT, CUSTOMERS} from "@constants/queryKeys";
 import { CustomersInterface, QueryInterface } from "@interfaces/cmsInterfaces";
 import { axiosClient } from "@lib/axios-client";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
@@ -24,12 +24,32 @@ async function getCustomers({
   return data;
 }
 
+async function getCustomerStat({
+  token,
+}: {
+  token?: string;
+}): Promise<CustomerStatInference> {
+  const { data } = await axiosClient.get(
+    `${BACKEND_API_URL}/api/customer/stat`,
+    {
+      headers: {
+        Authorization: `JWT ${token}`,
+      },
+    }
+  );
+  return data;
+}
+
 interface UseCustomer {
   data?: CustomersInterface;
   isLoading: boolean;
   setQuery: Dispatch<SetStateAction<QueryInterface>>;
   query: QueryInterface;
   resetQuery:()=>void;
+}
+interface UseCustomerStatInterface{
+  data?: CustomerStatInference;
+  isLoading: boolean;
 }
 
 export function useCustomer({ token }: { token?: string }): UseCustomer {
@@ -50,4 +70,17 @@ export function useCustomer({ token }: { token?: string }): UseCustomer {
 
   const resetQuery = () => setQuery(defaultQuery);
   return { data, isLoading, setQuery, query,resetQuery };
+}
+
+interface CustomerStatInference {
+  "total_customers": number,
+  "average_pets": number,
+  "recent_created": number
+}
+export function useCustomerStat({ token }: { token?: string }): UseCustomerStatInterface {
+  const { data, isLoading } = useQuery([CUSTOMER_STAT], () =>
+    getCustomerStat({  token })
+  );
+
+  return { data, isLoading  };
 }

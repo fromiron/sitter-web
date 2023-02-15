@@ -1,6 +1,6 @@
 import CMSLayout from "@components/layout/cms/CMSLayout";
 
-import { useCustomer } from "@hooks/useCustomer";
+import {useCustomer, useCustomerStat} from "@hooks/useCustomer";
 import { RiUserAddLine } from "react-icons/ri";
 import { Table } from "./partials/Table";
 import { GetServerSideProps } from "next";
@@ -54,12 +54,14 @@ export default function Customers({
     resetQuery,
   } = useCustomer({ token: session.access_token });
 
+  const  {data:customerStat} = useCustomerStat({ token: session.access_token });
+  console.log(customerStat)
   return (
     <CMSLayout>
       <div className="flex gap-4 mb-4 w-fit">
-        <NumberCountWidget count={customers?.count} title={"総顧客"} />
-        <NumberCountWidget count={4} title={"新規顧客"} />
-        <NumberCountWidget count={2} title={"平均ペット"} />
+        <NumberCountWidget count={customerStat?.total_customers} title={"総顧客"} />
+        <NumberCountWidget count={customerStat?.recent_created} title={"新規顧客"} />
+        <NumberCountWidget count={Number(customerStat?.average_pets.toFixed(2))} title={"平均ペット"} />
         <FeatureWidget
           Icon={RiUserAddLine}
           onClick={() => console.log("click")}

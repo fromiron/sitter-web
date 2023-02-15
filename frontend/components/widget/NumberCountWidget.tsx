@@ -9,9 +9,14 @@ export default function NumberCountWidget({
 }) {
   const [customCount, setCustomCount] = useState<number | undefined>(undefined);
 
+  // TODO 削除した場合もサイレンダーリングできるよう修正
   useEffect(() => {
     if (count !== undefined && customCount === undefined) {
-      setCustomCount(count - 2);
+      if(count - 2 >=0){
+        setCustomCount(count - 2);
+      }else{
+        setCustomCount(count)
+      }
     }
 
     if (

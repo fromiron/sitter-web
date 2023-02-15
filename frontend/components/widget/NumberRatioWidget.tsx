@@ -16,7 +16,7 @@ export default function NumberRatioWidget({
       <div className="text-center text-neutral">
         <div className="text-3xl">
           {fixedCount1 * fixedCount2 !== 0
-            ? fixedCount1 / fixedCount2
+            ? (fixedCount1 / fixedCount2).toFixed(2)
             : "計算不可"}
         </div>
         <div className="text-xxs">

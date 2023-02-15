@@ -1,4 +1,4 @@
-import { PETS, PET_BREEDS, PET_TYPES } from "@constants/queryKeys";
+import {PETS, PET_BREEDS, PET_TYPES, CUSTOMER_STAT, PET_STAT} from "@constants/queryKeys";
 import {
   QueryInterface,
   PetsInterface,
@@ -11,6 +11,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
+import {number} from "prop-types";
 
 const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL;
 
@@ -229,6 +230,7 @@ export function usePetTypeMutation({ token }: { token?: string }) {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(PET_TYPES);
+        queryClient.invalidateQueries(PET_STAT);
         toast.success("タイプ追加成功");
       },
       onError: (errors: AxiosError) => {
@@ -238,11 +240,16 @@ export function usePetTypeMutation({ token }: { token?: string }) {
     }
   );
 
+
+
+
+
   const deletePetType = useMutation(
     (payload: { id: number }) => deletePetTypes({ token, payload }),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(PET_TYPES);
+        queryClient.invalidateQueries(PET_TYPES)
+        queryClient.invalidateQueries(PET_STAT)
         toast.success("タイプ削除成功");
       },
       onError: (errors: AxiosError) => {
@@ -253,6 +260,22 @@ export function usePetTypeMutation({ token }: { token?: string }) {
   );
 
   return { addPetType, deletePetType };
+}
+
+  async function getPetStat({
+  token,
+}: {
+  token?: string;
+}): Promise<PetStatInference> {
+  const { data } = await axiosClient.get(
+    `${BACKEND_API_URL}/api/pet/stat`,
+    {
+      headers: {
+        Authorization: `JWT ${token}`,
+      },
+    }
+  );
+  return data;
 }
 
 export function usePetBreed({
@@ -274,6 +297,7 @@ export function usePetBreedMutation({ token }: { token?: string }) {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(PET_BREEDS);
+        queryClient.invalidateQueries(PET_STAT);
         toast.success("品種追加成功");
       },
       onError: (errors: AxiosError) => {
@@ -288,6 +312,7 @@ export function usePetBreedMutation({ token }: { token?: string }) {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(PET_BREEDS);
+        queryClient.invalidateQueries(PET_STAT);
         toast.success("品種削除成功");
       },
       onError: (errors: AxiosError) => {
@@ -298,4 +323,26 @@ export function usePetBreedMutation({ token }: { token?: string }) {
   );
 
   return { addPetBreed, deletePetBreed };
+}
+
+
+interface UsePetStatInterface{
+  data?: PetStatInference;
+  isLoading: boolean;
+}
+interface PetStatInference {
+  "pet_count": number,
+  "male_count": number,
+  "female_count": number,
+  "dead_count": number,
+  "type_count": number,
+  "breed_count": number
+}
+
+export function usePetStat({ token }: { token?: string }): UsePetStatInterface {
+  const { data, isLoading } = useQuery([PET_STAT], () =>
+    getPetStat({  token })
+  );
+
+  return { data, isLoading  };
 }

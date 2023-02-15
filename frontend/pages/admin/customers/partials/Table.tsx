@@ -92,7 +92,7 @@ function PetAvatarBadge({ pets }: { pets: PetInterface[] }) {
             className="text-xs text-neutral-content tooltip tooltip-primary tooltip-top"
             data-tip={pet.name}
           >
-            <div className="relative flex items-center justify-center w-12 h-12 border-4 rounded-full bg-base-200 border-neutral-content">
+            <div className="relative flex items-center justify-center w-12 h-12 border-4 rounded-full bg-base-200 border-neutral-content overflow-hidden">
               {pet.thumbnail ? (
                 <Image
                   src={pet.thumbnail}

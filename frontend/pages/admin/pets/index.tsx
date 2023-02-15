@@ -9,7 +9,7 @@ import { Table } from "./partials/Table";
 import {
   usePet,
   usePetBreed,
-  usePetBreedMutation,
+  usePetBreedMutation, usePetStat,
   usePetType,
   usePetTypeMutation,
 } from "@hooks/usePet";
@@ -73,6 +73,8 @@ export default function Pet({ session }: { session: SessionAuthInterface }) {
     setCustomerFilter,
   } = usePet({ token });
 
+  const {data:petStat} = usePetStat({token})
+
   const { data: types } = usePetType({ token });
   const { data: breeds } = usePetBreed({ token });
   const petTypeMutation = usePetTypeMutation({ token });
@@ -100,11 +102,11 @@ export default function Pet({ session }: { session: SessionAuthInterface }) {
         mutation={petBreedMutation}
       />
       <div className="flex gap-4 mb-4 w-fit">
-        <NumberCountWidget count={pets?.count} title={"総登録ペット数"} />
-        <NumberCountWidget count={4} title={"虹の橋"} />
-        <NumberRatioWidget count1={29} count2={20} title={"性比"} />
-        <NumberCountWidget count={4} title={"タイプ"} />
-        <NumberCountWidget count={12} title={"品種"} />
+        <NumberCountWidget count={petStat?.pet_count} title={"総登録ペット数"} />
+        <NumberCountWidget count={petStat?.dead_count} title={"虹の橋"} />
+        <NumberRatioWidget count1={petStat?.male_count} count2={petStat?.female_count} title={"性比"} />
+        <NumberCountWidget count={petStat?.type_count} title={"タイプ"} />
+        <NumberCountWidget count={petStat?.breed_count} title={"品種"} />
         <FeatureWidget Icon={AddPetIcon} onClick={() => console.log("click")} />
       </div>
 
