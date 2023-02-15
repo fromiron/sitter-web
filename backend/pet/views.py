@@ -22,7 +22,7 @@ class BasePetViewSet(viewsets.ModelViewSet):
 
 class PetViewSet(BasePetViewSet):
     """Pet api viewset"""
-    queryset = Pet.objects.all()
+    queryset = Pet.objects.all().order_by('-pk')
     serializer_class = PetSerializer
     filterset_fields = ['name', 'sex', 'birth',
                         'breed_id', 'customer_id', 'type_id']
