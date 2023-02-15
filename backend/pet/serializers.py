@@ -32,9 +32,7 @@ class PetBreedSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """Pet Breedデータ生成"""
         pet_type = validated_data.pop('type_id', None)
-        if pet_type:
-            validated_data['type_id'] = pet_type.id
-        return PetBreed.objects.create(**validated_data)
+        return PetBreed.objects.create(**validated_data, type_id=pet_type.id)
 
 
 class PetLikeSerializer(serializers.ModelSerializer):
@@ -109,26 +107,20 @@ class PetSerializer(serializers.ModelSerializer):
 
     def _get_or_create_breed(self, breed, pet):
         """同じbreedがあったらリターン、なかったら生成してリターン"""
-        type_id = pet.type.id
-        obj, _ = PetBreed.objects.get_or_create(type_id=type_id, **breed)
+        type = breed.pop('type_id')
+        obj, _ = PetBreed.objects.get_or_create(**breed, type_id=type.id)
         pet.breed = obj
-
-    def _get_customer(self, customer_id, pet):
-        obj, _ = Customer.objects.get(id=customer_id)
-        pet.customer = obj
 
     def create(self, validated_data):
         """Pet データ生成"""
-        customer_id = validated_data.pop('customer_id', None)
+        customer = validated_data.pop('customer_id', None)
         type = validated_data.pop('type', None)
         breed = validated_data.pop('breed', None)
-        pet = Pet.objects.create(**validated_data)
+        pet = Pet.objects.create(**validated_data, customer_id=customer.id)
         if type is not None:
             self._get_or_create_type(type, pet)
         if breed is not None:
             self._get_or_create_breed(breed, pet)
-        if customer_id is not None:
-            self._get_customer(customer_id, pet)
         pet.save()
         return pet
 
@@ -141,8 +133,8 @@ class PetSerializer(serializers.ModelSerializer):
             self._get_or_create_type(type, instance)
         if breed is not None:
             self._get_or_create_breed(breed, instance)
-        if customer_id is not None:
-            self._get_customer(customer_id, instance)
+        # if customer_id is not None:
+        #     self._get_customer(customer_id, instance)
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 

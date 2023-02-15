@@ -90,7 +90,7 @@ class PrivatePetApiTestsForStaff(TestCase):
 
         res = self.client.get(PET_URL)
         data = res.data['results']
-
+        data.reverse()
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(data), len(pets))
         self.assertEqual(data[0]['name'], pets[0]['name'])
@@ -101,14 +101,13 @@ class PrivatePetApiTestsForStaff(TestCase):
         """pet生成テスト"""
         payload = {'name': 'testpet1', 'sex': True, 'birth': '2022-11-15',
                    'customer_id': self.customer.id}
-
         res = self.client.post(PET_URL, payload)
         data = res.data
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         self.assertEqual(data['name'], payload['name'])
         self.assertEqual(data['sex'], payload['sex'])
         self.assertEqual(data['birth'], payload['birth'])
-        self.assertEqual(data['customer_id'], payload['customer_id'])
+        self.assertEqual(data['customer']['id'], payload['customer_id'])
 
     def test_create_pet_with_weight(self):
         """pet生成テスト"""
@@ -121,7 +120,7 @@ class PrivatePetApiTestsForStaff(TestCase):
         self.assertEqual(data['name'], payload['name'])
         self.assertEqual(data['sex'], payload['sex'])
         self.assertEqual(data['birth'], payload['birth'])
-        self.assertEqual(data['customer_id'], payload['customer_id'])
+        self.assertEqual(data['customer']['id'], payload['customer_id'])
         url = detail_url(data['id'])
         res2 = res = self.client.get(url)
         data2 = res2.data
@@ -160,11 +159,9 @@ class PrivatePetApiTestsForStaff(TestCase):
 
         res1 = self.client.post(PET_URL, payload1, format='json')
         data1 = res1.data
-        print(data1)
         self.assertEqual(res1.status_code, status.HTTP_201_CREATED)
         res2 = self.client.post(PET_URL, payload2, format='json')
         data2 = res2.data
-        print(data2)
         self.assertEqual(res2.status_code, status.HTTP_201_CREATED)
         self.assertEqual(data1['type']['id'], data2['type']['id'])
 
@@ -246,7 +243,8 @@ class PrivatePetApiTestsForStaff(TestCase):
                     "name": "モモンガ"
                 },
                 "breed": {
-                    "name": "パプアフクロモモンガ"
+                    "name": "パプアフクロモモンガ",
+                    "type_id": self.type.id
                 },
                 "customer_id": self.customer.id,
                 "weight": 44
@@ -259,7 +257,8 @@ class PrivatePetApiTestsForStaff(TestCase):
                     "name": "モモンガ"
                 },
                 "breed": {
-                    "name": "オブトフクロモモンガ"
+                    "name": "オブトフクロモモンガ",
+                    "type_id": self.type.id
                 },
                 "customer_id": self.customer.id,
                 "weight": 44
@@ -272,7 +271,8 @@ class PrivatePetApiTestsForStaff(TestCase):
                     "name": "リス"
                 },
                 "breed": {
-                    "name": "エゾリス"
+                    "name": "エゾリス",
+                    "type_id": self.type.id
                 },
                 "customer_id": self.customer.id,
                 "weight": 44
@@ -311,7 +311,8 @@ class PrivatePetApiTestsForStaff(TestCase):
                     "name": "モモンガ"
                 },
                 "breed": {
-                    "name": "パプアフクロモモンガ"
+                    "name": "パプアフクロモモンガ",
+                    "type_id" :self.type.id
                 },
                 "customer_id": self.customer.id,
                 "weight": 44
@@ -321,10 +322,12 @@ class PrivatePetApiTestsForStaff(TestCase):
                 "sex": True,
                 "birth": "2022-12-01",
                 "type": {
-                    "name": "モモンガ"
+                    "name": "モモンガ",
+                    "type_id":self.type.id
                 },
                 "breed": {
-                    "name": "オブトフクロモモンガ"
+                    "name": "オブトフクロモモンガ",
+                    "type_id":self.type.id
                 },
                 "customer_id": self.customer.id,
                 "weight": 44
@@ -337,7 +340,8 @@ class PrivatePetApiTestsForStaff(TestCase):
                     "name": "モモンガ"
                 },
                 "breed": {
-                    "name": "オブトフクロモモンガ"
+                    "name": "オブトフクロモモンガ",
+                    "type_id":self.type.id
                 },
                 "customer_id": self.customer.id,
                 "weight": 44
