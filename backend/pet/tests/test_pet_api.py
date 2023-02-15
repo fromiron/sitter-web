@@ -423,7 +423,6 @@ class PrivatePetApiTestsForStaff(TestCase):
             create_pet(**payload)
 
         res = self.client.get(PET_STAT_URL)
-        print(res.data)
         data = res.data
         self.assertEquals(res.status_code, status.HTTP_200_OK)
         self.assertEquals(data["pet_count"], len(pets))
