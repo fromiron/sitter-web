@@ -172,7 +172,6 @@ class PetDetailSerializer(PetSerializer):
 
 class PetStatSerializer(serializers.Serializer):
     pet_count = serializers.IntegerField()
-    dead_count = serializers.IntegerField()
     male_count = serializers.IntegerField()
     female_count = serializers.IntegerField()
     dead_count = serializers.IntegerField()

@@ -18,5 +18,5 @@ app_name = "pet"
 
 urlpatterns = [
     path("", include(router.urls)),
-    path("stat", views.PetStatViewSet.as_view()),
+    path("stat", views.PetStatViewSet.as_view(), name="pet-stat"),
 ]

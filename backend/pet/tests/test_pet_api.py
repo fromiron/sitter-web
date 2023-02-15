@@ -18,6 +18,7 @@ from core.helper.create_dummy_pack import (
 )
 
 PET_URL = reverse("pet:pet-list")
+PET_STAT_URL = reverse("pet:pet-stat")
 
 
 def detail_url(pet_id):
@@ -397,3 +398,32 @@ class PrivatePetApiTestsForStaff(TestCase):
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]["breed"]["id"], pet_breed_id[0])
         self.assertEqual(data[0]["name"], pets[0]["name"])
+
+    def test_pet_stat_data(self):
+        """dashboardなどに使うstatデータを取得できるかをテスト"""
+        pets = [
+            {
+                "name": "モモンガ1",
+                "sex": True,
+                "birth": "2022-01-01",
+            },
+            {
+                "name": "モモンガ2",
+                "sex": True,
+                "birth": "2012-12-01",
+            },
+            {
+                "name": "リス1",
+                "sex": False,
+                "birth": "2022-12-01",
+                "death": "2023-01-01",
+            },
+        ]
+        for payload in pets:
+            create_pet(**payload)
+
+        res = self.client.get(PET_STAT_URL)
+        print(res.data)
+        data = res.data
+        self.assertEquals(res.status_code, status.HTTP_200_OK)
+        self.assertEquals(data["pet_count"], len(pets))
