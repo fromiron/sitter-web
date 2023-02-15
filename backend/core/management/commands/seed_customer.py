@@ -18,14 +18,8 @@ def generate_tel_number():
 
 
 class Command(BaseCommand):
-
     def add_arguments(self, parser):
-        parser.add_argument(
-            "--total",
-            default=50,
-            type=int,
-            help="Test Customer data"
-        )
+        parser.add_argument("--total", default=50, type=int, help="Test Customer data")
 
     def handle(self, *args, **options):
         total = options.get("total")
@@ -34,19 +28,20 @@ class Command(BaseCommand):
         c = 0
         while c < total:
             c = c + 1
-            faker = Faker(['ja_JP'])
+            faker = Faker(["ja_JP"])
             name = faker.name()
             kks = kakasi.convert(name)
             name_kana = f"{kks[0]['hira']} {kks[2]['hira']}"
-            seeder.add_entity(Customer,
-                              1,
-                              {
-                                  "name": name,
-                                  "name_kana": name_kana,
-                                  "tel": generate_tel_number(),
-                                  "tel2": generate_tel_number(),
-                                  "address": faker.address(),
-                              }
-                              )
+            seeder.add_entity(
+                Customer,
+                1,
+                {
+                    "name": name,
+                    "name_kana": name_kana,
+                    "tel": generate_tel_number(),
+                    "tel2": generate_tel_number(),
+                    "address": faker.address(),
+                },
+            )
         seeder.execute()
         self.stdout.write(self.style.SUCCESS(f"{total}顧客データ追加"))

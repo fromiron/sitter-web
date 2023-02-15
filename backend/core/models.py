@@ -7,7 +7,7 @@ from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
-    PermissionsMixin
+    PermissionsMixin,
 )
 from django.utils import timezone
 from imagekit.models import ImageSpecField
@@ -18,9 +18,9 @@ from imagekit.models import ProcessedImageField
 def pet_image_file_path(instance, filename):
     """generate file path for new recipe image"""
     ext = os.path.splitext(filename)[1]
-    filename = f'{uuid.uuid4()}{ext}'
+    filename = f"{uuid.uuid4()}{ext}"
 
-    return os.path.join('uploads', 'pet', filename)
+    return os.path.join("uploads", "pet", filename)
 
 
 class UserManager(BaseUserManager):
@@ -30,10 +30,14 @@ class UserManager(BaseUserManager):
         """ユーザー登録"""
         now = timezone.now()
         if not email:
-            raise ValueError('メールアドレスが必要です。')
-        user = self.model(email=self.normalize_email(
-            email), name=name, **extra_filed, last_login=now,
-            date_joined=now,)
+            raise ValueError("メールアドレスが必要です。")
+        user = self.model(
+            email=self.normalize_email(email),
+            name=name,
+            **extra_filed,
+            last_login=now,
+            date_joined=now,
+        )
         user.set_password(password)
         user.save(using=self._db)
 
@@ -60,6 +64,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     """ユーザーモデル"""
+
     email = models.EmailField(max_length=50, unique=True)
     name = models.CharField(max_length=50, unique=True, null=True, blank=True)
     is_active = models.BooleanField(default=True)
@@ -71,8 +76,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     updated = models.DateTimeField(auto_now=True)
     objects = UserManager()
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name']
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["name"]
 
 
 class Customer(models.Model):
@@ -92,11 +97,11 @@ class Customer(models.Model):
 
 class CustomerMemo(models.Model):
     """customer memo model"""
+
     memo = models.TextField()
     customer = models.ForeignKey(
-        Customer,
-        related_name='memos',
-        on_delete=models.CASCADE)
+        Customer, related_name="memos", on_delete=models.CASCADE
+    )
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
@@ -106,6 +111,7 @@ class CustomerMemo(models.Model):
 
 class PetType(models.Model):
     """pet type model"""
+
     name = models.CharField(max_length=40)
 
     def __str__(self):
@@ -114,11 +120,15 @@ class PetType(models.Model):
 
 class PetBreed(models.Model):
     """pet 品種 model"""
+
     name = models.CharField(max_length=40)
     type = models.ForeignKey(
-        PetType, related_name='pet_type',
+        PetType,
+        related_name="pet_type",
         on_delete=models.CASCADE,
-        null=True, blank=True)
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return self.name
@@ -126,6 +136,7 @@ class PetBreed(models.Model):
 
 class PetLike(models.Model):
     """tag for filtering recipes"""
+
     name = models.CharField(max_length=255)
 
     def __str__(self):
@@ -134,6 +145,7 @@ class PetLike(models.Model):
 
 class PetDislike(models.Model):
     """tag for filtering recipes"""
+
     name = models.CharField(max_length=255)
 
     def __str__(self):
@@ -142,44 +154,45 @@ class PetDislike(models.Model):
 
 class Pet(models.Model):
     """Pet model"""
-    name = models.CharField(max_length=40, help_text='名前')
+
+    name = models.CharField(max_length=40, help_text="名前")
     type = models.ForeignKey(
         PetType,
         on_delete=models.PROTECT,
         blank=True,
         null=True,
-        help_text='犬･猫･うさぎなど',
+        help_text="犬･猫･うさぎなど",
     )
     breed = models.ForeignKey(
         PetBreed,
         on_delete=models.PROTECT,
         blank=True,
         null=True,
-        help_text='柴犬･ネザーランドドワーフなど',
+        help_text="柴犬･ネザーランドドワーフなど",
     )
-    sex = models.BooleanField(
-        help_text='オス=True、メス=False', blank=True, null=True)
+    sex = models.BooleanField(help_text="オス=True、メス=False", blank=True, null=True)
     customer = models.ForeignKey(
-        Customer, related_name='pets',
-        on_delete=models.CASCADE,
-        help_text='顧客ナンバー')
-    weight = models.IntegerField(blank=True, null=True, help_text='体重')
-    likes = models.ManyToManyField(
-        PetLike, blank=True, help_text='好きなこと')
-    dislikes = models.ManyToManyField(
-        PetDislike, blank=True, help_text='苦手なこと')
-    birth = models.DateField(null=True, help_text='誕生日')
-    death = models.DateField(blank=True, null=True, help_text='死亡日')
-    image = ProcessedImageField(blank=True,
-                                null=True,
-                                upload_to=pet_image_file_path,
-                                processors=[ResizeToFit(500, 500)],
-                                format='PNG',
-                                options={'quality': 80})
-    thumbnail = ImageSpecField(source='image',
-                               processors=[SmartResize(100, 100)],
-                               format='PNG',
-                               options={'quality': 60})
+        Customer, related_name="pets", on_delete=models.CASCADE, help_text="顧客ナンバー"
+    )
+    weight = models.IntegerField(blank=True, null=True, help_text="体重")
+    likes = models.ManyToManyField(PetLike, blank=True, help_text="好きなこと")
+    dislikes = models.ManyToManyField(PetDislike, blank=True, help_text="苦手なこと")
+    birth = models.DateField(null=True, help_text="誕生日")
+    death = models.DateField(blank=True, null=True, help_text="死亡日")
+    image = ProcessedImageField(
+        blank=True,
+        null=True,
+        upload_to=pet_image_file_path,
+        processors=[ResizeToFit(500, 500)],
+        format="PNG",
+        options={"quality": 80},
+    )
+    thumbnail = ImageSpecField(
+        source="image",
+        processors=[SmartResize(100, 100)],
+        format="PNG",
+        options={"quality": 60},
+    )
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -189,9 +202,9 @@ class Pet(models.Model):
 
 class PetMemo(models.Model):
     """pet  memo model"""
+
     memo = models.TextField()
-    pet = models.ForeignKey(Pet, related_name='memos',
-                            on_delete=models.CASCADE)
+    pet = models.ForeignKey(Pet, related_name="memos", on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 

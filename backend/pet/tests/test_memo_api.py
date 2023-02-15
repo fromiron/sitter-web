@@ -10,15 +10,18 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from core.helper.create_dummy_pack import (
-    create_user, create_staff, create_customer, create_pet
+    create_user,
+    create_staff,
+    create_customer,
+    create_pet,
 )
 
-PET_MEMO_URL = reverse('pet:petmemo-list')
+PET_MEMO_URL = reverse("pet:petmemo-list")
 
 
 def detail_url(pet_breed_id):
-    """memo detail URL生成 """
-    return reverse('pet:petmemo-detail', args=[pet_breed_id])
+    """memo detail URL生成"""
+    return reverse("pet:petmemo-detail", args=[pet_breed_id])
 
 
 class PublicPetMemoAPITests(TestCase):
@@ -39,10 +42,10 @@ class PrivatePetMemoApiTests(TestCase):
 
     def setUp(self):
         self.user = create_user(
-            email='test@example.com',
-            name='testuser',
-            password='password123',
-            is_staff=False
+            email="test@example.com",
+            name="testuser",
+            password="password123",
+            is_staff=False,
         )
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
@@ -58,9 +61,9 @@ class PrivatePetMemoApiTestsForStaff(TestCase):
 
     def setUp(self):
         self.user = create_staff(
-            email='staff@example.com',
-            name='staff',
-            password='password123',
+            email="staff@example.com",
+            name="staff",
+            password="password123",
         )
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
@@ -75,41 +78,41 @@ class PrivatePetMemoApiTestsForStaff(TestCase):
     def test_get_memo_list(self):
         """memoデータが正しく取得できるかの確認テスト"""
         memos = [
-            {'memo': 'memo1', 'pet_id': self.pet.id},
-            {'memo': 'memo2', 'pet_id': self.pet.id},
-            {'memo': 'memo3', 'pet_id': self.pet.id},
-            {'memo': 'memo4', 'pet_id': self.pet.id},
+            {"memo": "memo1", "pet_id": self.pet.id},
+            {"memo": "memo2", "pet_id": self.pet.id},
+            {"memo": "memo3", "pet_id": self.pet.id},
+            {"memo": "memo4", "pet_id": self.pet.id},
         ]
 
         for data in memos:
             PetMemo.objects.create(**data)
 
         res = self.client.get(PET_MEMO_URL)
-        data = res.data['results']
+        data = res.data["results"]
         memos.reverse()
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(data), len(memos))
-        self.assertEqual(data[0]['memo'], memos[0]['memo'])
-        self.assertEqual(data[1]['memo'], memos[1]['memo'])
-        self.assertEqual(data[2]['memo'], memos[2]['memo'])
+        self.assertEqual(data[0]["memo"], memos[0]["memo"])
+        self.assertEqual(data[1]["memo"], memos[1]["memo"])
+        self.assertEqual(data[2]["memo"], memos[2]["memo"])
 
     def test_create_memo(self):
         """pet memo生成テスト"""
-        payload = {'memo': 'memo5', 'pet_id': self.pet.id}
+        payload = {"memo": "memo5", "pet_id": self.pet.id}
         res = self.client.post(PET_MEMO_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(res.data['memo'], payload['memo'])
+        self.assertEqual(res.data["memo"], payload["memo"])
 
     def test_create_memo_without_pet_id(self):
         """pet idなしでのpet memo生成テスト"""
-        payload = {'memo': 'memo5'}
+        payload = {"memo": "memo5"}
         res = self.client.post(PET_MEMO_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_memo_nonexistent_pet_id(self):
         """存在しないpet idでのpet memo生成テスト"""
-        payload = {'memo': 'memo5', 'pet_id': 888}
+        payload = {"memo": "memo5", "pet_id": 888}
         res = self.client.post(PET_MEMO_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -123,11 +126,11 @@ class PrivatePetMemoApiTestsForStaff(TestCase):
         self.assertFalse(memos.exists())
 
     def test_update_pet_memo(self):
-        """"pet memo修正テスト"""
+        """ "pet memo修正テスト"""
         memo = PetMemo.objects.create(memo="memo8", pet_id=self.pet.id)
-        payload = {'memo': 'ホーランドロップ', 'pet_id': self.pet.id}
+        payload = {"memo": "ホーランドロップ", "pet_id": self.pet.id}
         url = detail_url(memo.id)
         res = self.client.patch(url, payload)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         memo.refresh_from_db()
-        self.assertEqual(memo.memo, payload['memo'])
+        self.assertEqual(memo.memo, payload["memo"])

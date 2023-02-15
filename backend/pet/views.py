@@ -6,33 +6,47 @@ from rest_framework.views import APIView
 
 from pet.serializers import (
     PetLikeSerializer,
-    PetDislikeSerializer, PetSerializer,
+    PetDislikeSerializer,
+    PetSerializer,
     PetStatSerializer,
     PetTypeSerializer,
-    PetBreedSerializer, PetDetailSerializer, PetMemoSerializer
+    PetBreedSerializer,
+    PetDetailSerializer,
+    PetMemoSerializer,
 )
 from core.models import Pet, PetType, PetBreed, PetMemo, PetLike, PetDislike
 
 
 class BasePetViewSet(viewsets.ModelViewSet):
     """base viewset for pet attributes"""
+
     filter_backends = [
-        DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
 
 
 class PetViewSet(BasePetViewSet):
     """Pet api viewset"""
-    queryset = Pet.objects.all().order_by('-pk')
+
+    queryset = Pet.objects.all().order_by("-pk")
     serializer_class = PetSerializer
-    filterset_fields = ['name', 'sex', 'birth',
-                        'breed_id', 'customer_id', 'type_id']
-    search_fields = ['name', 'sex', 'birth', 'breed__name',
-                     'type__name', 'customer__name', 'customer__name_kana']
+    filterset_fields = ["name", "sex", "birth", "breed_id", "customer_id", "type_id"]
+    search_fields = [
+        "name",
+        "sex",
+        "birth",
+        "breed__name",
+        "type__name",
+        "customer__name",
+        "customer__name_kana",
+    ]
     pagination_class = ListPageNumberPagination
 
     def get_serializer_class(self):
         """actionにあうserializerをリターンする"""
-        if self.action == 'retrieve':
+        if self.action == "retrieve":
             self.queryset.select_related()
             return PetDetailSerializer
         return self.serializer_class
@@ -40,42 +54,48 @@ class PetViewSet(BasePetViewSet):
 
 class PetTypeViewSet(BasePetViewSet):
     """pet type view set"""
-    queryset = PetType.objects.all().order_by('-pk')
+
+    queryset = PetType.objects.all().order_by("-pk")
     serializer_class = PetTypeSerializer
-    filterset_fields = ['name']
+    filterset_fields = ["name"]
 
 
 class PetBreedViewSet(BasePetViewSet):
     """pet Breed view set"""
-    queryset = PetBreed.objects.all().order_by('-pk')
+
+    queryset = PetBreed.objects.all().order_by("-pk")
     serializer_class = PetBreedSerializer
-    filterset_fields = ['name']
+    filterset_fields = ["name"]
 
 
 class PetMemoViewSet(BasePetViewSet):
     """pet memo view set"""
-    queryset = PetMemo.objects.all().order_by('-pk')
+
+    queryset = PetMemo.objects.all().order_by("-pk")
     serializer_class = PetMemoSerializer
-    filterset_fields = ['memo', 'pet_id']
+    filterset_fields = ["memo", "pet_id"]
     pagination_class = ListPageNumberPagination
 
 
 class PetLikeViewSet(BasePetViewSet):
     """pet like view set"""
-    queryset = PetLike.objects.all().order_by('-pk')
+
+    queryset = PetLike.objects.all().order_by("-pk")
     serializer_class = PetLikeSerializer
-    filterset_fields = ['name']
+    filterset_fields = ["name"]
 
 
 class PetDislikeViewSet(BasePetViewSet):
     """pet dislike view set"""
-    queryset = PetDislike.objects.all().order_by('-pk')
+
+    queryset = PetDislike.objects.all().order_by("-pk")
     serializer_class = PetDislikeSerializer
-    filterset_fields = ['name']
+    filterset_fields = ["name"]
 
 
 class PetStatViewSet(APIView):
     """pet stat view"""
+
     serializer_class = PetStatSerializer
 
     def get(self, request, *args, **kwargs):
@@ -86,12 +106,12 @@ class PetStatViewSet(APIView):
         type_count = PetType.objects.count()
         breed_count = PetBreed.objects.count()
         data = {
-            'pet_count': pet_count,
-            'male_count': male_count,
-            'female_count': female_count,
-            'dead_count': dead_count,
-            'type_count': type_count,
-            'breed_count': breed_count,
+            "pet_count": pet_count,
+            "male_count": male_count,
+            "female_count": female_count,
+            "dead_count": dead_count,
+            "type_count": type_count,
+            "breed_count": breed_count,
         }
         serializer = PetStatSerializer(data)
         return Response(serializer.data, status=status.HTTP_200_OK)

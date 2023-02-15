@@ -38,5 +38,6 @@ class CustomerDetailSerializer(CustomerSerializer):
     """Serializer for customer detail view."""
     # todo karte追加後Fields追加
     memos = CustomerMemoSerializer(many=True, required=False)
+
     class Meta(CustomerSerializer.Meta):
         fields = CustomerSerializer.Meta.fields + ['memos']
