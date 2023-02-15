@@ -226,6 +226,7 @@ export function usePetTypeMutation({token}: { token?: string }) {
         {
             onSuccess: () => {
                 queryClient.invalidateQueries(PET_TYPES)
+                queryClient.invalidateQueries(PET_BREEDS)
                 queryClient.invalidateQueries(PET_STAT)
                 toast.success("タイプ削除成功");
             },
