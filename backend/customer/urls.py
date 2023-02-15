@@ -12,4 +12,7 @@ router.register("memos", views.CustomerMemoViewSet)
 
 app_name = "customer"
 
-urlpatterns = [path("", include(router.urls))]
+urlpatterns = [
+    path("", include(router.urls)),
+    path("stat", views.CustomerStatViewSet.as_view(), name="customer-stat"),
+]

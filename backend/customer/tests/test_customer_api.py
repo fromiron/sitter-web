@@ -1,16 +1,18 @@
 """
 顧客apiテスト
 """
-
-from core.models import Customer
+from core.helper.create_dummy_pack import create_pet
+from core.models import Customer, Pet
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
+import random
 
 from rest_framework import status
 from rest_framework.test import APIClient
 
 CUSTOMER_URL = reverse("customer:customer-list")
+CUSTOMER_STAT_URL = reverse("customer:customer-stat")
 
 
 def detail_url(customer_id):
@@ -181,3 +183,39 @@ class PrivateCustomerApiTestsForStaff(TestCase):
         res = self.client.delete(url)
         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Customer.objects.filter(id=customer.id).exists())
+
+    def test_customer_stat_data(self):
+        """dashboardなどに使うstatデータを取得できるかをテスト"""
+        customers = [
+            {
+                "name": "testuser1",
+                "name_kana": "testuser1_kana",
+            },
+            {
+                "name": "testuser2",
+                "name_kana": "testuser2_kana",
+            },
+        ]
+
+        pets = [
+            {"name": "モモンガ1", "sex": True, "birth": "2022-01-01"},
+            {"name": "モモンガ2", "sex": True, "birth": "2012-12-01"},
+            {"name": "リス1", "sex": False, "birth": "2022-12-01"},
+        ]
+        customer_objects = []
+        for data in customers:
+            customer = create_customer(**data)
+            customer_objects.append(customer)
+        for data in pets:
+            data["customer"] = customer_objects[
+                random.randint(0, len(customer_objects) - 1)
+            ]
+            create_pet(**data)
+
+        res = self.client.get(CUSTOMER_STAT_URL)
+        pet_count = Pet.objects.count()
+        customer_count = Customer.objects.count()
+        data = res.data
+        self.assertEquals(res.status_code, status.HTTP_200_OK)
+        self.assertEquals(data["average_pets"], pet_count / customer_count)
+        self.assertEquals(data["total_customers"], customer_count)
