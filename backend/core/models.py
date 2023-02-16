@@ -87,6 +87,7 @@ class Customer(models.Model):
     name_kana = models.CharField(max_length=40, blank=True, null=True)
     tel = models.CharField(max_length=40)
     tel2 = models.CharField(max_length=40, blank=True, null=True)
+    zipcode = models.CharField(max_length=255, blank=True, null=True)
     address = models.CharField(max_length=255)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

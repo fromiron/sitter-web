@@ -28,7 +28,7 @@ class CustomerViewSet(BaseCustomerViewSet):
 
     queryset = Customer.objects.all().order_by("-pk")
     serializer_class = CustomerSerializer
-    search_fields = ["id", "name", "name_kana", "address", "tel", "tel2"]
+    search_fields = ["id", "name", "name_kana", "zipcode", "address", "tel", "tel2"]
 
     def get_serializer_class(self):
         """actionにあうserializerをリターンする"""
