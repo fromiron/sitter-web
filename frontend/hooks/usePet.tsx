@@ -67,7 +67,7 @@ async function getPetBreeds({token}: { token?: string }) {
     return data;
 }
 
-async function addPetTypes({token, payload}: {
+async function addPetTypeMutation({token, payload}: {
     token?: string;
     payload: any;
 }) {
@@ -79,7 +79,7 @@ async function addPetTypes({token, payload}: {
     return null;
 }
 
-async function deletePetTypes({token, payload}: {
+async function deletePetTypeMutation({token, payload}: {
     token?: string;
     payload: { id: number };
 }) {
@@ -91,10 +91,10 @@ async function deletePetTypes({token, payload}: {
     return null;
 }
 
-async function addPetBreeds({
-                                token,
-                                payload,
-                            }: {
+async function addPetBreedMutation({
+                                       token,
+                                       payload,
+                                   }: {
     token?: string;
     payload: { type_id: number; name: string };
 }) {
@@ -107,7 +107,7 @@ async function addPetBreeds({
     return null;
 }
 
-async function deletePetBreeds({token, payload}: {
+async function deletePetBreedMutation({token, payload}: {
     token?: string;
     payload: { id: number };
 }) {
@@ -206,7 +206,7 @@ export function usePetType({token}: { token?: string }): UsePetTypeInterface {
 
 export function usePetTypeMutation({token}: { token?: string }) {
     const addPetType = useMutation(
-        (payload: { name: string }) => addPetTypes({token, payload}),
+        (payload: { name: string }) => addPetTypeMutation({token, payload}),
         {
             onSuccess: () => {
                 queryClient.invalidateQueries(PET_TYPES);
@@ -222,7 +222,7 @@ export function usePetTypeMutation({token}: { token?: string }) {
 
 
     const deletePetType = useMutation(
-        (payload: { id: number }) => deletePetTypes({token, payload}),
+        (payload: { id: number }) => deletePetTypeMutation({token, payload}),
         {
             onSuccess: () => {
                 queryClient.invalidateQueries(PET_TYPES)
@@ -269,7 +269,7 @@ export function usePetBreed({
 export function usePetBreedMutation({token}: { token?: string }) {
     const addPetBreed = useMutation(
         (payload: { name: string; type_id: number }) =>
-            addPetBreeds({token, payload}),
+            addPetBreedMutation({token, payload}),
         {
             onSuccess: () => {
                 queryClient.invalidateQueries(PET_BREEDS);
@@ -284,7 +284,7 @@ export function usePetBreedMutation({token}: { token?: string }) {
     );
 
     const deletePetBreed = useMutation(
-        (payload: { id: number }) => deletePetBreeds({token, payload}),
+        (payload: { id: number }) => deletePetBreedMutation({token, payload}),
         {
             onSuccess: () => {
                 queryClient.invalidateQueries(PET_BREEDS);
