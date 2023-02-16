@@ -1,0 +1,1 @@
+export const ZIP_CODE_PATTERN: RegExp = /^\d{3}(-?\d{4})$/;

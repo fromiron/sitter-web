@@ -1,18 +1,17 @@
 import CMSLayout from "@components/layout/cms/CMSLayout";
 
-import {useCustomer, useCustomerStat} from "@hooks/useCustomer";
+import {useCustomer, useCustomerMutation, useCustomerStat} from "@hooks/useCustomer";
 import {RiUserAddLine} from "react-icons/ri";
 import {Table} from "./partials/Table";
 import {GetServerSideProps} from "next";
 import {getSession} from "next-auth/react";
-import {
-    SearchSelectOptionInterface,
-    SessionAuthInterface,
-} from "@interfaces/cmsInterfaces";
+import {SearchSelectOptionInterface, SessionAuthInterface,} from "@interfaces/cmsInterfaces";
 import SearchInput from "@components/layout/cms/SearchInput";
 import {ResetButton} from "@components/layout/buttons";
 import NumberCountWidget from "@components/widgets/NumberCountWidget";
 import {FeatureWidget} from "@components/widgets/FeatureWidget";
+import {CustomerAddModal} from "./partials/CustomerAddModal";
+import {useState} from "react";
 
 const options: SearchSelectOptionInterface = {
     idDESC: {
@@ -41,30 +40,39 @@ const options: SearchSelectOptionInterface = {
     },
 };
 
-export default function Customers({
-                                      session,
-                                  }: {
+
+export default function Customers({session}: {
     session: SessionAuthInterface;
 }) {
+    const token = session.access_token;
     const {
         data: customers,
         isLoading,
         query,
         setQuery,
         resetQuery,
-    } = useCustomer({token: session.access_token});
+    } = useCustomer({token});
+    const [isCustomerAddModalOpen, setIsCustomerAddModalOpen] = useState(false);
+    const customerMutation = useCustomerMutation({token});
+
 
     const {data: customerStat} = useCustomerStat({token: session.access_token});
-    console.log(customerStat)
+
+    const openCustomerAddModal = () => setIsCustomerAddModalOpen(true);
+
+
     return (
         <CMSLayout>
+            <CustomerAddModal isModalOpen={isCustomerAddModalOpen}
+                              mutation={customerMutation}
+                              setIsModalOpen={setIsCustomerAddModalOpen}/>
             <div className="flex gap-4 mb-4 w-fit">
                 <NumberCountWidget count={customerStat?.total_customers} title={"総顧客"}/>
                 <NumberCountWidget count={customerStat?.recent_created} title={"新規顧客"}/>
                 <NumberCountWidget count={Number(customerStat?.average_pets.toFixed(2))} title={"平均ペット"}/>
                 <FeatureWidget
                     Icon={RiUserAddLine}
-                    onClick={() => console.log("click")}
+                    onClick={openCustomerAddModal}
                 />
             </div>
             <div className="flex">
