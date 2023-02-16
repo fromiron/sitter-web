@@ -12,9 +12,15 @@ import random
 
 def generate_tel_number():
     a = str(random.randint(0, 999)).zfill(3)
-    b = str(random.randint(0, 999)).zfill(4)
-    c = str(random.randint(0, 999)).zfill(4)
+    b = str(random.randint(0, 9999)).zfill(4)
+    c = str(random.randint(0, 9999)).zfill(4)
     return f"{a}-{b}-{c}"
+
+
+def generate_zipcode():
+    a = str(random.randint(0, 999)).zfill(3)
+    b = str(random.randint(0, 9999)).zfill(4)
+    return f"{a}-{b}"
 
 
 class Command(BaseCommand):
@@ -40,6 +46,7 @@ class Command(BaseCommand):
                     "name_kana": name_kana,
                     "tel": generate_tel_number(),
                     "tel2": generate_tel_number(),
+                    "zipcode": generate_zipcode(),
                     "address": faker.address(),
                 },
             )
