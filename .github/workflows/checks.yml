@@ -12,7 +12,7 @@ jobs:
       DJANGO_SECRET_KEY: secret_key
       MARIADB_ROOT_PASSWORD: password
       DB_NAME: sitter-devdb
-      DB_USER: dbuser
+      DB_USER: root
       DB_PASSWORD: password
     steps:
       - name: Login to Docker hub
@@ -22,10 +22,6 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Stop and Remove existing containers
-        run: |
-          docker-compose down -v
-          docker-compose rm -f
 
       - name: Build and Start Containers
         run: docker-compose up -d --build
