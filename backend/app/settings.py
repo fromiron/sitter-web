@@ -10,13 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-from datetime import timedelta
 import os
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -69,7 +68,6 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get(
     'SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET', 'GOOGLE_OAUTH2_SECRET')
 
 SITE_ID = 1
-
 
 # Application definition
 
@@ -148,7 +146,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'app.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
@@ -159,9 +156,11 @@ DATABASES = {
         'NAME': os.environ.get('DB_NAME'),
         'USER': os.environ.get('DB_USER'),
         'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'TEST': {
+            'NAME': 'test_' + os.environ.get('DB_NAME')
+        }
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -181,7 +180,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -192,7 +190,6 @@ TIME_ZONE = 'Asia/Tokyo'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
@@ -265,12 +262,10 @@ JWT_AUTH_COOKIE_USE_CSRF = True
 JWT_AUTH_HTTPONLY = False
 JWT_AUTH_RETURN_EXPIRATION = True  # ログイン時のレスポンスに有効期限を含める
 
-
 # allauth設定
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
 SOCIALACCOUNT_EMAIL_REQUIRED = True
-
 
 AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
@@ -283,7 +278,6 @@ REST_AUTH_SERIALIZERS = {
     'USER_DETAILS_SERIALIZER': 'user.serializers.UserSerializer',
 }
 
-
 # mail settings
 if DEBUG:
     EMAIL_HOST = 'mailcatcher'
@@ -291,7 +285,6 @@ if DEBUG:
     EMAIL_HOST_PASSWORD = ''
     EMAIL_PORT = 1025
     EMAIL_USE_TLS = False
-
 
 SPECTACULAR_SETTINGS = {
     'COMPONENT_SPLIT_REQUEST': True,
