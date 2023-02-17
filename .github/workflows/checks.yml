@@ -27,11 +27,6 @@ jobs:
           docker-compose down -v
           docker-compose rm -f
 
-      - name: Remove old database and media files
-        run: |
-          rm -rf data/db
-          rm -rf data/media
-
       - name: Build and Start Containers
         run: docker-compose up -d --build
 
