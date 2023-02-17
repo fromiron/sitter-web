@@ -30,7 +30,8 @@ jobs:
         run: docker-compose run --rm backend sh -c "python manage.py wait_for_db"
 
       - name: Grant setting
-        run: docker-compose exec -T database mysql --protocol=tcp -P 3306 -u root -p$MARIADB_ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON test_database.* TO 'dbuser'@'%';"
+        run: |
+          docker-compose exec -T database mysql -u root -p$MARIADB_ROOT_PASSWORD -e "GRANT ALL PRIVILEGES ON \`$DB_NAME\`.* TO '$DB_USER'@'%';"
 
       - name: Migrate Database
         run: docker-compose run --rm backend sh -c "python manage.py migrate"
