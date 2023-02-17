@@ -37,3 +37,7 @@ seed_customer:
 
 seed_pet:
 	docker-compose run --rm backend sh -c "python manage.py seed_pet --total 50"
+
+
+act:
+	act --secret-file .secrets -P ubuntu-20.04=catthehacker/ubuntu:full-20.04

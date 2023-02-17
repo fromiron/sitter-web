@@ -18,3 +18,4 @@ backend/.env
 frontend/.env
 .env
 /database/data/
+.secrets
