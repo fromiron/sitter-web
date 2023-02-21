@@ -20,10 +20,10 @@ dtest:
 dlint:
 	docker-compose run --rm backend sh -c "flake8"
 
-dcmd:
+bcmd:
 	docker-compose run --rm backend sh -c "$(c)"
 
-dpmd:
+bpmd:
 	docker-compose run --rm backend sh -c "python manage.py $(c)"
 
 migration:

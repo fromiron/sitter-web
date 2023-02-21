@@ -3,7 +3,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.utils import timezone
 from datetime import timedelta
-
 from core.models import Customer, CustomerMemo
 from core.pagination import ListPageNumberPagination
 from customer.serializers import (

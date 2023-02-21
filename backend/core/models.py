@@ -36,7 +36,6 @@ class UserManager(BaseUserManager):
             name=name,
             **extra_filed,
             last_login=now,
-            date_joined=now,
         )
         user.set_password(password)
         user.save(using=self._db)
@@ -71,7 +70,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     last_login = models.DateTimeField(null=True, blank=True)
-    date_joined = models.DateTimeField(auto_now_add=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     objects = UserManager()

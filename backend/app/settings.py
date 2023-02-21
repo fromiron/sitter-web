@@ -189,11 +189,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.1/howto/static-files/
-
-STATIC_URL = "static/"
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
@@ -206,7 +201,6 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAdminUser",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
     ],
     # drfのschemaをdrf-specacularのAutoSchemaに自動変換.
@@ -215,16 +209,15 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
 }
 SIMPLE_JWT = {
-    "AUTH_HEADER_TYPES": "JWT",
+    "AUTH_HEADER_TYPES": ("JWT"),
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    "ROTATE_REFRESH_TOKENS": False,
+    "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": True,
     "USER_ID_FIELD": "id",
     "USER_ID_CLAIM": "user_id",
 }
-
 
 # allauth google provider settings
 # https://django-allauth.readthedocs.io/en/latest/providers.html
@@ -235,11 +228,11 @@ SOCIALACCOUNT_PROVIDERS = {
             "email",
         ],
         "AUTH_PARAMS": {
-            "access_type": "online",
+            "access_type": "offline",
         },
         "OAUTH_PKCE_ENABLED": True,
     },
-    "line": {"SCOPE": ["profile", "openid", "email"], "LINE_EMAIL": True},
+    "line": {"SCOPE": ["profile", "openid", "email"]},
 }
 GOOGLE_CALLBACK_URI = os.environ.get(
     "GOOGLE_CALLBACK_URI", "http://localhost:8000/api/auth/google/callback/"
@@ -248,10 +241,11 @@ GOOGLE_CALLBACK_URI = os.environ.get(
 # dj-rest-auth settings
 # https://dj-rest-auth.readthedocs.io/en/latest/configuration.html?highlight=USER_DETAILS_SERIALIZER#configuration
 REST_USE_JWT = True
-JWT_AUTH_COOKIE = "jwt-token"
+USE_JWT = True
+JWT_AUTH_COOKIE = "JWT"
 JWT_AUTH_REFRESH_COOKIE = "jwt-refresh-token"
 JWT_AUTH_COOKIE_USE_CSRF = True
-JWT_AUTH_HTTPONLY = True
+JWT_AUTH_HTTPONLY = False
 JWT_AUTH_RETURN_EXPIRATION = True  # ログイン時のレスポンスに有効期限を含める
 
 # allauth設定
@@ -259,7 +253,6 @@ JWT_AUTH_RETURN_EXPIRATION = True  # ログイン時のレスポンスに有効�
 SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
 SOCIALACCOUNT_EMAIL_REQUIRED = True
 SOCIALACCOUNT_AUTO_SIGNUP = True
-SOCIALACCOUNT_EMAIL_VERIFICATION = False
 SOCIALACCOUNT_STORE_TOKENS = True
 SOCIALACCOUNT_QUERY_EMAIL = True
 ACCOUNT_MAX_EMAIL_ADDRESSES = 1
@@ -271,7 +264,6 @@ ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False  # ユーザー名を要求しない
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True  # ユーザー登録後メールから確認ボタンを押したら登録済にする
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
-
 
 AUTHENTICATION_BACKENDS = [
     "allauth.account.auth_backends.AuthenticationBackend",
