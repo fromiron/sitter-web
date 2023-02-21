@@ -1,9 +1,9 @@
-import axios from "axios";
+import axios, {AxiosInstance} from "axios";
 
-export const axiosClient = axios.create({
-  timeout: 3000,
-  withCredentials: true,
-  headers: {
-    "Content-Type": "application/json",
-  },
+export const axiosClient: AxiosInstance = axios.create({
+    timeout: 3000,
+    withCredentials: true,
+    headers: {
+        "Content-Type": "application/json",
+    },
 });
