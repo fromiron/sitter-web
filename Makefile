@@ -1,6 +1,9 @@
 start:
 	docker-compose up
 
+startd:
+	docker-compose up --build
+
 build:
 	docker-compose build
 

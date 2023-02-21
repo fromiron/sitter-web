@@ -69,7 +69,7 @@ export default function Customers({session}: {
             <div className="flex gap-4 mb-4 w-fit">
                 <NumberCountWidget count={customerStat?.total_customers} title={"総顧客"}/>
                 <NumberCountWidget count={customerStat?.recent_created} title={"新規顧客"}/>
-                <NumberCountWidget count={Number(customerStat?.average_pets.toFixed(2))} title={"平均ペット"}/>
+                <NumberCountWidget count={Number(customerStat?.average_pets?.toFixed(2))} title={"平均ペット"}/>
                 <FeatureWidget
                     Icon={RiUserAddLine}
                     onClick={openCustomerAddModal}

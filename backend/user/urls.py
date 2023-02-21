@@ -2,13 +2,13 @@
 URL mappings for auth
 """
 
-from django.urls import path, include, re_path
-from user.views import GoogleAuthView
 from dj_rest_auth.registration.views import (
     VerifyEmailView,
     ConfirmEmailView,
-    SocialAccountListView,
 )
+from django.urls import path, include, re_path
+
+from user.views import GoogleAuthView, LineAuthView
 
 app_name = "user"
 
@@ -27,10 +27,6 @@ urlpatterns = [
         ConfirmEmailView.as_view(),
         name="account_confirm_email",
     ),
-    path("google/", GoogleAuthView.as_view(), name="google_connect"),
-    path(
-        "socialaccounts/",
-        SocialAccountListView.as_view(),
-        name="socialaccount_connections",
-    ),
+    path("google/", GoogleAuthView.as_view(), name="google_login"),
+    path("line/", LineAuthView.as_view(), name="line_login"),
 ]
