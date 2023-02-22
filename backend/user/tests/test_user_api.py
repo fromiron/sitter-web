@@ -12,13 +12,13 @@ from rest_framework import status
 
 # url reverse name参照
 # https://github.com/iMerica/dj-rest-auth/blob/master/dj_rest_auth/registration/urls.py
-CREATE_USER_URL = reverse('user:rest_register')
+CREATE_USER_URL = reverse("user:rest_register")
 # url reverse name参照
 # https://github.com/iMerica/dj-rest-auth/blob/master/dj_rest_auth/urls.py
-LOGIN_URL = reverse('user:rest_login')
-ME_URL = reverse('user:rest_user_details')
-VERIFY_EMAIL_URL = reverse('user:rest_verify_email')
-EMAIL_VERIFICATION_SENT_URL = reverse('user:account_email_verification_sent')
+LOGIN_URL = reverse("user:rest_login")
+ME_URL = reverse("user:rest_user_details")
+VERIFY_EMAIL_URL = reverse("user:rest_verify_email")
+EMAIL_VERIFICATION_SENT_URL = reverse("user:account_email_verification_sent")
 
 
 def create_user(**params):
@@ -36,10 +36,10 @@ class PublicUserApiTests(TestCase):
     def test_create_user_success(self):
         """ユーザー生成成功テスト"""
         payload = {
-            'email': 'test@example.com',
-            'name': 'testuser',
-            'password1': 'passsword123',
-            'password2': 'passsword123'
+            "email": "test@example.com",
+            "username": "testuser",
+            "password1": "passsword123",
+            "password2": "passsword123",
         }
         res = self.client.post(CREATE_USER_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
@@ -53,15 +53,15 @@ class PublicUserApiTests(TestCase):
     def test_create_user_email_exists_error(self):
         """ユーザー生成中、メール中腹エラーテスト"""
         userdata = {
-            'email': 'test@example.com',
-            'name': 'testuser',
-            'password': 'passsword123',
+            "email": "test@example.com",
+            "name": "testuser",
+            "password": "passsword123",
         }
         payload = {
-            'email': 'test@example.com',
-            'name': 'testuser',
-            'password1': 'passsword123',
-            'password2': 'passsword123'
+            "email": "test@example.com",
+            "username": "testuser",
+            "password1": "passsword123",
+            "password2": "passsword123",
         }
         create_user(**userdata)
         res = self.client.post(CREATE_USER_URL, payload)
@@ -70,130 +70,110 @@ class PublicUserApiTests(TestCase):
     def test_create_user_mail_is_null_error(self):
         """ユーザー生成中、メール未入力エラーテスト"""
         payload = {
-            'email': '',
-            'name': 'testuser',
-            'password1': 'passsword123',
-            'password2': 'passsword123'
+            "email": "",
+            "name": "testuser",
+            "password1": "passsword123",
+            "password2": "passsword123",
         }
         res = self.client.post(CREATE_USER_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
-        user_exists = get_user_model().objects.filter(
-            email=payload['email']
-        ).exists()
+        user_exists = get_user_model().objects.filter(email=payload["email"]).exists()
         self.assertFalse(user_exists)
 
-    def test_create_user_name_is_null_success(self):
+    def test_create_user_name_is_null_error(self):
         """ユーザー生成中、名前未入力エラーテスト"""
         payload = {
-            'email': 'test@example.com',
-            'name': '',
-            'password1': 'passsword123',
-            'password2': 'passsword123'
+            "email": "test@example.com",
+            "username": "",
+            "password1": "passsword123",
+            "password2": "passsword123",
         }
         res = self.client.post(CREATE_USER_URL, payload)
-        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
-        user_exists = get_user_model().objects.filter(
-            email=payload['email']
-        ).exists()
-        self.assertTrue(user_exists)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        user_exists = get_user_model().objects.filter(email=payload["email"]).exists()
+        self.assertFalse(user_exists)
 
     def test_create_user_password_too_short_error(self):
         """ユーザー生成中、passwordが短いとき(8文字未満)エラーテスト"""
         payload = {
-            'email': 'test@example.com',
-            'name': 'testuser',
-            'password1': 'passs',
-            'password2': 'passs'
+            "email": "test@example.com",
+            "name": "testuser",
+            "password1": "passs",
+            "password2": "passs",
         }
         res = self.client.post(CREATE_USER_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
-        user_exists = get_user_model().objects.filter(
-            email=payload['email']
-        ).exists()
+        user_exists = get_user_model().objects.filter(email=payload["email"]).exists()
         self.assertFalse(user_exists)
 
     def test_login_not_verified_user(self):
         """認証されてないメールユーザーログインテスト"""
         db_user_data = {
-            'name': 'testuser2',
-            'email': 'test@example.com',
-            'password': 'password123'
+            "name": "testuser2",
+            "email": "test@example.com",
+            "password": "password123",
         }
         create_user(**db_user_data)
-        payload = {
-            'email': db_user_data['email'],
-            'password': db_user_data['password']
-        }
+        payload = {"email": db_user_data["email"], "password": db_user_data["password"]}
         res = self.client.post(LOGIN_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertTrue(res.data['user']['is_active'])
-        self.assertFalse(res.data['user']['is_staff'])
+        self.assertTrue(res.data["user"]["is_active"])
+        self.assertFalse(res.data["user"]["is_staff"])
 
     def test_login_verified_user(self):
         """ユーザーtoken生成テスト"""
         db_user_data = {
-            'name': 'testuser',
-            'email': 'test@example.com',
-            'password': 'password123',
-            'is_active': True,
-            'is_staff': True
+            "name": "testuser",
+            "email": "test@example.com",
+            "password": "password123",
+            "is_active": True,
+            "is_staff": True,
         }
         user = create_user(**db_user_data)
         EmailAddress.objects.create(
-            email=db_user_data['email'],
-            user=user,
-            verified=True
+            email=db_user_data["email"], user=user, verified=True
         )
 
-        payload = {
-            'email': db_user_data['email'],
-            'password': db_user_data['password']
-        }
+        payload = {"email": db_user_data["email"], "password": db_user_data["password"]}
         res = self.client.post(LOGIN_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertIn('access_token', res.data)
-        self.assertIn('user', res.data)
-        self.assertTrue(res.data["user"]['is_active'])
-        self.assertTrue(res.data["user"]['is_staff'])
+        self.assertIn("access_token", res.data)
+        self.assertIn("user", res.data)
+        self.assertTrue(res.data["user"]["is_active"])
+        self.assertTrue(res.data["user"]["is_staff"])
 
     def test_create_token_incorrect_password_error(self):
         """ユーザーtoken生成時間違ったパスワードエラー発生テスト"""
         db_user_data = {
-            'name': 'testuser',
-            'email': 'test@example.com',
-            'password': 'password123'
+            "name": "testuser",
+            "email": "test@example.com",
+            "password": "password123",
         }
 
         create_user(**db_user_data)
 
-        payload = {
-            'email': db_user_data['email'],
-            'password': 'incorrectpass'
-        }
+        payload = {"email": db_user_data["email"], "password": "incorrectpass"}
 
         res = self.client.post(LOGIN_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertNotIn('token', res.data)
+        self.assertNotIn("token", res.data)
 
     def test_create_token_blank_password_error(self):
         """ユーザーtoken生成時パスワード空欄エラー発生テスト"""
         db_user_data = {
-            'name': 'testuser',
-            'email': 'test@example.com',
-            'password': 'password123'
+            "name": "testuser",
+            "email": "test@example.com",
+            "password": "password123",
         }
 
         create_user(**db_user_data)
 
-        payload = {
-            'email': db_user_data['email'],
-            'password': ''
-        }
+        payload = {"email": db_user_data["email"], "password": ""}
 
         res = self.client.post(LOGIN_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertNotIn('token', res.data)
+        self.assertNotIn("token", res.data)
 
 
 class PrivateUserApiTests(TestCase):
@@ -202,11 +182,11 @@ class PrivateUserApiTests(TestCase):
     def setUp(self):
         settings.ACCOUNT_EMAIL_VERIFICATION = None
         self.user = create_user(
-            email='test@example.com',
-            name='testuser',
-            password='password123',
+            email="test@example.com",
+            name="testuser",
+            password="password123",
             is_active=True,
-            is_staff=True
+            is_staff=True,
         )
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
@@ -215,7 +195,7 @@ class PrivateUserApiTests(TestCase):
         """自分のデータ-(メール、ネーム)の取得ができるかのテスト"""
         res = self.client.get(ME_URL)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data['email'], self.user.email)
+        self.assertEqual(res.data["email"], self.user.email)
 
     def test_me_not_allowed(self):
         """postでの通信に405エラーになるかのテスト"""
@@ -224,8 +204,8 @@ class PrivateUserApiTests(TestCase):
 
     def test_update_user_profile(self):
         """ユーザーデータのアップデートができるかのテスト"""
-        payload = {'email': 'updated@example.com'}
+        payload = {"email": "updated@example.com"}
         res = self.client.patch(ME_URL, payload)
         self.user.refresh_from_db()
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(self.user.email, payload['email'])
+        self.assertEqual(self.user.email, payload["email"])
