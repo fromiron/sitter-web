@@ -6,7 +6,7 @@ export function SocialLoginPolicyModal({isModalOpen, setIsModalOpen}: {
     isModalOpen: boolean;
     setIsModalOpen: Dispatch<SetStateAction<boolean>>;
 }) {
-
+    
     return (
         <ModalContainer
             title="ソシアルアカウントログインポリシー"

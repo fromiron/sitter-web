@@ -16,6 +16,14 @@ const nextConfig = {
         });
         return config;
     },
+    async rewrites() {
+        return [
+            {
+                source: '/zipcode/:path*',
+                destination: 'https://zipcloud.ibsnet.co.jp/api/search?zipcode=:path*',
+            },
+        ]
+    },
 };
 
 module.exports = nextConfig;

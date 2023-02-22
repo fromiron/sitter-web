@@ -1,148 +1,149 @@
-import {Dispatch, SetStateAction} from "react";
+import { Dispatch, SetStateAction } from "react";
 
 export interface LoginFormInterface {
-    email: string;
-    password: string;
+  email: string;
+  password: string;
 }
 
 export interface UserInterface {
-    id: number | string;
-    name: string;
-    email: string;
-    is_active: boolean | string;
-    is_staff: boolean | string;
-    last_login: string;
+  id: number | string;
+  name: string;
+  email: string;
+  is_active: boolean | string;
+  is_staff: boolean | string;
+  last_login: string;
 }
 
 export interface RefreshTokenInterface {
-    access?: string;
-    access_token_expiration?: string;
-    detail?: string;
-    code?: string;
+  access?: string;
+  access_token_expiration?: string;
+  detail?: string;
+  code?: string;
 }
 
 export interface SessionAuthInterface {
-    access_token?: string;
-    access_token_expiration?: string;
-    refresh_token?: string;
-    refresh_token_expiration?: string;
-    user?: UserInterface;
+  access_token?: string;
+  access_token_expiration?: string;
+  refresh_token?: string;
+  refresh_token_expiration?: string;
+  user?: UserInterface;
 }
 
 // for mutation
 export interface CustomerBaseInterface {
-    name: string;
-    name_kana: string;
-    tel: string;
-    tel2: string;
-    zipcode: string;
-    address: string;
+  name: string;
+  name_kana: string;
+  tel: string;
+  tel2: string;
+  zipcode: string;
+  address: string;
 }
 
 //next-auth interface
 export interface CustomerInterface extends CustomerBaseInterface {
-    id: string;
-    memos: CustomerMemoInterface[];
-    pets: PetInterface[];
+  id: string;
+  memos: CustomerMemoInterface[];
+  pets: PetInterface[];
 }
 
 export interface CustomerMemoInterface extends MemoInterface {
-    customer_id: number;
+  customer_id: number;
 }
 
 export interface MemoInterface {
-    id: number;
-    memo: string;
+  id: number;
+  memo: string;
 }
 
 export interface MemoInterface {
-    id: number;
-    memo: string;
+  id: number;
+  memo: string;
 }
 
 export interface CustomersInterface {
-    count: number;
-    next: number | null;
-    previous: number | null;
-    results: CustomerInterface[];
+  count: number;
+  next: number | null;
+  previous: number | null;
+  results: CustomerInterface[];
 }
 
 export interface PetInterface {
+  id: number;
+  name: "string";
+  sex: boolean;
+  birth: string;
+  death: string;
+  type: {
     id: number;
     name: "string";
-    sex: boolean;
-    birth: string;
-    death: string;
-    type: {
-        id: number;
-        name: "string";
-    };
-    breed: {
-        id: number;
-        name: "string";
-    };
-    customer: {
-        id: number;
-        name: string;
-        name_kana?: string;
-    };
-    weight: number;
-    image: string | null;
-    thumbnail: string | null;
+  };
+  breed: {
+    id: number;
+    name: "string";
+  };
+  customer: {
+    id: number;
+    name: string;
+    name_kana?: string;
+  };
+  weight: number;
+  image: string | null;
+  thumbnail: string | null;
 }
 
 export interface PetsInterface {
-    count: number;
-    next: number | null;
-    previous: number | null;
-    results: PetInterface[];
+  count: number;
+  next: number | null;
+  previous: number | null;
+  results: PetInterface[];
 }
 
 export interface QueryInterface {
-    search: string;
-    ordering: string;
-    page: number;
+  search: string;
+  ordering: string;
+  page: number;
 }
 
 export interface SearchValuesInterface {
-    ordering?: string;
-    search?: string;
+  ordering?: string;
+  search?: string;
 }
 
 export interface SearchInputInterface {
-    setQuery: Dispatch<SetStateAction<QueryInterface>>;
-    query: QueryInterface;
-    options: SearchSelectOptionInterface;
-    placeholder?: string;
+  setQuery: Dispatch<SetStateAction<QueryInterface>>;
+  query: QueryInterface;
+  options: SearchSelectOptionInterface;
+  placeholder?: string;
 }
 
 export interface BaseTableInterface {
-    setQuery: Dispatch<SetStateAction<QueryInterface>>;
-    query: QueryInterface;
-    isLoading: boolean;
+  setQuery: Dispatch<SetStateAction<QueryInterface>>;
+  query: QueryInterface;
+  isLoading: boolean;
 }
 
 export interface CustomerTableInterface extends BaseTableInterface {
-    customers: CustomersInterface | undefined;
+  customers: CustomersInterface | undefined;
+  setIsModalOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 export interface PetTableInterface extends BaseTableInterface {
-    pets: PetsInterface | undefined;
-    customerFilter: string | number;
-    setCustomerFilter: Dispatch<SetStateAction<string | number>>;
+  pets: PetsInterface | undefined;
+  customerFilter: string | number;
+  setCustomerFilter: Dispatch<SetStateAction<string | number>>;
 }
 
 export interface SearchSelectOptionInterface {
-    [key: string]: { query: string; string: string };
+  [key: string]: { query: string; string: string };
 }
 
 export interface PetTypeInterface {
-    id: number;
-    name: string;
+  id: number;
+  name: string;
 }
 
 export interface PetBreedInterface {
-    id: number;
-    name: string;
-    type_id: number;
+  id: number;
+  name: string;
+  type_id: number;
 }

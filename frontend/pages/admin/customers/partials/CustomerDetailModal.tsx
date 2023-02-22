@@ -13,19 +13,26 @@ import insertString from "@helpers/insert-string";
 import { axiosClient } from "@lib/axios-client";
 import { toast } from "react-toastify";
 
-export function CustomerAddModal({
+export function CustomerDetailModal({
   isModalOpen,
   setIsModalOpen,
-  addCustomer,
+  editCustomer,
+  deleteCustomer,
 }: {
-  addCustomer: UseMutationResult<
+  isModalOpen: boolean;
+  setIsModalOpen: Dispatch<SetStateAction<boolean>>;
+  editCustomer: UseMutationResult<
     null,
     AxiosError<unknown, any>,
     CustomerBaseInterface,
     unknown
   >;
-  isModalOpen: boolean;
-  setIsModalOpen: Dispatch<SetStateAction<boolean>>;
+  deleteCustomer: UseMutationResult<
+    null,
+    AxiosError<unknown, any>,
+    { id: string | number },
+    unknown
+  >;
 }) {
   const {
     register,
@@ -37,7 +44,7 @@ export function CustomerAddModal({
 
   const getAddress = async (zipcode: string) => {
     const res: void | AxiosResponse<any, any> = await axiosClient
-      .get(`/zipcode/${zipcode}`)
+      .get(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${zipcode}`)
       .catch((error: AxiosError) => {
         toast.error("住所取得に失敗しました。");
       });
@@ -57,7 +64,7 @@ export function CustomerAddModal({
   const handleReset = () => reset();
   const onSubmit = (data: CustomerBaseInterface) => {
     console.log(data);
-    addCustomer.mutate(data);
+    editCustomer.mutate(data);
   };
 
   const checkKeyDown = (e: KeyboardEvent<HTMLFormElement>) => {
@@ -74,10 +81,10 @@ export function CustomerAddModal({
       }
     }
     const zipcode = numberNormalize(value);
+    setValue("zipcode", zipcode);
     if (value.length >= 8) {
       await getAddress(zipcode.replace("-", ""));
     }
-    setValue("zipcode", zipcode);
   };
 
   const handleTelNumber = async (
@@ -91,7 +98,7 @@ export function CustomerAddModal({
 
   return (
     <ModalContainer
-      title="顧客情報登録"
+      title="顧客情報"
       isOpen={isModalOpen}
       setIsOpen={setIsModalOpen}
       Icon={FaUser}
@@ -152,24 +159,24 @@ export function CustomerAddModal({
             onChange: (e) => handleTelNumber(e, "tel2"),
           })}
         />
-        <TextInput
-          colSpan={1}
-          errorMsg={errors.zipcode?.message}
-          label={"郵便番号 (optional)"}
-          placeholder={"064-○○○〇"}
-          Icon={IoMdAdd}
-          type={"tel"}
-          maxLength={8}
-          minLength={7}
-          register={register("zipcode", {
-            pattern: {
-              value: ZIP_CODE_PATTERN,
-              message: "012-3456のように入力してください。",
-            },
-            onChange: (e) => handleZipcode(e),
-          })}
-        />
-        <div className="w-full col-span-1" />
+        <div className="w-full col-span-1">
+          <TextInput
+            errorMsg={errors.zipcode?.message}
+            label={"郵便番号 (optional)"}
+            placeholder={"064-○○○〇"}
+            Icon={IoMdAdd}
+            type={"tel"}
+            maxLength={8}
+            minLength={7}
+            register={register("zipcode", {
+              pattern: {
+                value: ZIP_CODE_PATTERN,
+                message: "012-3456のように入力してください。",
+              },
+              onChange: (e) => handleZipcode(e),
+            })}
+          />
+        </div>
         <TextAreaInput
           colSpan={2}
           errorMsg={errors.address?.message}
