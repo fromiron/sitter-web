@@ -65,7 +65,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     """ユーザーモデル"""
 
     email = models.EmailField(max_length=50, unique=True)
-    name = models.CharField(max_length=50, unique=True, null=True, blank=True)
+    name = models.CharField(max_length=50, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
@@ -76,6 +76,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["name"]
+
+    def __str__(self):
+        return self.name
 
 
 class Customer(models.Model):

@@ -212,7 +212,7 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("JWT"),
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    "ROTATE_REFRESH_TOKENS": True,
+    "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": True,
     "USER_ID_FIELD": "id",
@@ -257,11 +257,10 @@ SOCIALACCOUNT_STORE_TOKENS = True
 SOCIALACCOUNT_QUERY_EMAIL = True
 ACCOUNT_MAX_EMAIL_ADDRESSES = 1
 ACCOUNT_AUTHENTICATION_METHOD = "email"  # 認証方法をメールアドレスにする
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_USER_MODEL_USERNAME_FIELD = "name"
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_EMAIL_REQUIRED = True  # メールアドレスを要求する
 ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_USERNAME_REQUIRED = False  # ユーザー名を要求しない
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True  # ユーザー登録後メールから確認ボタンを押したら登録済にする
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
 
@@ -269,6 +268,7 @@ AUTHENTICATION_BACKENDS = [
     "allauth.account.auth_backends.AuthenticationBackend",
     "django.contrib.auth.backends.ModelBackend",
 ]
+SOCIALACCOUNT_ADAPTER = "user.adapters.CustomSocialAccountAdapter"
 
 # REST_AUTH User 生成用
 

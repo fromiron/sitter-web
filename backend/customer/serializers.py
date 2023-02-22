@@ -40,7 +40,6 @@ class CustomerSerializer(serializers.ModelSerializer):
             "tel2",
             "zipcode",
             "address",
-            "memos",
             "pets",
         ]
         read_only_fields = ["id"]
