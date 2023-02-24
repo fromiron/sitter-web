@@ -1,41 +1,40 @@
-import { createContext, Dispatch, SetStateAction, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  createContext,
+  ReactNode,
+  useState,
+  useContext,
+} from "react";
+import { useCustomerContext } from "./CustomerContext";
 
-const ModalContext = createContext<{
-  isCustomerAddModalOpen: boolean;
-  isCustomerDetailModalOpen: boolean;
-  setIsCustomerAddModalOpen: Dispatch<SetStateAction<boolean>>;
-  setIsCustomerDetailModalOpen: Dispatch<SetStateAction<boolean>>;
-  clearModal: () => void;
-}>({
-  isCustomerAddModalOpen: false,
-  isCustomerDetailModalOpen: false,
-  setIsCustomerAddModalOpen: () => {},
-  setIsCustomerDetailModalOpen: () => {},
-  clearModal: () => {},
-});
-
-interface Props {
-  children: JSX.Element | JSX.Element[];
+interface ModalInterface {
+  showCustomerAddModal: boolean;
+  setShowCustomerAddModal: Dispatch<SetStateAction<boolean>>;
+  showCustomerDetailModal: boolean;
+  setShowCustomerDetailModal: Dispatch<SetStateAction<boolean>>;
 }
 
-const ModalProvider = ({ children }: Props): JSX.Element => {
-  const [isCustomerAddModalOpen, setIsCustomerAddModalOpen] =
+const ModalContext = createContext<ModalInterface | null>({
+  showCustomerAddModal: false,
+  setShowCustomerAddModal: () => {},
+  showCustomerDetailModal: false,
+  setShowCustomerDetailModal: () => {},
+});
+
+export const ModalProvider = ({ children }: { children: ReactNode }) => {
+  const [showCustomerAddModal, setShowCustomerAddModal] =
     useState<boolean>(false);
-  const [isCustomerDetailModalOpen, setIsCustomerDetailModalOpen] =
+  const [showCustomerDetailModal, setShowCustomerDetailModal] =
     useState<boolean>(false);
 
-  const clearModal = () => {
-    setIsCustomerAddModalOpen(false);
-    setIsCustomerDetailModalOpen(false);
-  };
   return (
     <ModalContext.Provider
       value={{
-        isCustomerAddModalOpen,
-        isCustomerDetailModalOpen,
-        setIsCustomerAddModalOpen,
-        setIsCustomerDetailModalOpen,
-        clearModal,
+        showCustomerAddModal,
+        setShowCustomerAddModal,
+        showCustomerDetailModal,
+        setShowCustomerDetailModal,
       }}
     >
       {children}
@@ -43,4 +42,12 @@ const ModalProvider = ({ children }: Props): JSX.Element => {
   );
 };
 
-export { ModalContext, ModalProvider };
+export function useModalContext() {
+  const context = useContext(ModalContext);
+  if (!context) {
+    throw new Error(
+      "useModalContextは、カスタマープロバイダー内で使用する必要があります。"
+    );
+  }
+  return context;
+}

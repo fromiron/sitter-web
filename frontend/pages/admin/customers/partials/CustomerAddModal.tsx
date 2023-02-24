@@ -3,8 +3,7 @@ import { useForm } from "react-hook-form";
 import { IoMdAdd } from "react-icons/io";
 import { FaUser } from "react-icons/fa";
 import { TextAreaInput, TextInput } from "@components/inputs";
-import { ChangeEvent, Dispatch, KeyboardEvent, SetStateAction } from "react";
-import { UseMutationResult } from "react-query";
+import { ChangeEvent, KeyboardEvent, useContext } from "react";
 import { AxiosError, AxiosResponse } from "axios";
 import { CustomerBaseInterface } from "@interfaces/cmsInterfaces";
 import { TEL_PATTERN, ZIP_CODE_PATTERN } from "@constants/regex";
@@ -12,21 +11,10 @@ import { numberNormalize } from "@helpers/number-normalize";
 import insertString from "@helpers/insert-string";
 import { axiosClient } from "@lib/axios-client";
 import { toast } from "react-toastify";
+import { useCustomerContext } from "context/CustomerContext";
+import { useModalContext } from "context/ModalContext";
 
-export function CustomerAddModal({
-  isModalOpen,
-  setIsModalOpen,
-  addCustomer,
-}: {
-  addCustomer: UseMutationResult<
-    null,
-    AxiosError<unknown, any>,
-    CustomerBaseInterface,
-    unknown
-  >;
-  isModalOpen: boolean;
-  setIsModalOpen: Dispatch<SetStateAction<boolean>>;
-}) {
+export function CustomerAddModal() {
   const {
     register,
     handleSubmit,
@@ -34,6 +22,9 @@ export function CustomerAddModal({
     reset,
     setValue,
   } = useForm<CustomerBaseInterface>();
+
+  const { addCustomer } = useCustomerContext();
+  const { showCustomerAddModal, setShowCustomerAddModal } = useModalContext();
 
   const getAddress = async (zipcode: string) => {
     const res: void | AxiosResponse<any, any> = await axiosClient
@@ -91,8 +82,8 @@ export function CustomerAddModal({
   return (
     <ModalContainer
       title="顧客情報登録"
-      isOpen={isModalOpen}
-      setIsOpen={setIsModalOpen}
+      show={showCustomerAddModal}
+      setShow={setShowCustomerAddModal}
       Icon={FaUser}
     >
       <form

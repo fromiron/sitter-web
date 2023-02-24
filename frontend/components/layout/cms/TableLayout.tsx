@@ -13,7 +13,7 @@ interface TableLayoutInterface {
   next: number | null;
   pageArray: (string | number)[];
   query: QueryInterface;
-  tableName:string
+  tableName: string;
 }
 
 export function TableLayout({
@@ -27,7 +27,7 @@ export function TableLayout({
   next,
   pageArray,
   query,
-  tableName
+  tableName,
 }: TableLayoutInterface) {
   return (
     <div className="w-full max-w-5xl border border-opacity-50 rounded-md border-base-200 text-neutral">
@@ -35,7 +35,8 @@ export function TableLayout({
         <div className="text-xl font-medium">{tableName}</div>
         <div className="divider divider-horizontal" />
         <div className="text-xs text-base-200">
-          {from} ~ {to} of <span className="text-sm text-base-300">{count}</span>
+          {from} ~ {to} of{" "}
+          <span className="text-sm text-base-300">{count}</span>
         </div>
       </div>
       <table className="w-full table-compact">

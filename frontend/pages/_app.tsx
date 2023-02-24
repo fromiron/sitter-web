@@ -9,8 +9,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { ThemeProvider } from "next-themes";
 import { WideModeProvider } from "context/WideModeContext";
 import { queryClient } from "@lib/react-query-client";
-import "/node_modules/react-grid-layout/css/styles.css";
-import "/node_modules/react-resizable/css/styles.css";
 import { ModalProvider } from "context/ModalContext";
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -29,13 +27,13 @@ export default function App({ Component, pageProps }: AppProps) {
         </Head>
         <ThemeProvider>
           <WideModeProvider>
-            <ToastContainer
-              position="top-center"
-              autoClose={1000}
-              transition={Slide}
-              hideProgressBar
-            />
             <ModalProvider>
+              <ToastContainer
+                position="top-center"
+                autoClose={1000}
+                transition={Slide}
+                hideProgressBar
+              />
               <Component {...pageProps} />
             </ModalProvider>
           </WideModeProvider>

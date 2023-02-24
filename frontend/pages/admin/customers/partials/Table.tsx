@@ -4,42 +4,41 @@ import {
   showColumRangeGenerator,
   totalPageCountGenerator,
 } from "@helpers/page-num-generator";
-import {
-  CustomerTableInterface,
-  PetInterface,
-} from "@interfaces/cmsInterfaces";
+import { PetInterface } from "@interfaces/cmsInterfaces";
 import { BsFillTelephoneFill } from "react-icons/bs";
 
 import Image from "next/image";
 import RabbitIcon from "@images/rabbit_icon.svg";
 import { TableLayout } from "@components/layout/cms/TableLayout";
+import { useCustomerContext } from "context/CustomerContext";
+import { useModalContext } from "context/ModalContext";
 
-export function Table({
-  customers,
-  query,
-  setQuery,
-  isLoading,
-  setIsModalOpen,
-}: CustomerTableInterface) {
-  const columRange = showColumRangeGenerator(customers?.count ?? 0, query.page);
-  const totalPageCount = totalPageCountGenerator(customers?.count);
+export function Table() {
+  const { list, isListLoading, query, setQuery, setCustomerId } =
+    useCustomerContext();
+  const { setShowCustomerDetailModal } = useModalContext();
+
+  if (!list) {
+    return <div>loading...</div>;
+  }
+  if (isListLoading) {
+    return <div>loading...</div>;
+  }
+
+  const columRange = showColumRangeGenerator(list?.count ?? 0, query.page);
+  const totalPageCount = totalPageCountGenerator(list?.count);
   const pageArray = paginationNumGenerator(totalPageCount, query.page);
-
-  if (!customers) {
-    return <div>loading...</div>;
-  }
-  if (isLoading) {
-    return <div>loading...</div>;
-  }
 
   const theadList = ["顧客", "情報", "ペット"];
 
-  const openCustomerDetail = (id: string) => setIsModalOpen(true);
-
+  const openCustomerDetail = (id: number | string) => {
+    setCustomerId(id);
+    setShowCustomerDetailModal(true);
+  };
   function TbodyRow() {
     return (
       <>
-        {customers?.results.map((customer) => (
+        {list?.results.map((customer) => (
           <tr key={customer.id} className="hover:bg-base-100">
             <td
               className="cursor-pointer whitespace-nowrap pl-7 min-w-fit"
@@ -79,11 +78,11 @@ export function Table({
     <TableLayout
       theadList={theadList}
       TbodyRow={TbodyRow}
-      count={customers?.count}
+      count={list?.count}
       from={columRange.from}
       to={columRange.to}
-      next={customers.next}
-      previous={customers.previous}
+      next={list.next}
+      previous={list.previous}
       pageArray={pageArray}
       query={query}
       setQuery={setQuery}

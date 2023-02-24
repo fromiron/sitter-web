@@ -1,3 +1,4 @@
+export const CUSTOMER = "Customer";
 export const CUSTOMERS = "Customers";
 export const CUSTOMER_STAT = "CustomerStat";
 export const PETS = "Pets";

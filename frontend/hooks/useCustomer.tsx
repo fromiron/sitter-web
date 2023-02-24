@@ -1,67 +1,26 @@
-import { CUSTOMER_STAT, CUSTOMERS } from "@constants/queryKeys";
+import { CUSTOMER_STAT, CUSTOMERS, CUSTOMER } from "@constants/queryKeys";
 import {
   CustomerBaseInterface,
   CustomersInterface,
   QueryInterface,
 } from "@interfaces/cmsInterfaces";
-import { axiosClient } from "@lib/axios-client";
 import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import { queryClient } from "@lib/react-query-client";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios/index";
-import { ModalContext } from "context/ModalContext";
+import {
+  addCustomerMutation,
+  deleteCustomerMutation,
+  fetchCustomer,
+  fetchCustomers,
+  fetchCustomerStat,
+} from "./queries";
 
-const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL;
+export function useCustomer({ token }: { token?: string }) {
+  const [customerId, setCustomerId] = useState<number | string>(0);
 
-async function getCustomers({
-  query,
-  token,
-}: {
-  query: { ordering: string; search: string; page: number };
-  token?: string;
-}): Promise<CustomersInterface> {
-  const { data } = await axiosClient.get(
-    `${BACKEND_API_URL}/api/customer/customers/?page=${query.page}&ordering=${query.ordering}&search=${query.search}`,
-    {
-      headers: {
-        Authorization: `JWT ${token}`,
-      },
-    }
-  );
-  return data;
-}
-
-async function getCustomerStat({
-  token,
-}: {
-  token?: string;
-}): Promise<CustomerStatInference> {
-  const { data } = await axiosClient.get(
-    `${BACKEND_API_URL}/api/customer/stat`,
-    {
-      headers: {
-        Authorization: `JWT ${token}`,
-      },
-    }
-  );
-  return data;
-}
-
-interface UseCustomer {
-  data?: CustomersInterface;
-  isLoading: boolean;
-  setQuery: Dispatch<SetStateAction<QueryInterface>>;
-  query: QueryInterface;
-  resetQuery: () => void;
-}
-
-interface UseCustomerStatInterface {
-  data?: CustomerStatInference;
-  isLoading: boolean;
-}
-
-export function useCustomer({ token }: { token?: string }): UseCustomer {
+  // Read customer list
   const defaultQuery = {
     search: "",
     ordering: "-id",
@@ -73,68 +32,14 @@ export function useCustomer({ token }: { token?: string }): UseCustomer {
     page: number;
   }>(defaultQuery);
 
-  const { data, isLoading } = useQuery([CUSTOMERS, query], () =>
-    getCustomers({ query, token })
+  const { data: list, isLoading: isListLoading } = useQuery(
+    [CUSTOMERS, query],
+    () => fetchCustomers({ query, token })
   );
 
-  const resetQuery = () => setQuery(defaultQuery);
-  return { data, isLoading, setQuery, query, resetQuery };
-}
+  const resetListQuery = () => setQuery(defaultQuery);
 
-interface CustomerStatInference {
-  total_customers: number;
-  average_pets: number;
-  recent_created: number;
-}
-
-export function useCustomerStat({
-  token,
-}: {
-  token?: string;
-}): UseCustomerStatInterface {
-  const { data, isLoading } = useQuery([CUSTOMER_STAT], () =>
-    getCustomerStat({ token })
-  );
-
-  return { data, isLoading };
-}
-
-async function addCustomerMutation({
-  token,
-  payload,
-}: {
-  token?: string;
-  payload: any;
-}) {
-  await axiosClient.post(
-    `${BACKEND_API_URL}/api/customer/customers/`,
-    payload,
-    {
-      headers: {
-        Authorization: `JWT ${token}`,
-      },
-    }
-  );
-  return null;
-}
-
-async function deleteCustomerMutation({
-  token,
-  id,
-}: {
-  token?: string;
-  id: string | number;
-}) {
-  await axiosClient.delete(`${BACKEND_API_URL}/api/customer/customers/${id}/`, {
-    headers: {
-      Authorization: `JWT ${token}`,
-    },
-  });
-  return null;
-}
-
-export function useCustomerMutation({ token }: { token?: string }) {
-  const { clearModal } = useContext(ModalContext);
+  // Create customer
   const addCustomer = useMutation(
     (payload: CustomerBaseInterface) => addCustomerMutation({ token, payload }),
     {
@@ -142,7 +47,7 @@ export function useCustomerMutation({ token }: { token?: string }) {
         queryClient.invalidateQueries(CUSTOMERS);
         queryClient.invalidateQueries(CUSTOMER_STAT);
         toast.success("顧客追加成功");
-        clearModal();
+        // clearModal();
       },
       onError: (errors: AxiosError) => {
         toast.error("顧客追加失敗");
@@ -150,6 +55,20 @@ export function useCustomerMutation({ token }: { token?: string }) {
       },
     }
   );
+
+  // Read customer
+  const { data: customer, isLoading: isCustomerLoading } = useQuery(
+    [CUSTOMER, customerId],
+    () => {
+      if (customerId !== 0) return fetchCustomer({ token, id: customerId });
+    },
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: true,
+    }
+  );
+
+  // Update customer
   const editCustomer = useMutation(
     (payload: CustomerBaseInterface) => addCustomerMutation({ token, payload }),
     {
@@ -165,6 +84,7 @@ export function useCustomerMutation({ token }: { token?: string }) {
     }
   );
 
+  // Delete customer
   const deleteCustomer = useMutation(
     ({ id }: { id: string | number }) => deleteCustomerMutation({ token, id }),
     {
@@ -180,5 +100,23 @@ export function useCustomerMutation({ token }: { token?: string }) {
     }
   );
 
-  return { addCustomer, editCustomer, deleteCustomer };
+  // Read Customer stat
+  const customerStat = useQuery([CUSTOMER_STAT], () =>
+    fetchCustomerStat({ token })
+  );
+
+  return {
+    list,
+    isListLoading,
+    setQuery,
+    query,
+    resetListQuery,
+    addCustomer,
+    editCustomer,
+    deleteCustomer,
+    customerStat,
+    customer,
+    isCustomerLoading,
+    setCustomerId,
+  };
 }

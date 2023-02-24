@@ -1,10 +1,6 @@
 import CMSLayout from "@components/layout/cms/CMSLayout";
 
-import {
-  useCustomer,
-  useCustomerMutation,
-  useCustomerStat,
-} from "@hooks/useCustomer";
+import { useCustomer } from "@hooks/useCustomer";
 import { RiUserAddLine } from "react-icons/ri";
 import { Table } from "./partials/Table";
 import { GetServerSideProps } from "next";
@@ -18,9 +14,9 @@ import { ResetButton } from "@components/layout/buttons";
 import NumberCountWidget from "@components/widgets/NumberCountWidget";
 import { FeatureWidget } from "@components/widgets/FeatureWidget";
 import { CustomerAddModal } from "./partials/CustomerAddModal";
-import { useContext, useState } from "react";
 import { CustomerDetailModal } from "./partials/CustomerDetailModal";
-import { ModalContext } from "context/ModalContext";
+import { CustomerProvider } from "context/CustomerContext";
+import { useModalContext } from "context/ModalContext";
 
 const options: SearchSelectOptionInterface = {
   idDESC: {
@@ -55,73 +51,46 @@ export default function Customers({
   session: SessionAuthInterface;
 }) {
   const token = session.access_token;
-  const {
-    data: customers,
-    isLoading,
-    query,
-    setQuery,
-    resetQuery,
-  } = useCustomer({ token });
 
-  const {
-    isCustomerAddModalOpen,
-    isCustomerDetailModalOpen,
-    setIsCustomerAddModalOpen,
-    setIsCustomerDetailModalOpen,
-  } = useContext(ModalContext);
-
-  const customerMutation = useCustomerMutation({ token });
-
-  const { data: customerStat } = useCustomerStat({
-    token: session.access_token,
+  const { showCustomerAddModal, setShowCustomerAddModal } = useModalContext();
+  const { setQuery, query, resetListQuery, customerStat } = useCustomer({
+    token,
   });
-
-  const openCustomerAddModal = () => setIsCustomerAddModalOpen(true);
 
   return (
     <CMSLayout>
-      <CustomerAddModal
-        isModalOpen={isCustomerAddModalOpen}
-        addCustomer={customerMutation.addCustomer}
-        setIsModalOpen={setIsCustomerAddModalOpen}
-      />
-      <CustomerDetailModal
-        isModalOpen={isCustomerDetailModalOpen}
-        editCustomer={customerMutation.editCustomer}
-        deleteCustomer={customerMutation.deleteCustomer}
-        setIsModalOpen={setIsCustomerDetailModalOpen}
-      />
-      <div className="flex gap-4 mb-4 w-fit">
-        <NumberCountWidget
-          count={customerStat?.total_customers}
-          title={"総顧客"}
-        />
-        <NumberCountWidget
-          count={customerStat?.recent_created}
-          title={"新規顧客"}
-        />
-        <NumberCountWidget
-          count={Number(customerStat?.average_pets?.toFixed(2))}
-          title={"平均ペット"}
-        />
-        <FeatureWidget Icon={RiUserAddLine} onClick={openCustomerAddModal} />
-      </div>
-      <div className="flex">
-        <SearchInput
-          query={query}
-          setQuery={setQuery}
-          options={options}
-          placeholder={"Search for customer"}
-        />
-        <ResetButton onClick={resetQuery} />
-      </div>
-      <Table
-        customers={customers}
-        query={query}
-        setQuery={setQuery}
-        isLoading={isLoading}
-        setIsModalOpen={setIsCustomerDetailModalOpen}
-      />
+      <CustomerProvider token={token}>
+        <CustomerAddModal />
+        <CustomerDetailModal />
+        <div className="flex gap-4 mb-4 w-fit">
+          <NumberCountWidget
+            count={customerStat?.data?.total_customers}
+            title={"総顧客"}
+          />
+          <NumberCountWidget
+            count={customerStat?.data?.recent_created}
+            title={"新規顧客"}
+          />
+          <NumberCountWidget
+            count={Number(customerStat?.data?.average_pets?.toFixed(2))}
+            title={"平均ペット"}
+          />
+          <FeatureWidget
+            Icon={RiUserAddLine}
+            onClick={() => setShowCustomerAddModal(true)}
+          />
+        </div>
+        <div className="flex">
+          <SearchInput
+            query={query}
+            setQuery={setQuery}
+            options={options}
+            placeholder={"Search for customer"}
+          />
+          <ResetButton onClick={resetListQuery} />
+        </div>
+        <Table />
+      </CustomerProvider>
     </CMSLayout>
   );
 }

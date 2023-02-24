@@ -125,6 +125,16 @@ export interface BaseTableInterface {
 export interface CustomerTableInterface extends BaseTableInterface {
   customers: CustomersInterface | undefined;
   setIsModalOpen: Dispatch<SetStateAction<boolean>>;
+  getCustomer: ({ id }: { id: number | string }) => Promise<
+    | {
+        data: CustomersInterface;
+        error?: undefined;
+      }
+    | {
+        data: null;
+        error: unknown;
+      }
+  >;
 }
 
 export interface PetTableInterface extends BaseTableInterface {

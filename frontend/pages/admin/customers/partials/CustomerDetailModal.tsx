@@ -3,45 +3,43 @@ import { useForm } from "react-hook-form";
 import { IoMdAdd } from "react-icons/io";
 import { FaUser } from "react-icons/fa";
 import { TextAreaInput, TextInput } from "@components/inputs";
-import { ChangeEvent, Dispatch, KeyboardEvent, SetStateAction } from "react";
-import { UseMutationResult } from "react-query";
+import { ChangeEvent, KeyboardEvent, useEffect } from "react";
 import { AxiosError, AxiosResponse } from "axios";
-import { CustomerBaseInterface } from "@interfaces/cmsInterfaces";
+import {
+  CustomerBaseInterface,
+  CustomerInterface,
+} from "@interfaces/cmsInterfaces";
 import { TEL_PATTERN, ZIP_CODE_PATTERN } from "@constants/regex";
 import { numberNormalize } from "@helpers/number-normalize";
 import insertString from "@helpers/insert-string";
 import { axiosClient } from "@lib/axios-client";
 import { toast } from "react-toastify";
+import { useCustomerContext } from "context/CustomerContext";
+import { useModalContext } from "context/ModalContext";
 
-export function CustomerDetailModal({
-  isModalOpen,
-  setIsModalOpen,
-  editCustomer,
-  deleteCustomer,
-}: {
-  isModalOpen: boolean;
-  setIsModalOpen: Dispatch<SetStateAction<boolean>>;
-  editCustomer: UseMutationResult<
-    null,
-    AxiosError<unknown, any>,
-    CustomerBaseInterface,
-    unknown
-  >;
-  deleteCustomer: UseMutationResult<
-    null,
-    AxiosError<unknown, any>,
-    { id: string | number },
-    unknown
-  >;
-}) {
+export function CustomerDetailModal() {
+  const { editCustomer, customer, isCustomerLoading } = useCustomerContext();
+  const { showCustomerDetailModal, setShowCustomerDetailModal } =
+    useModalContext();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
     setValue,
-  } = useForm<CustomerBaseInterface>();
+  } = useForm<CustomerInterface>();
 
+  useEffect(() => {
+    if (customer) {
+      // 初期値をデフォルトとしていえる
+      reset(customer);
+    }
+  }, [customer?.id]);
+
+  if (isCustomerLoading) {
+    return null;
+  }
   const getAddress = async (zipcode: string) => {
     const res: void | AxiosResponse<any, any> = await axiosClient
       .get(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${zipcode}`)
@@ -60,7 +58,6 @@ export function CustomerDetailModal({
       }
     }
   };
-
   const handleReset = () => reset();
   const onSubmit = (data: CustomerBaseInterface) => {
     console.log(data);
@@ -98,9 +95,9 @@ export function CustomerDetailModal({
 
   return (
     <ModalContainer
-      title="顧客情報"
-      isOpen={isModalOpen}
-      setIsOpen={setIsModalOpen}
+      title={`${customer?.name} 様`}
+      show={showCustomerDetailModal}
+      setShow={setShowCustomerDetailModal}
       Icon={FaUser}
     >
       <form
