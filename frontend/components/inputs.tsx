@@ -82,7 +82,7 @@ export function TextAreaInput({
   return (
     <div
       className={`w-full form-control group h-auto ${
-        colSpan ? `col-span-${colSpan}` : ""
+        colSpan ? `col-span-${colSpan}` : "col-auto"
       }`}
     >
       <label className="label">

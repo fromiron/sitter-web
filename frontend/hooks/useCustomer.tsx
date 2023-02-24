@@ -5,11 +5,12 @@ import {
   QueryInterface,
 } from "@interfaces/cmsInterfaces";
 import { axiosClient } from "@lib/axios-client";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import { queryClient } from "@lib/react-query-client";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios/index";
+import { ModalContext } from "context/ModalContext";
 
 const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL;
 
@@ -133,6 +134,7 @@ async function deleteCustomerMutation({
 }
 
 export function useCustomerMutation({ token }: { token?: string }) {
+  const { clearModal } = useContext(ModalContext);
   const addCustomer = useMutation(
     (payload: CustomerBaseInterface) => addCustomerMutation({ token, payload }),
     {
@@ -140,6 +142,7 @@ export function useCustomerMutation({ token }: { token?: string }) {
         queryClient.invalidateQueries(CUSTOMERS);
         queryClient.invalidateQueries(CUSTOMER_STAT);
         toast.success("顧客追加成功");
+        clearModal();
       },
       onError: (errors: AxiosError) => {
         toast.error("顧客追加失敗");

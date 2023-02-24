@@ -11,6 +11,7 @@ import { WideModeProvider } from "context/WideModeContext";
 import { queryClient } from "@lib/react-query-client";
 import "/node_modules/react-grid-layout/css/styles.css";
 import "/node_modules/react-resizable/css/styles.css";
+import { ModalProvider } from "context/ModalContext";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -34,7 +35,9 @@ export default function App({ Component, pageProps }: AppProps) {
               transition={Slide}
               hideProgressBar
             />
-            <Component {...pageProps} />
+            <ModalProvider>
+              <Component {...pageProps} />
+            </ModalProvider>
           </WideModeProvider>
         </ThemeProvider>
         <ReactQueryDevtools initialIsOpen={false} />

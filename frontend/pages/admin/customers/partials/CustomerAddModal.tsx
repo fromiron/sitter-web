@@ -56,7 +56,6 @@ export function CustomerAddModal({
 
   const handleReset = () => reset();
   const onSubmit = (data: CustomerBaseInterface) => {
-    console.log(data);
     addCustomer.mutate(data);
   };
 
@@ -169,7 +168,7 @@ export function CustomerAddModal({
             onChange: (e) => handleZipcode(e),
           })}
         />
-        <div className="w-full col-span-1" />
+        <div className="col-span-1" />
         <TextAreaInput
           colSpan={2}
           errorMsg={errors.address?.message}

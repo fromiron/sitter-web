@@ -18,8 +18,9 @@ import { ResetButton } from "@components/layout/buttons";
 import NumberCountWidget from "@components/widgets/NumberCountWidget";
 import { FeatureWidget } from "@components/widgets/FeatureWidget";
 import { CustomerAddModal } from "./partials/CustomerAddModal";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { CustomerDetailModal } from "./partials/CustomerDetailModal";
+import { ModalContext } from "context/ModalContext";
 
 const options: SearchSelectOptionInterface = {
   idDESC: {
@@ -61,9 +62,13 @@ export default function Customers({
     setQuery,
     resetQuery,
   } = useCustomer({ token });
-  const [isCustomerAddModalOpen, setIsCustomerAddModalOpen] = useState(false);
-  const [isCustomerDetailModalOpen, setIsCustomerDetailModalOpen] =
-    useState(false);
+
+  const {
+    isCustomerAddModalOpen,
+    isCustomerDetailModalOpen,
+    setIsCustomerAddModalOpen,
+    setIsCustomerDetailModalOpen,
+  } = useContext(ModalContext);
 
   const customerMutation = useCustomerMutation({ token });
 
