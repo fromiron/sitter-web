@@ -1,10 +1,6 @@
 import { CUSTOMER_STAT, CUSTOMERS, CUSTOMER } from "@constants/queryKeys";
-import {
-  CustomerBaseInterface,
-  CustomersInterface,
-  QueryInterface,
-} from "@interfaces/cmsInterfaces";
-import { Dispatch, SetStateAction, useContext, useState } from "react";
+import { CustomerBaseInterface } from "@interfaces/cmsInterfaces";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import { queryClient } from "@lib/react-query-client";
 import { toast } from "react-toastify";
@@ -16,8 +12,10 @@ import {
   fetchCustomers,
   fetchCustomerStat,
 } from "./queries";
+import { useCustomerModalContext } from "context/CustomerModalContext";
 
 export function useCustomer({ token }: { token?: string }) {
+  const { clearModal } = useCustomerModalContext();
   const [customerId, setCustomerId] = useState<number | string>(0);
 
   // Read customer list
@@ -37,7 +35,9 @@ export function useCustomer({ token }: { token?: string }) {
     () => fetchCustomers({ query, token })
   );
 
-  const resetListQuery = () => setQuery(defaultQuery);
+  const resetListQuery = () => {
+    setQuery(defaultQuery);
+  };
 
   // Create customer
   const addCustomer = useMutation(
@@ -47,7 +47,7 @@ export function useCustomer({ token }: { token?: string }) {
         queryClient.invalidateQueries(CUSTOMERS);
         queryClient.invalidateQueries(CUSTOMER_STAT);
         toast.success("顧客追加成功");
-        // clearModal();
+        clearModal();
       },
       onError: (errors: AxiosError) => {
         toast.error("顧客追加失敗");

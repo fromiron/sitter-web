@@ -1,3 +1,4 @@
+import { CustomerInterface } from "@interfaces/cmsInterfaces";
 import {
   Dispatch,
   SetStateAction,
@@ -6,12 +7,14 @@ import {
   useState,
   useContext,
 } from "react";
+import { useForm } from "react-hook-form";
 
 interface ModalInterface {
   showCustomerAddModal: boolean;
   setShowCustomerAddModal: Dispatch<SetStateAction<boolean>>;
   showCustomerDetailModal: boolean;
   setShowCustomerDetailModal: Dispatch<SetStateAction<boolean>>;
+  clearModal: () => void;
 }
 
 const ModalContext = createContext<ModalInterface | null>({
@@ -19,14 +22,24 @@ const ModalContext = createContext<ModalInterface | null>({
   setShowCustomerAddModal: () => {},
   showCustomerDetailModal: false,
   setShowCustomerDetailModal: () => {},
+  clearModal: () => {},
 });
 
-export const ModalProvider = ({ children }: { children: ReactNode }) => {
+export const CustomerModalProvider = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
   const [showCustomerAddModal, setShowCustomerAddModal] =
     useState<boolean>(false);
   const [showCustomerDetailModal, setShowCustomerDetailModal] =
     useState<boolean>(false);
-
+  const { reset } = useForm<CustomerInterface>();
+  const clearModal = () => {
+    setShowCustomerDetailModal(false);
+    setShowCustomerAddModal(false);
+    reset({});
+  };
   return (
     <ModalContext.Provider
       value={{
@@ -34,6 +47,7 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
         setShowCustomerAddModal,
         showCustomerDetailModal,
         setShowCustomerDetailModal,
+        clearModal,
       }}
     >
       {children}
@@ -41,7 +55,7 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export function useModalContext() {
+export function useCustomerModalContext() {
   const context = useContext(ModalContext);
   if (!context) {
     throw new Error(

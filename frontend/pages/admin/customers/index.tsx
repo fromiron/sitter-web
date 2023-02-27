@@ -15,8 +15,11 @@ import NumberCountWidget from "@components/widgets/NumberCountWidget";
 import { FeatureWidget } from "@components/widgets/FeatureWidget";
 import { CustomerAddModal } from "./partials/CustomerAddModal";
 import { CustomerDetailModal } from "./partials/CustomerDetailModal";
-import { CustomerProvider } from "context/CustomerContext";
-import { useModalContext } from "context/ModalContext";
+import { CustomerProvider, useCustomerContext } from "context/CustomerContext";
+import {
+  CustomerModalProvider,
+  useCustomerModalContext,
+} from "context/CustomerModalContext";
 
 const options: SearchSelectOptionInterface = {
   idDESC: {
@@ -52,46 +55,54 @@ export default function Customers({
 }) {
   const token = session.access_token;
 
-  const { setShowCustomerAddModal } = useModalContext();
-  const { setQuery, query, resetListQuery, customerStat } = useCustomer({
-    token,
-  });
-
   return (
     <CMSLayout>
       <CustomerProvider token={token}>
-        <CustomerAddModal />
-        <CustomerDetailModal />
-        <div className="flex gap-4 mb-4 w-fit">
-          <NumberCountWidget
-            count={customerStat?.data?.total_customers}
-            title={"総顧客"}
-          />
-          <NumberCountWidget
-            count={customerStat?.data?.recent_created}
-            title={"新規顧客"}
-          />
-          <NumberCountWidget
-            count={Number(customerStat?.data?.average_pets?.toFixed(2))}
-            title={"平均ペット"}
-          />
-          <FeatureWidget
-            Icon={RiUserAddLine}
-            onClick={() => setShowCustomerAddModal(true)}
-          />
-        </div>
-        <div className="flex">
-          <SearchInput
-            query={query}
-            setQuery={setQuery}
-            options={options}
-            placeholder={"Search for customer"}
-          />
-          <ResetButton onClick={resetListQuery} />
-        </div>
-        <Table />
+        <CustomerModalProvider>
+          <ProviderWrapper />
+        </CustomerModalProvider>
       </CustomerProvider>
     </CMSLayout>
+  );
+}
+
+function ProviderWrapper() {
+  const { setQuery, query, resetListQuery, customerStat } =
+    useCustomerContext();
+  const { setShowCustomerAddModal } = useCustomerModalContext();
+  return (
+    <>
+      <CustomerAddModal />
+      <CustomerDetailModal />
+      <div className="flex gap-4 mb-4 w-fit">
+        <NumberCountWidget
+          count={customerStat?.data?.total_customers}
+          title={"総顧客"}
+        />
+        <NumberCountWidget
+          count={customerStat?.data?.recent_created}
+          title={"新規顧客"}
+        />
+        <NumberCountWidget
+          count={Number(customerStat?.data?.average_pets?.toFixed(2))}
+          title={"平均ペット"}
+        />
+        <FeatureWidget
+          Icon={RiUserAddLine}
+          onClick={() => setShowCustomerAddModal(true)}
+        />
+      </div>
+      <div className="flex">
+        <SearchInput
+          query={query}
+          setQuery={setQuery}
+          options={options}
+          placeholder={"Search for customer"}
+        />
+        <ResetButton onClick={resetListQuery} />
+      </div>
+      <Table />
+    </>
   );
 }
 

@@ -1,5 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Dispatch, Fragment, ReactNode, SetStateAction, useRef } from "react";
+import { IoClose } from "react-icons/io5";
 
 export default function ModalContainer({
   show,
@@ -54,9 +55,14 @@ export default function ModalContainer({
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <div className="inline-block overflow-hidden text-left align-bottom transition-all transform rounded-md shadow-xl bg-neutral-content sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-              <div className="flex items-center w-full px-6 py-2 bg-gradient-to-r from-primary to-primary-focus text-primary-content">
-                <Icon className="mr-2" />
-                <div>{title}</div>
+              <div className="flex items-center justify-between w-full px-6 py-2 bg-gradient-to-r from-primary to-primary-focus text-primary-content">
+                <div className="flex items-center">
+                  <Icon className="mr-2" />
+                  <div>{title}</div>
+                </div>
+                <div className="flex px-1 py-1" onClick={() => setShow(false)}>
+                  <IoClose className="cursor-pointer" />
+                </div>
               </div>
               <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4 bg-neutral-content">
                 {children}

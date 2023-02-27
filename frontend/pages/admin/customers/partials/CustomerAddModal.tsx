@@ -3,16 +3,16 @@ import { useForm } from "react-hook-form";
 import { IoMdAdd } from "react-icons/io";
 import { FaUser } from "react-icons/fa";
 import { TextAreaInput, TextInput } from "@components/inputs";
-import { ChangeEvent, KeyboardEvent, useContext } from "react";
+import { ChangeEvent, KeyboardEvent, useContext, useEffect } from "react";
 import { AxiosError, AxiosResponse } from "axios";
 import { CustomerBaseInterface } from "@interfaces/cmsInterfaces";
-import { TEL_PATTERN, ZIP_CODE_PATTERN } from "@constants/regex";
+import { EMAIL_PATTERN, TEL_PATTERN, ZIP_CODE_PATTERN } from "@constants/regex";
 import { numberNormalize } from "@helpers/number-normalize";
 import insertString from "@helpers/insert-string";
 import { axiosClient } from "@lib/axios-client";
 import { toast } from "react-toastify";
 import { useCustomerContext } from "context/CustomerContext";
-import { useModalContext } from "context/ModalContext";
+import { useCustomerModalContext } from "context/CustomerModalContext";
 
 export function CustomerAddModal() {
   const {
@@ -24,7 +24,14 @@ export function CustomerAddModal() {
   } = useForm<CustomerBaseInterface>();
 
   const { addCustomer } = useCustomerContext();
-  const { showCustomerAddModal, setShowCustomerAddModal } = useModalContext();
+  const { showCustomerAddModal, setShowCustomerAddModal } =
+    useCustomerModalContext();
+
+  useEffect(() => {
+    if (!showCustomerAddModal) {
+      reset();
+    }
+  }, [showCustomerAddModal]);
 
   const getAddress = async (zipcode: string) => {
     const res: void | AxiosResponse<any, any> = await axiosClient
@@ -144,6 +151,28 @@ export function CustomerAddModal() {
         />
         <TextInput
           colSpan={1}
+          type={"email"}
+          errorMsg={errors.email?.message}
+          label={"メール (optional)"}
+          placeholder={"hana@rabbit.com"}
+          Icon={IoMdAdd}
+          register={register("email", {
+            pattern: {
+              value: EMAIL_PATTERN,
+              message: "メールフォーマットを確認してください。",
+            },
+          })}
+        />
+        <TextInput
+          colSpan={1}
+          errorMsg={errors.name_kana?.message}
+          label={"Line (optional)"}
+          placeholder={"hana"}
+          Icon={IoMdAdd}
+          register={register("line")}
+        />
+        <TextInput
+          colSpan={1}
           errorMsg={errors.zipcode?.message}
           label={"郵便番号 (optional)"}
           placeholder={"064-○○○〇"}
@@ -159,7 +188,7 @@ export function CustomerAddModal() {
             onChange: (e) => handleZipcode(e),
           })}
         />
-        <div className="col-span-1" />
+        <div className="col-span-2" />
         <TextAreaInput
           colSpan={2}
           errorMsg={errors.address?.message}

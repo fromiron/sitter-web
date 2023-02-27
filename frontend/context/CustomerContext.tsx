@@ -1,5 +1,5 @@
 import { useCustomer } from "@hooks/useCustomer";
-import React, { createContext, ReactNode, useContext } from "react";
+import React, { createContext, ReactNode, useEffect, useContext } from "react";
 
 type CustomerContextType = ReturnType<typeof useCustomer>;
 
@@ -13,6 +13,13 @@ export function CustomerProvider({
   children: ReactNode;
 }) {
   const value = useCustomer({ token });
+
+  useEffect(() => {
+    console.log("context");
+
+    console.log(value.list);
+  }, [value]);
+
   return (
     <CustomerContext.Provider value={value}>
       {children}

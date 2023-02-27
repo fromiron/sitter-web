@@ -15,12 +15,12 @@ import insertString from "@helpers/insert-string";
 import { axiosClient } from "@lib/axios-client";
 import { toast } from "react-toastify";
 import { useCustomerContext } from "context/CustomerContext";
-import { useModalContext } from "context/ModalContext";
+import { useCustomerModalContext } from "context/CustomerModalContext";
 
 export function CustomerDetailModal() {
   const { editCustomer, customer, isCustomerLoading } = useCustomerContext();
   const { showCustomerDetailModal, setShowCustomerDetailModal } =
-    useModalContext();
+    useCustomerModalContext();
 
   const {
     register,
