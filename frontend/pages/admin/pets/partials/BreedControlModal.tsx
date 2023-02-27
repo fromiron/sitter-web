@@ -71,8 +71,8 @@ export function BreedControlModal({
   return (
     <ModalContainer
       title="品種管理"
-      isOpen={isModalOpen}
-      setIsOpen={setIsModalOpen}
+      show={isModalOpen}
+      setShow={setIsModalOpen}
       Icon={RabbitIcon}
     >
       <div className="flex items-center mb-6">

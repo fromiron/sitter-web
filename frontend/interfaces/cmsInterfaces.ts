@@ -35,6 +35,8 @@ export interface CustomerBaseInterface {
   name_kana: string;
   tel: string;
   tel2: string;
+  email: string;
+  line: string;
   zipcode: string;
   address: string;
 }

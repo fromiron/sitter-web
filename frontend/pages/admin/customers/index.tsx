@@ -52,7 +52,7 @@ export default function Customers({
 }) {
   const token = session.access_token;
 
-  const { showCustomerAddModal, setShowCustomerAddModal } = useModalContext();
+  const { setShowCustomerAddModal } = useModalContext();
   const { setQuery, query, resetListQuery, customerStat } = useCustomer({
     token,
   });

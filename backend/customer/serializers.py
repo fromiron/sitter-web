@@ -38,6 +38,8 @@ class CustomerSerializer(serializers.ModelSerializer):
             "name_kana",
             "tel",
             "tel2",
+            "email",
+            "line",
             "zipcode",
             "address",
             "pets",

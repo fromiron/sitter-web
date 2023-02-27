@@ -6,12 +6,14 @@ import {
 } from "@helpers/page-num-generator";
 import { PetInterface } from "@interfaces/cmsInterfaces";
 import { BsFillTelephoneFill } from "react-icons/bs";
+import { MdEmail } from "react-icons/md";
 
 import Image from "next/image";
 import RabbitIcon from "@images/rabbit_icon.svg";
 import { TableLayout } from "@components/layout/cms/TableLayout";
 import { useCustomerContext } from "context/CustomerContext";
 import { useModalContext } from "context/ModalContext";
+import LineLogo from "@images/logo_line.svg";
 
 export function Table() {
   const { list, isListLoading, query, setQuery, setCustomerId } =
@@ -48,12 +50,14 @@ export function Table() {
               <div className="opacity-50 text-xxs">{customer.name_kana}</div>
             </td>
             <td className="whitespace-pre-wrap ">
-              {customer.address}
-              <div className="flex gap-x-2">
-                <div className="flex items-center px-2 mt-1 text-xs font-medium text-green-600 rounded-full bg-green-50 w-fit">
-                  <span className="mr-1">〒</span>
+              <div className="flex">
+                <div className="mr-2 text-xxs">
+                  <span className="select-none">〒</span>
                   {customer.zipcode}
                 </div>
+                {customer.address}
+              </div>
+              <div className="flex gap-x-2">
                 <div
                   className="flex items-center px-2 mt-1 text-xs font-medium text-blue-600 rounded-full cursor-pointer bg-blue-50 w-fit"
                   onClick={() => copyToClipboard(customer.tel)}
@@ -62,6 +66,24 @@ export function Table() {
                     <BsFillTelephoneFill />
                   </span>
                   {customer.tel}
+                </div>
+                <div
+                  className="flex items-center px-2 mt-1 text-xs font-medium rounded-full cursor-pointer text-gray-600-600 bg-gray-50 w-fit"
+                  onClick={() => copyToClipboard(customer.email)}
+                >
+                  <span className="mr-1">
+                    <MdEmail />
+                  </span>
+                  {customer.email}
+                </div>
+                <div
+                  className="flex items-center px-2 mt-1 text-xs font-medium text-green-600 rounded-full cursor-pointer bg-green-50 w-fit"
+                  onClick={() => copyToClipboard(customer.line)}
+                >
+                  <span className="scale-50">
+                    <LineLogo />
+                  </span>
+                  {customer.line}
                 </div>
               </div>
             </td>

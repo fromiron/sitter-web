@@ -59,8 +59,8 @@ export function TypeControlModal({
   return (
     <ModalContainer
       title="Type 登録"
-      isOpen={isModalOpen}
-      setIsOpen={setIsModalOpen}
+      show={isModalOpen}
+      setShow={setIsModalOpen}
       Icon={RabbitIcon}
     >
       <div className="flex items-center mb-6">

@@ -6,7 +6,6 @@ import {
   useState,
   useContext,
 } from "react";
-import { useCustomerContext } from "./CustomerContext";
 
 interface ModalInterface {
   showCustomerAddModal: boolean;
