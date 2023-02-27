@@ -10,8 +10,6 @@ export default function Dashboard({
 }: {
   session: SessionAuthInterface;
 }) {
-  //   console.log("session", session);
-
   const [test, setIsTest] = useState(false);
 
   return (

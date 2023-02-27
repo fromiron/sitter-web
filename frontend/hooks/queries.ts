@@ -3,6 +3,7 @@ import {
   CustomersInterface,
 } from "@interfaces/cmsInterfaces";
 import { axiosClient } from "@lib/axios-client";
+const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL;
 
 export async function addCustomerMutation({
   token,
@@ -22,7 +23,25 @@ export async function addCustomerMutation({
   );
   return null;
 }
-const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL;
+
+export async function editCustomerMutation({
+  token,
+  payload,
+}: {
+  token?: string;
+  payload: any;
+}) {
+  await axiosClient.patch(
+    `${BACKEND_API_URL}/api/customer/customers/${payload.id}/`,
+    payload,
+    {
+      headers: {
+        Authorization: `JWT ${token}`,
+      },
+    }
+  );
+  return null;
+}
 
 export async function deleteCustomerMutation({
   token,
@@ -31,7 +50,7 @@ export async function deleteCustomerMutation({
   token?: string;
   id: string | number;
 }) {
-  await axiosClient.delete(`${BACKEND_API_URL}/api/customer/customers/${id}/`, {
+  await axiosClient.delete(`${BACKEND_API_URL}/api/customer/customers/${id}`, {
     headers: {
       Authorization: `JWT ${token}`,
     },
@@ -95,4 +114,33 @@ export async function fetchCustomerStat({
     }
   );
   return data;
+}
+
+export async function addCustomerMemoMutation({
+  token,
+  payload,
+}: {
+  token?: string;
+  payload: any;
+}) {
+  await axiosClient.post(`${BACKEND_API_URL}/api/customer/memos/`, payload, {
+    headers: {
+      Authorization: `JWT ${token}`,
+    },
+  });
+  return null;
+}
+export async function deleteCustomerMemoMutation({
+  token,
+  id,
+}: {
+  token?: string;
+  id: string | number;
+}) {
+  await axiosClient.delete(`${BACKEND_API_URL}/api/customer/memos/${id}`, {
+    headers: {
+      Authorization: `JWT ${token}`,
+    },
+  });
+  return null;
 }

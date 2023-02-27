@@ -31,6 +31,7 @@ export interface SessionAuthInterface {
 
 // for mutation
 export interface CustomerBaseInterface {
+  id?: number | string;
   name: string;
   name_kana: string;
   tel: string;
@@ -43,13 +44,14 @@ export interface CustomerBaseInterface {
 
 //next-auth interface
 export interface CustomerInterface extends CustomerBaseInterface {
-  id: string;
+  id: number | string;
   memos: CustomerMemoInterface[];
   pets: PetInterface[];
 }
 
 export interface CustomerMemoInterface extends MemoInterface {
-  customer_id: number;
+  customer_id: number | string;
+  memo: string;
 }
 
 export interface MemoInterface {

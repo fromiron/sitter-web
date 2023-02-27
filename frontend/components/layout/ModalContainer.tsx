@@ -54,8 +54,8 @@ export default function ModalContainer({
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="inline-block overflow-hidden text-left align-bottom transition-all transform rounded-md shadow-xl bg-neutral-content sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-              <div className="flex items-center justify-between w-full px-6 py-2 bg-gradient-to-r from-primary to-primary-focus text-primary-content">
+            <div className="inline-block overflow-hidden text-left align-bottom transition-all transform rounded-md shadow-xl bg-neutral-content sm:my-8 sm:align-middle">
+              <div className="flex items-center justify-between px-6 py-2 bg-gradient-to-r from-primary to-primary-focus text-primary-content">
                 <div className="flex items-center">
                   <Icon className="mr-2" />
                   <div>{title}</div>
@@ -64,7 +64,7 @@ export default function ModalContainer({
                   <IoClose className="cursor-pointer" />
                 </div>
               </div>
-              <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4 bg-neutral-content">
+              <div className="px-4 pt-5 pb-4 overflow-hidden w-fit sm:p-6 sm:pb-4 bg-neutral-content">
                 {children}
               </div>
               <div className="flex justify-end px-4 py-3 bg-base-100" />

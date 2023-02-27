@@ -28,7 +28,7 @@ class CustomerMemoSerializer(serializers.ModelSerializer):
 class CustomerSerializer(serializers.ModelSerializer):
     """Customer Serializer"""
 
-    pets = PetSerializer(many=True, required=False)
+    pets = PetSerializer(many=True, required=False, read_only=True)
 
     class Meta:
         model = Customer
@@ -51,7 +51,7 @@ class CustomerDetailSerializer(CustomerSerializer):
     """Serializer for customer detail view."""
 
     # todo karte追加後Fields追加
-    memos = CustomerMemoSerializer(many=True, required=False)
+    memos = CustomerMemoSerializer(many=True, required=False, read_only=True)
 
     class Meta(CustomerSerializer.Meta):
         fields = CustomerSerializer.Meta.fields + ["memos"]

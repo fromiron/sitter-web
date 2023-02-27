@@ -14,12 +14,6 @@ export function CustomerProvider({
 }) {
   const value = useCustomer({ token });
 
-  useEffect(() => {
-    console.log("context");
-
-    console.log(value.list);
-  }, [value]);
-
   return (
     <CustomerContext.Provider value={value}>
       {children}

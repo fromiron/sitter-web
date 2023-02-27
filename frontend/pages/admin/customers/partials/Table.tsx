@@ -33,9 +33,8 @@ export function Table() {
 
   const theadList = ["顧客", "情報", "ペット"];
 
-  const openCustomerDetail = (id: number | string) => {
-    setCustomerId(id);
-    setShowCustomerDetailModal(true);
+  const openCustomerDetail = async (id: number | string) => {
+    await setCustomerId({ id }).then(() => setShowCustomerDetailModal(true));
   };
   function TbodyRow() {
     return (
