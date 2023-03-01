@@ -57,11 +57,7 @@ export interface CustomerMemoInterface extends MemoInterface {
 export interface MemoInterface {
   id: number;
   memo: string;
-}
-
-export interface MemoInterface {
-  id: number;
-  memo: string;
+  customer_id: string | number;
 }
 
 export interface CustomersInterface {

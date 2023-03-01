@@ -12,7 +12,9 @@ export function FeatureWidget({
       onClick={onClick}
       className="flex items-center justify-center w-24 h-24 text-4xl border border-opacity-50 rounded-md cursor-pointer text-primary-content bg-primary border-base-200 "
     >
-      <Icon />
+      <div className="w-10 h-10">
+        <Icon />
+      </div>
     </div>
   );
 }

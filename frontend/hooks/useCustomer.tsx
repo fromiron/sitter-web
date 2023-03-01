@@ -21,11 +21,14 @@ import {
 import { useCustomerModalContext } from "context/CustomerModalContext";
 import { CustomerMemoInterface } from "../interfaces/cmsInterfaces";
 
-export function useCustomer({ token }: { token?: string }) {
+export function useCustomer({
+  token,
+  id,
+}: {
+  token?: string;
+  id?: number | string;
+}) {
   const { clearModal } = useCustomerModalContext();
-  const [customerId, _] = useState<number | string>(0);
-
-  const setCustomerId = async ({ id }: { id: number | string }) => _(id);
 
   // Read customer list
   const defaultQuery = {
@@ -70,8 +73,8 @@ export function useCustomer({ token }: { token?: string }) {
     data: customer,
     isLoading: isCustomerLoading,
     refetch: customerRefetch,
-  } = useQuery([CUSTOMER, customerId], () => {
-    if (customerId) return fetchCustomer({ token, id: customerId });
+  } = useQuery([CUSTOMER, id], () => fetchCustomer({ token, id: id }), {
+    enabled: !!id,
   });
 
   // Update customer
@@ -155,7 +158,6 @@ export function useCustomer({ token }: { token?: string }) {
     deleteCustomer,
     customerStat,
     customer,
-    setCustomerId,
     customerRefetch,
     isCustomerLoading,
     addCustomerMemo,

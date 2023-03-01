@@ -27,7 +27,7 @@ export default function SearchInput({
       search: search ?? "",
     });
   };
-  useEffect(() => {
+  useEffect(() => {    
     onSubmit();
   }, [selected]);
 

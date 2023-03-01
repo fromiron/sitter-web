@@ -87,67 +87,79 @@ export default function Pet({session}: { session: SessionAuthInterface }) {
     );
 
     return (
-        <CMSLayout>
-            <TypeControlModal
-                isModalOpen={isTypeModalOpen}
-                setIsModalOpen={setIsTypeModalOpen}
-                types={types}
-                mutation={petTypeMutation}
+      <CMSLayout>
+        <div className="w-full h-fit">
+          <TypeControlModal
+            isModalOpen={isTypeModalOpen}
+            setIsModalOpen={setIsTypeModalOpen}
+            types={types}
+            mutation={petTypeMutation}
+          />
+          <BreedControlModal
+            isModalOpen={isBreedModalOpen}
+            setIsModalOpen={setIsBreedModalOpen}
+            breeds={breeds}
+            types={types}
+            mutation={petBreedMutation}
+          />
+          <div className="flex gap-4 mb-4 w-fit">
+            <NumberCountWidget
+              count={petStat?.pet_count}
+              title={"総登録ペット数"}
             />
-            <BreedControlModal
-                isModalOpen={isBreedModalOpen}
-                setIsModalOpen={setIsBreedModalOpen}
-                breeds={breeds}
-                types={types}
-                mutation={petBreedMutation}
+            <NumberCountWidget count={petStat?.dead_count} title={"虹の橋"} />
+            <NumberRatioWidget
+              count1={petStat?.male_count}
+              count2={petStat?.female_count}
+              title={"性比"}
             />
-            <div className="flex gap-4 mb-4 w-fit">
-                <NumberCountWidget count={petStat?.pet_count} title={"総登録ペット数"}/>
-                <NumberCountWidget count={petStat?.dead_count} title={"虹の橋"}/>
-                <NumberRatioWidget count1={petStat?.male_count} count2={petStat?.female_count} title={"性比"}/>
-                <NumberCountWidget count={petStat?.type_count} title={"タイプ"}/>
-                <NumberCountWidget count={petStat?.breed_count} title={"品種"}/>
-                <FeatureWidget Icon={AddPetIcon} onClick={() => console.log("click")}/>
-            </div>
+            <NumberCountWidget count={petStat?.type_count} title={"タイプ"} />
+            <NumberCountWidget count={petStat?.breed_count} title={"品種"} />
+            <FeatureWidget
+              Icon={AddPetIcon}
+              onClick={() => console.log("click")}
+            />
+          </div>
 
-            <div className="flex">
-                <SearchInput
-                    query={query}
-                    setQuery={setQuery}
-                    options={options}
-                    placeholder={"Search for pet"}
-                />
-                <ResetButton onClick={resetQuery}/>
+          <div className="flex">
+            <SearchInput
+              query={query}
+              setQuery={setQuery}
+              options={options}
+              placeholder={"Search for pet"}
+            />
+            <ResetButton onClick={resetQuery} />
+          </div>
+          <div className="flex gap-4">
+            <div className="flex-1 max-w-5xl">
+              <Table
+                pets={pets}
+                query={query}
+                setQuery={setQuery}
+                isLoading={isLoading}
+                customerFilter={customerFilter}
+                setCustomerFilter={setCustomerFilter}
+              />
             </div>
-            <div className="flex gap-4">
-                <div className="flex-1 max-w-5xl">
-                    <Table
-                        pets={pets}
-                        query={query}
-                        setQuery={setQuery}
-                        isLoading={isLoading}
-                        customerFilter={customerFilter}
-                        setCustomerFilter={setCustomerFilter}
-                    />
-                </div>
-                <div>
-                    <TypeFilter
-                        types={types}
-                        setTypeFilter={setTypeFilter}
-                        typeFilter={typeFilter}
-                        typeFilterClear={typeFilterClear}
-                        openModal={openTypeModal}
-                    />
-                    <BreedFilter
-                        breeds={filteredBreeds}
-                        setBreedFilter={setBreedFilter}
-                        breedFilter={breedFilter}
-                        breedFilterClear={breedFilterClear}
-                        openModal={openBreedModal}
-                    />
-                </div>
+            <div>
+              <TypeFilter
+                types={types}
+                setTypeFilter={setTypeFilter}
+                typeFilter={typeFilter}
+                typeFilterClear={typeFilterClear}
+                openModal={openTypeModal}
+              />
+              <BreedFilter
+                breeds={filteredBreeds}
+                setBreedFilter={setBreedFilter}
+                breedFilter={breedFilter}
+                breedFilterClear={breedFilterClear}
+                openModal={openBreedModal}
+              />
             </div>
-        </CMSLayout>
+          </div>
+        </div>
+      </CMSLayout>
     );
 }
 

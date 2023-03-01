@@ -17,6 +17,7 @@ export default function App(
   session: SessionAuthInterface
 ) {
   const token = session.access_token;
+
   return (
     <SessionProvider
       session={pageProps.session}

@@ -3,31 +3,70 @@ import CMSLayout from "@components/layout/cms/CMSLayout";
 import { getSession } from "next-auth/react";
 import { NextPageContext } from "next/types";
 import { SessionAuthInterface } from "@interfaces/cmsInterfaces";
-import { useState } from "react";
+import {
+  Responsive,
+  WidthProvider,
+  Layout as LayoutInterface,
+  Layouts as LayoutsInterface,
+} from "react-grid-layout";
+import { useEffect, useState } from "react";
+import "react-grid-layout/css/styles.css";
+import "react-resizable/css/styles.css";
+import { GRID_LAYOUT_BREAKPOINTS, GRID_LAYOUT_COLS } from "@constants/layout";
+const ResponsiveGridLayout = WidthProvider(Responsive);
 
 export default function Dashboard({
   session,
 }: {
   session: SessionAuthInterface;
 }) {
-  const [test, setIsTest] = useState(false);
+  const [isReady, setIsReady] = useState<boolean>(false);
+  const [layout, setLayout] = useState<LayoutsInterface>({ lg: [] });
+  const LAYOUT_lOCAL_STORAGE_KEY = "dashboard-layout";
+
+  useEffect(() => {
+    const storedLayout = localStorage.getItem(LAYOUT_lOCAL_STORAGE_KEY);
+    if (typeof window !== "undefined" && storedLayout) {
+      setLayout(JSON.parse(storedLayout));
+      setIsReady(true);
+    }
+  }, []);
+  const onLayoutChange = (_: LayoutInterface[], layouts: LayoutsInterface) => {
+    if (typeof window !== "undefined" && isReady) {
+      setLayout(layouts);
+      localStorage.setItem(LAYOUT_lOCAL_STORAGE_KEY, JSON.stringify(layouts));
+    }
+  };
 
   return (
     <CMSLayout>
-      <div>Dashboard</div>
-      <div>mail {session?.user?.email}</div>
-
-      <div
-        className={`${
-          test ? "translate-x-0" : "translate-x-11"
-        } transform text-white transition-all text-xs mt-3 bg-black text-white w-full `}
-        onClick={() => setIsTest(!test)}
+      <ResponsiveGridLayout
+        layouts={layout}
+        breakpoints={GRID_LAYOUT_BREAKPOINTS}
+        cols={GRID_LAYOUT_COLS}
+        measureBeforeMount={true}
+        onLayoutChange={onLayoutChange}
+        isResizable={true}
       >
-        asdasds
-      </div>
-      <button className="btn" onClick={() => setIsTest(!test)}>
-        asdasdsa
-      </button>
+        <div key={1} className="bg-red-300">
+          1
+        </div>
+        <div key={2} className="bg-blue-300">
+          2
+        </div>
+        <div key={3} className="bg-green-300">
+          3
+        </div>
+        <div key={4} className="bg-purple-300">
+          4
+        </div>
+        <div key={5} className="bg-yellow-300">
+          5
+        </div>
+        <div key={6} className="bg-fuchsia-300">
+          6
+        </div>
+      </ResponsiveGridLayout>
     </CMSLayout>
   );
 }
@@ -45,7 +84,7 @@ export const getServerSideProps = async (context: NextPageContext) => {
   }
   return {
     props: {
-      session: session,
+      session,
     },
   };
 };

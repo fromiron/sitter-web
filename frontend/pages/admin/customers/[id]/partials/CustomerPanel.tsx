@@ -1,42 +1,58 @@
-import ModalContainer from "@components/layout/ModalContainer";
+import { TextInput, TextAreaInput } from "@components/inputs";
+import ContentTitle from "@components/layout/ContentTitle";
+import { TEL_PATTERN, EMAIL_PATTERN, ZIP_CODE_PATTERN } from "@constants/regex";
+import insertString from "@helpers/insert-string";
+import { numberNormalize } from "@helpers/number-normalize";
+import {
+  CustomerInterface,
+  CustomerBaseInterface,
+} from "@interfaces/cmsInterfaces";
+import { axiosClient } from "@lib/axios-client";
+import { AxiosError, AxiosResponse } from "axios";
+import { useEffect, KeyboardEvent, ChangeEvent } from "react";
 import { useForm } from "react-hook-form";
 import { IoMdAdd } from "react-icons/io";
-import { FaUser } from "react-icons/fa";
-import { TextAreaInput, TextInput } from "@components/inputs";
-import { ChangeEvent, KeyboardEvent, useContext, useEffect } from "react";
-import { AxiosError, AxiosResponse } from "axios";
-import { CustomerBaseInterface } from "@interfaces/cmsInterfaces";
-import { EMAIL_PATTERN, TEL_PATTERN, ZIP_CODE_PATTERN } from "@constants/regex";
-import { numberNormalize } from "@helpers/number-normalize";
-import insertString from "@helpers/insert-string";
-import { axiosClient } from "@lib/axios-client";
+import { UseMutationResult } from "react-query";
 import { toast } from "react-toastify";
-import { useCustomerModalContext } from "context/CustomerModalContext";
-import { useSession } from "next-auth/react";
-import { useCustomer } from "@hooks/useCustomer";
 
-export function CustomerAddModal() {
+export default function CustomerPanel({
+  customer,
+  editCustomer,
+}: {
+  customer: CustomerInterface;
+  editCustomer: UseMutationResult<
+    null,
+    AxiosError<unknown, any>,
+    CustomerBaseInterface,
+    unknown
+  >;
+}) {
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
     setValue,
-  } = useForm<CustomerBaseInterface>();
-  const { data: session } = useSession();
-  const { addCustomer } = useCustomer({ token: session?.access_token });
-  const { showCustomerAddModal, setShowCustomerAddModal } =
-    useCustomerModalContext();
-
+  } = useForm<CustomerInterface>();
   useEffect(() => {
-    if (!showCustomerAddModal) {
-      reset();
+    // 初期値をデフォルトとしていえる
+    reset(customer);
+  }, [customer]);
+
+  const handleReset = () => reset();
+  const onSubmit = (data: CustomerBaseInterface) => {
+    if (window.confirm("更新しますか？")) {
+      editCustomer.mutate(data);
     }
-  }, [showCustomerAddModal]);
+  };
+  const checkKeyDown = (e: KeyboardEvent<HTMLFormElement>) => {
+    // 入力途中エンター入力でのSubmitをブロック
+    if (e.code === "Enter") e.preventDefault();
+  };
 
   const getAddress = async (zipcode: string) => {
     const res: void | AxiosResponse<any, any> = await axiosClient
-      .get(`/zipcode/${zipcode}`)
+      .get(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${zipcode}`)
       .catch((error: AxiosError) => {
         toast.error("住所取得に失敗しました。");
       });
@@ -52,17 +68,6 @@ export function CustomerAddModal() {
       }
     }
   };
-
-  const handleReset = () => reset();
-  const onSubmit = (data: CustomerBaseInterface) => {
-    addCustomer.mutate(data);
-  };
-
-  const checkKeyDown = (e: KeyboardEvent<HTMLFormElement>) => {
-    // 入力途中エンター入力でのSubmitをブロック
-    if (e.code === "Enter") e.preventDefault();
-  };
-
   const handleZipcode = async (event: ChangeEvent<HTMLInputElement>) => {
     let value = event.target.value;
     if (value.length >= 4) {
@@ -72,10 +77,10 @@ export function CustomerAddModal() {
       }
     }
     const zipcode = numberNormalize(value);
+    setValue("zipcode", zipcode);
     if (value.length >= 8) {
       await getAddress(zipcode.replace("-", ""));
     }
-    setValue("zipcode", zipcode);
   };
 
   const handleTelNumber = async (
@@ -88,18 +93,20 @@ export function CustomerAddModal() {
   };
 
   return (
-    <ModalContainer
-      title="顧客情報登録"
-      show={showCustomerAddModal}
-      setShow={setShowCustomerAddModal}
-      Icon={FaUser}
-    >
+    <div>
+      <ContentTitle title="顧客情報" />
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="grid grid-cols-2 gap-x-4"
         onKeyDown={(e) => checkKeyDown(e)}
       >
+        <input
+          type={"hidden"}
+          defaultValue={customer?.id}
+          {...register("id")}
+        />
         <TextInput
+          readonly={true}
           colSpan={1}
           errorMsg={errors.name?.message}
           label={"名前"}
@@ -110,6 +117,7 @@ export function CustomerAddModal() {
           })}
         />
         <TextInput
+          readonly={true}
           colSpan={1}
           errorMsg={errors.name_kana?.message}
           label={"かな名 (optional)"}
@@ -118,6 +126,7 @@ export function CustomerAddModal() {
           register={register("name_kana")}
         />
         <TextInput
+          readonly={true}
           colSpan={1}
           errorMsg={errors.tel?.message}
           label={"連絡先"}
@@ -135,6 +144,7 @@ export function CustomerAddModal() {
           })}
         />
         <TextInput
+          readonly={true}
           colSpan={1}
           errorMsg={errors.tel2?.message}
           label={"緊急連絡先 (optional)"}
@@ -151,6 +161,7 @@ export function CustomerAddModal() {
           })}
         />
         <TextInput
+          readonly={true}
           colSpan={1}
           type={"email"}
           errorMsg={errors.email?.message}
@@ -165,6 +176,7 @@ export function CustomerAddModal() {
           })}
         />
         <TextInput
+          readonly={true}
           colSpan={1}
           errorMsg={errors.name_kana?.message}
           label={"Line (optional)"}
@@ -172,26 +184,28 @@ export function CustomerAddModal() {
           Icon={IoMdAdd}
           register={register("line")}
         />
-        <TextInput
-          colSpan={1}
-          errorMsg={errors.zipcode?.message}
-          label={"郵便番号 (optional)"}
-          placeholder={"064-○○○〇"}
-          Icon={IoMdAdd}
-          type={"tel"}
-          maxLength={8}
-          minLength={7}
-          register={register("zipcode", {
-            pattern: {
-              value: ZIP_CODE_PATTERN,
-              message: "012-3456のように入力してください。",
-            },
-            onChange: (e) => handleZipcode(e),
-          })}
-        />
-        <div className="col-span-2" />
+        <div className="w-full col-span-1">
+          <TextInput
+            readonly={true}
+            errorMsg={errors.zipcode?.message}
+            label={"郵便番号 (optional)"}
+            placeholder={"064-○○○〇"}
+            Icon={IoMdAdd}
+            type={"tel"}
+            maxLength={8}
+            minLength={7}
+            register={register("zipcode", {
+              pattern: {
+                value: ZIP_CODE_PATTERN,
+                message: "012-3456のように入力してください。",
+              },
+              onChange: (e) => handleZipcode(e),
+            })}
+          />
+        </div>
         <TextAreaInput
           colSpan={2}
+          readonly={true}
           errorMsg={errors.address?.message}
           label={"住所"}
           placeholder={"札幌市○○区"}
@@ -201,19 +215,22 @@ export function CustomerAddModal() {
             required: "住所を入力してください。",
           })}
         />
-
-        <div className="flex justify-center w-full mt-10 col-span-full gap-x-4">
+        <div className="col-span-2 my-4 text-xs text-error">
+          <div>※各インプットは長押しにてロックのON/OFFができます。</div>
+        </div>
+        <div className="flex justify-center w-full col-span-full gap-x-4">
           <button
+            type="button"
             onClick={handleReset}
             className="btn btn-outline border-base-200"
           >
             リセット
           </button>
           <button type={"submit"} className="btn btn-primary">
-            登録
+            更新
           </button>
         </div>
       </form>
-    </ModalContainer>
+    </div>
   );
 }

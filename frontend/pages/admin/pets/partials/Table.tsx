@@ -6,22 +6,14 @@ import {
 import RabbitIcon from "@images/rabbit_icon.svg";
 
 import { PetTableInterface } from "@interfaces/cmsInterfaces";
-import { IoMale, IoFemale } from "react-icons/io5";
 
 import Image from "next/image";
 
 import { TableLayout } from "@components/layout/cms/TableLayout";
-import { ReactElement } from "react";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
+import { SexIcon } from "@components/icons/SexIcon";
 dayjs.extend(duration);
-
-const booleanToSexString = (boolean: boolean): ReactElement =>
-  !!boolean ? (
-    <IoMale className="text-info" />
-  ) : (
-    <IoFemale className="text-error" />
-  );
 
 export function Table({
   pets,
@@ -100,7 +92,7 @@ export function Table({
               <div>
                 <div className="flex items-center">
                   {pet.name}
-                  {booleanToSexString(pet.sex)}
+                  {SexIcon(pet.sex)}
                 </div>
                 <div className="text-xs text-base-300">({pet.weight}g)</div>
               </div>

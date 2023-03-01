@@ -11,14 +11,37 @@ import { MdEmail } from "react-icons/md";
 import Image from "next/image";
 import RabbitIcon from "@images/rabbit_icon.svg";
 import { TableLayout } from "@components/layout/cms/TableLayout";
-import { useCustomerContext } from "context/CustomerContext";
 import LineLogo from "@images/logo_line.svg";
-import { useCustomerModalContext } from "context/CustomerModalContext";
+import { useCustomer } from "@hooks/useCustomer";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import { CustomersInterface } from '../../../../interfaces/cmsInterfaces';
+import { Dispatch, SetStateAction } from "react";
 
-export function Table() {
-  const { list, isListLoading, query, setQuery, setCustomerId } =
-    useCustomerContext();
-  const { setShowCustomerDetailModal } = useCustomerModalContext();
+export function Table({
+  list,
+  isListLoading,
+  query,
+  setQuery,
+}: {
+  list?: CustomersInterface;
+  isListLoading: boolean;
+  query: {
+    search: string;
+    ordering: string;
+    page: number;
+  };
+  setQuery: Dispatch<
+    SetStateAction<{
+      search: string;
+      ordering: string;
+      page: number;
+    }>
+  >;
+}) {
+  const { data: session } = useSession();
+
+  const router = useRouter();
 
   if (!list) {
     return <div>loading...</div>;
@@ -33,9 +56,6 @@ export function Table() {
 
   const theadList = ["顧客", "情報", "ペット"];
 
-  const openCustomerDetail = async (id: number | string) => {
-    await setCustomerId({ id }).then(() => setShowCustomerDetailModal(true));
-  };
   function TbodyRow() {
     return (
       <>
@@ -43,7 +63,7 @@ export function Table() {
           <tr key={customer.id} className="hover:bg-base-100">
             <td
               className="cursor-pointer whitespace-nowrap pl-7 min-w-fit"
-              onClick={() => openCustomerDetail(customer.id)}
+              onClick={() => router.push(`/admin/customers/${customer.id}`)}
             >
               <div className="font-medium">{customer.name}</div>
               <div className="opacity-50 text-xxs">{customer.name_kana}</div>

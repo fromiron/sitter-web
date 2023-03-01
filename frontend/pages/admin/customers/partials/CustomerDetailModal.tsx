@@ -3,22 +3,30 @@ import { useForm } from "react-hook-form";
 import { IoMdAdd, IoMdClose } from "react-icons/io";
 import { FaUser } from "react-icons/fa";
 import { TextAreaInput, TextInput } from "@components/inputs";
-import { ChangeEvent, KeyboardEvent, memo, useEffect } from "react";
+import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
 import { AxiosError, AxiosResponse } from "axios";
 import {
   CustomerBaseInterface,
   CustomerInterface,
   CustomerMemoInterface,
+  PetInterface,
 } from "@interfaces/cmsInterfaces";
 import { EMAIL_PATTERN, TEL_PATTERN, ZIP_CODE_PATTERN } from "@constants/regex";
 import { numberNormalize } from "@helpers/number-normalize";
 import insertString from "@helpers/insert-string";
 import { axiosClient } from "@lib/axios-client";
 import { toast } from "react-toastify";
-import { useCustomerContext } from "context/CustomerContext";
 import { useCustomerModalContext } from "context/CustomerModalContext";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import Image from "next/image";
+import { SexIcon } from "@components/icons/SexIcon";
+import { useSession } from "next-auth/react";
+import { useCustomer } from "@hooks/useCustomer";
 
 export function CustomerDetailModal() {
+  const { data: session } = useSession();
   const {
     editCustomer,
     customer,
@@ -26,7 +34,7 @@ export function CustomerDetailModal() {
     addCustomerMemo,
     customerRefetch,
     deleteCustomerMemo,
-  } = useCustomerContext();
+  } = useCustomer({ token: session?.access_token });
   const { showCustomerDetailModal, setShowCustomerDetailModal } =
     useCustomerModalContext();
 
@@ -51,9 +59,6 @@ export function CustomerDetailModal() {
     reset(customer);
     // memo payloadの顧客idが更新されず、過去のデータが残ってしまうことを修正
     memoSetValue("customer_id", customer?.id!);
-
-    console.log(customer?.memos);
-
     customerRefetch();
   }, [customer]);
 
@@ -277,20 +282,9 @@ export function CustomerDetailModal() {
 
         <div className="col-span-1">
           pets
-          <div className="flex flex-col gap-2 my-4">
-            {customer?.pets.map((pet) => (
-              <div
-                key={`${pet.customer.id}_pet_${pet.id}`}
-                className="bg-blue-400"
-              >
-                <div>{pet.name}</div>
-                <div>{pet.type.name}</div>
-                <div>{pet.breed.name}</div>
-              </div>
-            ))}
-          </div>
+          <SliderContainer pets={customer?.pets} />
           memo
-          <div className="flex flex-wrap w-full gap-2 p-4 bg-yellow-50">
+          <div className="flex flex-wrap w-full gap-2 p-4 overflow-y-auto bg-yellow-50 max-h-48">
             {customer?.memos.map((memo) => (
               <div
                 className="h-auto cursor-pointer w-fit indicator group"
@@ -331,3 +325,75 @@ export function CustomerDetailModal() {
     </ModalContainer>
   );
 }
+
+const SliderContainer = ({ pets }: { pets?: PetInterface[] }) => {
+  const [nav1, setNav1] = useState<Slider>();
+  const [nav2, setNav2] = useState<Slider>();
+  const slider1 = useRef<Slider>(null);
+  const slider2 = useRef<Slider>(null);
+
+  useEffect(() => {
+    // @ts-ignore
+    setNav1(slider1.current);
+    // @ts-ignore
+    setNav2(slider2.current);
+  }, []);
+
+  return (
+    <div>
+      <Slider asNavFor={nav2} ref={slider1}>
+        {pets?.map((pet) => (
+          <div className="p-4" key={pet.id}>
+            <div
+              key={pet.id}
+              className="flex rounded-lg shadow-sm bg-base-100 md:max-w-xl md:flex-row"
+            >
+              <div className="relative w-48 rounded-l-lg aspect-square bg-base-200">
+                {pet.image ? (
+                  <Image
+                    className="object-cover w-full h-full rounded-l-lg"
+                    src={pet.image}
+                    unoptimized
+                    fill
+                    alt=""
+                  />
+                ) : (
+                  // TODO default image setting
+                  <div className="" />
+                )}
+              </div>
+
+              <div className="flex flex-col justify-start p-6">
+                <h5 className="flex mb-2 text-xl font-medium text-neutral-800 dark:text-neutral-50">
+                  {pet.name}
+                  {pet.sex ? "君" : "ちゃん"}
+                  {SexIcon(pet.sex)}
+                </h5>
+                <p className="flex gap-4 mb-4 text-base text-neutral-600 dark:text-neutral-200">
+                  <div className="badge badge-primary whitespace-nowrap">
+                    {pet.type.name}
+                  </div>
+                  <div className="badge badge-secondary whitespace-nowrap">
+                    {pet.breed.name}
+                  </div>
+                </p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-300"></p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </Slider>
+      <Slider
+        asNavFor={nav1}
+        ref={slider2}
+        slidesToShow={5}
+        swipeToSlide={true}
+        focusOnSelect={true}
+      >
+        {pets?.map((pet) => (
+          <div key={`pet_thumbnail_${pet.id}`}>{pet.name}</div>
+        ))}
+      </Slider>
+    </div>
+  );
+};
