@@ -20,6 +20,11 @@ def detail_url(customer_id):
     return reverse("customer:customer-detail", args=[customer_id])
 
 
+def delete_list_url():
+    """顧客 list delete URL生成"""
+    return reverse("customer:customers-delete")
+
+
 def create_user(**params):
     """ユーザー生成"""
     return get_user_model().objects.create_user(**params)
@@ -179,10 +184,25 @@ class PrivateCustomerApiTestsForStaff(TestCase):
     def test_delete_customer(self):
         """顧客削除テスト"""
         customer = create_customer()
+        pet = create_pet(customer=customer)
         url = detail_url(customer.id)
         res = self.client.delete(url)
         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Customer.objects.filter(id=customer.id).exists())
+        self.assertFalse(Pet.objects.filter(id=pet.id).exists())
+
+    def test_delete_customers(self):
+        """顧客LIST削除テスト"""
+        customer1 = create_customer()
+        customer2 = create_customer()
+        url = delete_list_url()
+        res = self.client.delete(
+            url,
+            {"ids": [customer1.id, customer2.id]},
+        )
+        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Customer.objects.filter(id=customer1.id).exists())
+        self.assertFalse(Customer.objects.filter(id=customer2.id).exists())
 
     def test_customer_stat_data(self):
         """dashboardなどに使うstatデータを取得できるかをテスト"""

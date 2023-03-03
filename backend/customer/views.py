@@ -1,4 +1,5 @@
 from rest_framework import viewsets, filters, status
+from rest_framework.generics import DestroyAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.utils import timezone
@@ -10,6 +11,7 @@ from customer.serializers import (
     CustomerMemoSerializer,
     CustomerSerializer,
     CustomerStatSerializer,
+    DeleteCustomersSerializer,
 )
 
 from django.db.models import Avg, Count
@@ -76,3 +78,16 @@ class CustomerStatViewSet(APIView):
         }
         serializer = CustomerStatSerializer(data)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class DeleteCustomersView(DestroyAPIView):
+    serializer_class = DeleteCustomersSerializer
+
+    def delete(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        ids = serializer.validated_data["ids"]
+        Customer.objects.filter(id__in=ids).delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)

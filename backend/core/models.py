@@ -98,6 +98,11 @@ class Customer(models.Model):
     def __str__(self):
         return self.name
 
+    def delete(self, *args, **kwargs):
+        # Delete related pets
+        self.pets.all().delete()
+        super().delete(*args, **kwargs)
+
 
 class CustomerMemo(models.Model):
     """customer memo model"""

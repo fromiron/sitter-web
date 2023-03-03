@@ -63,3 +63,7 @@ class CustomerStatSerializer(serializers.Serializer):
     total_customers = serializers.IntegerField()
     average_pets = serializers.FloatField()
     recent_created = serializers.IntegerField()
+
+
+class DeleteCustomersSerializer(serializers.Serializer):
+    ids = serializers.ListField(child=serializers.IntegerField(), min_length=1)
