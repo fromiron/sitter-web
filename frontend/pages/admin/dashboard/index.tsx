@@ -3,13 +3,13 @@ import CMSLayout from "@components/layout/cms/CMSLayout";
 import { getSession } from "next-auth/react";
 import { NextPageContext } from "next/types";
 import { SessionAuthInterface } from "@interfaces/cmsInterfaces";
+import { useEffect, useState } from "react";
 import {
   Responsive,
   WidthProvider,
   Layout as LayoutInterface,
   Layouts as LayoutsInterface,
 } from "react-grid-layout";
-import { useEffect, useState } from "react";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import { GRID_LAYOUT_BREAKPOINTS, GRID_LAYOUT_COLS } from "@constants/layout";
@@ -25,9 +25,12 @@ export default function Dashboard({
   const LAYOUT_lOCAL_STORAGE_KEY = "dashboard-layout";
 
   useEffect(() => {
-    const storedLayout = localStorage.getItem(LAYOUT_lOCAL_STORAGE_KEY);
-    if (typeof window !== "undefined" && storedLayout) {
-      setLayout(JSON.parse(storedLayout));
+    if (typeof window !== "undefined") {
+      const storedLayout = localStorage.getItem(LAYOUT_lOCAL_STORAGE_KEY);
+
+      if (storedLayout) {
+        setLayout(JSON.parse(storedLayout!));
+      }
       setIsReady(true);
     }
   }, []);
@@ -40,33 +43,35 @@ export default function Dashboard({
 
   return (
     <CMSLayout>
-      <ResponsiveGridLayout
-        layouts={layout}
-        breakpoints={GRID_LAYOUT_BREAKPOINTS}
-        cols={GRID_LAYOUT_COLS}
-        measureBeforeMount={true}
-        onLayoutChange={onLayoutChange}
-        isResizable={true}
-      >
-        <div key={1} className="bg-red-300">
-          1
-        </div>
-        <div key={2} className="bg-blue-300">
-          2
-        </div>
-        <div key={3} className="bg-green-300">
-          3
-        </div>
-        <div key={4} className="bg-purple-300">
-          4
-        </div>
-        <div key={5} className="bg-yellow-300">
-          5
-        </div>
-        <div key={6} className="bg-fuchsia-300">
-          6
-        </div>
-      </ResponsiveGridLayout>
+      <div className="w-full h-auto">
+        <ResponsiveGridLayout
+          layouts={layout}
+          breakpoints={GRID_LAYOUT_BREAKPOINTS}
+          cols={GRID_LAYOUT_COLS}
+          measureBeforeMount={true}
+          onLayoutChange={onLayoutChange}
+          isResizable={true}
+        >
+          <div key={1} className="bg-red-300">
+            1
+          </div>
+          <div key={2} className="bg-blue-300">
+            2
+          </div>
+          <div key={3} className="bg-green-300">
+            3
+          </div>
+          <div key={4} className="bg-purple-300">
+            4
+          </div>
+          <div key={5} className="bg-yellow-300">
+            5
+          </div>
+          <div key={6} className="bg-fuchsia-300">
+            6
+          </div>
+        </ResponsiveGridLayout>
+      </div>
     </CMSLayout>
   );
 }

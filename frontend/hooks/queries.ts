@@ -58,6 +58,23 @@ export async function deleteCustomerMutation({
   return null;
 }
 
+// TODO loopではなくバックエンドで処理するようリファクタリング
+export async function deleteCustomersMutation({
+  token,
+  ids,
+}: {
+  token?: string;
+  ids: number[];
+}) {
+  await axiosClient.delete(`${BACKEND_API_URL}/api/customer/customers/delete`, {
+    headers: {
+      Authorization: `JWT ${token}`,
+    },
+    data: { ids },
+  });
+  return null;
+}
+
 export async function fetchCustomers({
   query,
   token,

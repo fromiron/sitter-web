@@ -66,7 +66,7 @@ export function Table({
     return (
       <>
         {pets?.results.map((pet) => (
-          <tr key={pet.id} className="text-center hover:bg-base-100">
+          <tr key={pet.id} className="text-center truncate hover:bg-base-100">
             <td className="flex items-center">
               <div className="hidden avatar sm:block">
                 <div

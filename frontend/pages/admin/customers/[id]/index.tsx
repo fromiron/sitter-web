@@ -12,6 +12,7 @@ import { FeatureWidget } from "@components/widgets/FeatureWidget";
 import { useState } from "react";
 import PetSlider from "./partials/PetSlider";
 import AddPetIcon from "@images/add_pet.svg";
+import PetPanel from "./partials/PetSlider";
 
 export default function Customer({
   session,
@@ -32,8 +33,7 @@ export default function Customer({
     id,
   });
 
-const [showPetInfo, setPetInfo] = useState<boolean>(false)
-
+  const [showPetInfo, setPetInfo] = useState<boolean>(false);
 
   if (isCustomerLoading) {
     return null;
@@ -42,7 +42,6 @@ const [showPetInfo, setPetInfo] = useState<boolean>(false)
   if (!customer) {
     return null;
   }
-
 
   return (
     <CMSLayout>
@@ -88,20 +87,23 @@ const [showPetInfo, setPetInfo] = useState<boolean>(false)
                   Icon={AddPetIcon}
                   onClick={() => console.log("click")}
                 />
-                {customer.pets.length >0 ?          <FeatureWidget
-                  Icon={FaExchangeAlt}
-                  onClick={() => {
-                    setPetInfo(!showPetInfo);
-                  }}
-                />:null}
-       
+                {customer.pets.length > 0 ? (
+                  <FeatureWidget
+                    Icon={FaExchangeAlt}
+                    onClick={() => {
+                      setPetInfo(!showPetInfo);
+                    }}
+                  />
+                ) : null}
               </div>
             </div>
 
-            {showPetInfo ? (
-              <PetSlider pets={customer.pets} />
-            ) : (
-              <>
+            <div className="w-full col-span-2">
+              <div
+                className={`grid w-full grid-cols-2 col-span-2 gap-4  ${
+                  !showPetInfo ? "hidden" : ""
+                }`}
+              >
                 <CustomerPanel
                   customer={customer}
                   editCustomer={editCustomer}
@@ -112,8 +114,17 @@ const [showPetInfo, setPetInfo] = useState<boolean>(false)
                   deleteCustomerMemo={deleteCustomerMemo}
                   customerId={id}
                 />
-              </>
-            )}
+              </div>
+              {customer.pets.length > 0 ? (
+                <div
+                  className={`grid w-full grid-cols-2 col-span-2 gap-4  ${
+                    showPetInfo ? "hidden" : ""
+                  }`}
+                >
+                  <PetPanel pets={customer.pets} />
+                </div>
+              ) : null}
+            </div>
           </div>
         </div>
       </div>

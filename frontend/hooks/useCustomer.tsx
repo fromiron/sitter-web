@@ -1,4 +1,10 @@
-import { CUSTOMER_STAT, CUSTOMERS, CUSTOMER } from "@constants/queryKeys";
+import {
+  CUSTOMER_STAT,
+  CUSTOMERS,
+  CUSTOMER,
+  PETS,
+  PET_STAT,
+} from "@constants/queryKeys";
 import {
   CustomerBaseInterface,
   CustomerInterface,
@@ -13,6 +19,7 @@ import {
   addCustomerMutation,
   deleteCustomerMemoMutation,
   deleteCustomerMutation,
+  deleteCustomersMutation,
   editCustomerMutation,
   fetchCustomer,
   fetchCustomers,
@@ -42,10 +49,11 @@ export function useCustomer({
     page: number;
   }>(defaultQuery);
 
-  const { data: list, isLoading: isListLoading } = useQuery(
-    [CUSTOMERS, query],
-    () => fetchCustomers({ query, token })
-  );
+  const {
+    data: list,
+    isLoading: isListLoading,
+    refetch: listRefetch,
+  } = useQuery([CUSTOMERS, query], () => fetchCustomers({ query, token }));
 
   const resetListQuery = () => {
     setQuery(defaultQuery);
@@ -109,6 +117,23 @@ export function useCustomer({
       },
     }
   );
+  // Delete customers
+  const deleteCustomers = useMutation(
+    ({ ids }: { ids: number[] }) => deleteCustomersMutation({ token, ids }),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(CUSTOMERS);
+        queryClient.invalidateQueries(CUSTOMER_STAT);
+        queryClient.invalidateQueries(PETS);
+        queryClient.invalidateQueries(PET_STAT);
+        toast.success("顧客削除成功");
+      },
+      onError: (errors: AxiosError) => {
+        toast.error("顧客削除失敗");
+        console.error("ERROR: " + errors);
+      },
+    }
+  );
 
   // Read Customer stat
   const customerStat = useQuery([CUSTOMER_STAT], () =>
@@ -156,6 +181,7 @@ export function useCustomer({
     addCustomer,
     editCustomer,
     deleteCustomer,
+    deleteCustomers,
     customerStat,
     customer,
     customerRefetch,

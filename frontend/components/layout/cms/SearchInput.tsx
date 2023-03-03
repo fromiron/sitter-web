@@ -27,12 +27,12 @@ export default function SearchInput({
       search: search ?? "",
     });
   };
-  useEffect(() => {    
+  useEffect(() => {
     onSubmit();
   }, [selected]);
 
   return (
-    <div className="flex mb-4">
+    <div className="flex mb-4 min-w-[250px]">
       <div className="flex">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex items-center justify-between max-w-xl p-2 transition duration-500 border border-opacity-50 rounded-md focus-within:border-primary hover:border-primary group border-base-200 bg-neutral-content">

@@ -15,7 +15,7 @@ import LineLogo from "@images/logo_line.svg";
 import { useCustomer } from "@hooks/useCustomer";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { CustomersInterface } from '../../../../interfaces/cmsInterfaces';
+import { CustomersInterface } from "../../../../interfaces/cmsInterfaces";
 import { Dispatch, SetStateAction } from "react";
 
 export function Table({
@@ -23,9 +23,13 @@ export function Table({
   isListLoading,
   query,
   setQuery,
+  selectedItems,
+  handleCheckboxChange,
 }: {
   list?: CustomersInterface;
   isListLoading: boolean;
+  selectedItems: number[];
+  handleCheckboxChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   query: {
     search: string;
     ordering: string;
@@ -39,8 +43,6 @@ export function Table({
     }>
   >;
 }) {
-  const { data: session } = useSession();
-
   const router = useRouter();
 
   if (!list) {
@@ -54,13 +56,24 @@ export function Table({
   const totalPageCount = totalPageCountGenerator(list?.count);
   const pageArray = paginationNumGenerator(totalPageCount, query.page);
 
-  const theadList = ["顧客", "情報", "ペット"];
+  const theadList = ["", "顧客", "情報", "ペット"];
 
   function TbodyRow() {
     return (
       <>
         {list?.results.map((customer) => (
           <tr key={customer.id} className="hover:bg-base-100">
+            <td className="w-0 ">
+              <div className="form-control">
+                <input
+                  value={customer.id}
+                  type="checkbox"
+                  checked={selectedItems.includes(customer.id as number)}
+                  className="ml-2 checkbox checkbox-primary checkbox-xs"
+                  onChange={handleCheckboxChange}
+                />
+              </div>
+            </td>
             <td
               className="cursor-pointer whitespace-nowrap pl-7 min-w-fit"
               onClick={() => router.push(`/admin/customers/${customer.id}`)}

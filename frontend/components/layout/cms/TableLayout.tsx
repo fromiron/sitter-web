@@ -30,7 +30,7 @@ export function TableLayout({
   tableName,
 }: TableLayoutInterface) {
   return (
-    <div className="w-full max-w-5xl border border-opacity-50 rounded-md border-base-200 text-neutral">
+    <div className="w-full border border-opacity-50 rounded-md min-w-fit border-base-200 text-neutral">
       <div className="flex items-center p-4">
         <div className="text-xl font-medium">{tableName}</div>
         <div className="divider divider-horizontal" />

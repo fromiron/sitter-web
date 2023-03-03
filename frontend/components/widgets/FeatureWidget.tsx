@@ -1,5 +1,22 @@
 import { IconType } from "react-icons";
 
+export function FeatureWarningWidget({
+  Icon,
+  onClick,
+}: {
+  Icon: IconType;
+  onClick: () => void;
+}) {
+  return (
+    <div
+      onClick={onClick}
+      className="w-10 h-10 ml-4 btn-sm btn btn-error text-primary-content"
+    >
+      <Icon />
+    </div>
+  );
+}
+
 export function FeatureWidget({
   Icon,
   onClick,
@@ -10,11 +27,9 @@ export function FeatureWidget({
   return (
     <div
       onClick={onClick}
-      className="flex items-center justify-center w-24 h-24 text-4xl border border-opacity-50 rounded-md cursor-pointer text-primary-content bg-primary border-base-200 "
+      className="w-10 h-10 ml-4 btn-sm btn btn-primary text-primary-content"
     >
-      <div className="w-10 h-10">
-        <Icon />
-      </div>
+      <Icon />
     </div>
   );
 }

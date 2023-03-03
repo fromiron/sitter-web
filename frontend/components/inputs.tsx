@@ -31,6 +31,7 @@ interface SelectInputInterface {
   children: ReactNode;
   Icon: IconType;
   register: any;
+  readonly?: boolean;
 }
 function LockIcon({ block }: { block?: boolean }) {
   if (block) {
@@ -162,13 +163,36 @@ export function SelectInput({
   children,
   Icon,
   register,
+  readonly,
 }: SelectInputInterface) {
+  const [block, setBlock] = useState(readonly);
+
+  useEffect(() => {
+    if (readonly) setBlock(true);
+  }, [children]);
+
+  let timeoutId: NodeJS.Timeout;
+
+  const handleMouseDown = () => {
+    timeoutId = setTimeout(() => {
+      setBlock(!block);
+    }, 1000);
+  };
+  const handleMouseUp = () => {
+    clearTimeout(timeoutId);
+  };
   return (
-    <div className="w-full max-w-xs form-control group">
+    <div
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      className="relative w-full max-w-xs form-control group"
+    >
+      <div className={`${block ? "block" : "hidden"} absolute inset-0`}></div>
       <label className="label">
         <span className="flex items-center align-bottom label-text group-focus-within:text-primary">
           <Icon className="mr-2 transition duration-500 text-base-100 group-focus-within:text-primary" />
           {label}
+          {readonly && <LockIcon block={block} />}
         </span>
       </label>
       <select

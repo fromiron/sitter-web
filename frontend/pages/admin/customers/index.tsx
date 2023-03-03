@@ -1,6 +1,6 @@
 import CMSLayout from "@components/layout/cms/CMSLayout";
 
-import { RiUserAddLine } from "react-icons/ri";
+import { RiUserAddLine, RiUserUnfollowLine } from "react-icons/ri";
 import { Table } from "./partials/Table";
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
@@ -20,6 +20,8 @@ import {
 } from "context/CustomerModalContext";
 import { useCustomer } from "@hooks/useCustomer";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { FeatureWarningWidget } from "../../../components/widgets/FeatureWidget";
 
 const options: SearchSelectOptionInterface = {
   idDESC: {
@@ -70,24 +72,56 @@ function Render({ token }: { token?: string }) {
     query,
     resetListQuery,
     customerStat,
+    deleteCustomers,
     list,
     isListLoading,
-
   } = useCustomer({ token });
+
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
+
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+
+    if (event.target.checked) {
+      setSelectedItems([...selectedItems, parseInt(value)]);
+    } else {
+      setSelectedItems(selectedItems.filter((id) => id !== parseInt(value)));
+    }
+  };
+
+  const handleDelete = () => {
+    if (selectedItems.length === 0) {
+      alert("削除する顧客を選択してください");
+    } else {
+      if (confirm(`${selectedItems.length}件を削除しますか？`)) {
+        deleteCustomers.mutate({ ids: selectedItems });
+      }
+    }
+  };
+
+  useEffect(() => {
+    console.log(selectedItems);
+  }, [selectedItems]);
+
+  function Breadcrumbs() {
+    return (
+      <div className="w-full ml-2 text-sm breadcrumbs">
+        <ul>
+          <li>
+            <Link href={"/admin/dashboard"}>CMS</Link>
+          </li>
+          <li className="text-primary">Customers</li>
+        </ul>
+      </div>
+    );
+  }
 
   return (
     <div>
       <CustomerAddModal />
       <div className="flex items-end gap-4">
         <div>
-          <div className="w-full ml-2 text-sm breadcrumbs">
-            <ul>
-              <li>
-                <Link href={"/admin/dashboard"}>CMS</Link>
-              </li>
-              <li className="text-primary">Customers</li>
-            </ul>
-          </div>
+          <Breadcrumbs />
           <div className="flex">
             <SearchInput
               query={query}
@@ -96,9 +130,29 @@ function Render({ token }: { token?: string }) {
               placeholder={"Search for customer"}
             />
             <ResetButton onClick={resetListQuery} />
+            <FeatureWidget
+              Icon={RiUserAddLine}
+              onClick={() => setShowCustomerAddModal(true)}
+            />
+            <FeatureWarningWidget
+              Icon={RiUserUnfollowLine}
+              onClick={handleDelete}
+            />
           </div>
         </div>
-        <div className="flex gap-4 mb-4 w-fit">
+      </div>
+      <div className="flex">
+        <div className="w-full max-w-5xl ">
+          <Table
+            list={list}
+            isListLoading={isListLoading}
+            query={query}
+            setQuery={setQuery}
+            selectedItems={selectedItems}
+            handleCheckboxChange={handleCheckboxChange}
+          />
+        </div>
+        <div className="flex flex-col gap-4 mb-4 ml-4 w-fit">
           <NumberCountWidget
             count={customerStat?.data?.total_customers}
             title={"総顧客"}
@@ -111,18 +165,8 @@ function Render({ token }: { token?: string }) {
             count={Number(customerStat?.data?.average_pets?.toFixed(2))}
             title={"平均ペット"}
           />
-          <FeatureWidget
-            Icon={RiUserAddLine}
-            onClick={() => setShowCustomerAddModal(true)}
-          />
         </div>
       </div>
-      <Table
-        list={list}
-        isListLoading={isListLoading}
-        query={query}
-        setQuery={setQuery}
-      />
     </div>
   );
 }

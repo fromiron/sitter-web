@@ -23,7 +23,7 @@ export default function CMSLayout({ children }: { children: ReactNode }) {
   return (
     <div className={"flex w-screen h-screen"}>
       <SideBar />
-      <div className="flex flex-col items-center justify-center p-10 overflow-auto">
+      <div className="flex flex-col items-center justify-center w-full p-10 overflow-auto">
         <div className="w-full">{children}</div>
       </div>
     </div>

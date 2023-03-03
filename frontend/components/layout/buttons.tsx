@@ -4,7 +4,7 @@ export function ResetButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="h-10 ml-4 btn-sm btn btn-primary text-primary-content"
+      className="w-10 h-10 ml-4 btn-sm btn btn-primary text-primary-content"
     >
       <BiReset />
     </button>
