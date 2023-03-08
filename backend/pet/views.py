@@ -1,4 +1,6 @@
 from rest_framework import filters, viewsets, status
+from rest_framework.generics import UpdateAPIView
+from rest_framework.parsers import MultiPartParser, FormParser
 from core.pagination import ListPageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
@@ -13,6 +15,7 @@ from pet.serializers import (
     PetBreedSerializer,
     PetDetailSerializer,
     PetMemoSerializer,
+    PetImageSerializer,
 )
 from core.models import Pet, PetType, PetBreed, PetMemo, PetLike, PetDislike
 
@@ -115,3 +118,25 @@ class PetStatViewSet(APIView):
         }
         serializer = PetStatSerializer(data)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class PetImageUploadView(UpdateAPIView):
+    """Pet image upload view"""
+
+    serializer_class = PetImageSerializer
+    parser_classes = [MultiPartParser, FormParser]
+
+    def post(self, request, pk, format=None):
+        pet = self.get_object(pk)
+        serializer = PetImageSerializer(pet, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=400)
+
+    def get_object(self, pk):
+        try:
+            return Pet.objects.get(pk=pk)
+        except Pet.DoesNotExist:
+            raise Response(status=404)

@@ -1,6 +1,6 @@
 import CMSLayout from "@components/layout/cms/CMSLayout";
 import { useCustomer } from "@hooks/useCustomer";
-import { SessionAuthInterface } from "@interfaces/cmsInterfaces";
+import { PetInterface, SessionAuthInterface } from "@interfaces/cmsInterfaces";
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
 import { FaExchangeAlt, FaUser } from "react-icons/fa";
@@ -9,10 +9,11 @@ import CustomerPanel from "./partials/CustomerPanel";
 import CustomerMemoPanel from "./partials/CustomerMemoPanel";
 import NumberCountWidget from "@components/widgets/NumberCountWidget";
 import { FeatureWidget } from "@components/widgets/FeatureWidget";
-import { useState } from "react";
-import PetSlider from "./partials/PetSlider";
+import { useEffect, useState } from "react";
 import AddPetIcon from "@images/add_pet.svg";
-import PetPanel from "./partials/PetSlider";
+import PetsSliderPanel from "./partials/PetSliderPanel";
+import PetInfoPanel from "./partials/PetInfoPanel";
+import { usePetMutation } from "@hooks/usePet";
 
 export default function Customer({
   session,
@@ -33,7 +34,21 @@ export default function Customer({
     id,
   });
 
-  const [showPetInfo, setPetInfo] = useState<boolean>(false);
+  const [showPetInfo, setShowPetInfo] = useState<boolean>(false);
+  const [selectedPet, setSelectedPet] = useState<PetInterface | null>(null);
+  const [selectedPetIndex, setSelectedPetIndex] = useState<number>(0);
+
+  const { editPet, uploadImage } = usePetMutation({ token });
+
+  useEffect(() => {
+    setShowPetInfo(false);
+  }, []);
+
+  useEffect(() => {
+    if (customer) {
+      setSelectedPet(customer.pets[selectedPetIndex]);
+    }
+  }, [customer, selectedPetIndex]);
 
   if (isCustomerLoading) {
     return null;
@@ -57,7 +72,7 @@ export default function Customer({
         </ul>
       </div>
 
-      <div className="w-full max-w-5xl overflow-hidden border border-opacity-50 rounded-md border-base-200 text-neutral">
+      <div className="w-full overflow-hidden border border-opacity-50 rounded-md border-base-200 text-neutral">
         <div className="flex items-center p-4">
           <div className="text-xl font-medium">{customer.name}</div>
           <div className="divider divider-horizontal" />
@@ -66,42 +81,40 @@ export default function Customer({
             <span className="text-sm text-base-300">{customer.id}</span>
           </div>
         </div>
-        <div className="flex p-8 bg-neutral-content">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex justify-between col-span-2">
-              <div className="flex gap-4">
-                <NumberCountWidget
-                  count={customer.pets.length}
-                  title={"総登録ペット数"}
-                />
-                {/* todo バックエンド実装後アップデート */}
-                <NumberCountWidget count={4} title={"総依頼数"} />
-                <NumberCountWidget count={4} title={"未完了予約数"} />
-                <NumberCountWidget
-                  count={customer.memos.length}
-                  title={"メモ"}
-                />
-              </div>
-              <div className="flex gap-4">
-                <FeatureWidget
-                  Icon={AddPetIcon}
-                  onClick={() => console.log("click")}
-                />
-                {customer.pets.length > 0 ? (
-                  <FeatureWidget
-                    Icon={FaExchangeAlt}
-                    onClick={() => {
-                      setPetInfo(!showPetInfo);
-                    }}
-                  />
-                ) : null}
-              </div>
-            </div>
+        <div className="px-20 py-8 bg-neutral-content">
+          <div className="flex w-full gap-20">
+            <div className="flex flex-col gap-4 pr-20 border-r">
+              <NumberCountWidget
+                count={customer.pets.length}
+                title={"総登録ペット数"}
+              />
+              {/* todo バックエンド実装後アップデート */}
+              <NumberCountWidget count={4} title={"総依頼数"} />
+              <NumberCountWidget count={4} title={"未完了予約数"} />
+              <NumberCountWidget count={customer.memos.length} title={"メモ"} />
 
-            <div className="w-full col-span-2">
+              <FeatureWidget
+                disabled={customer?.pets?.length === 0}
+                Icon={FaExchangeAlt}
+                size={24}
+                onClick={() => {
+                  setShowPetInfo(!showPetInfo);
+                }}
+              />
+
+              <FeatureWidget
+                Icon={AddPetIcon}
+                size={24}
+                iconSize={10}
+                onClick={() => console.log("click")}
+              />
+            </div>
+            <div className="relative flex w-full overflow-hidden">
               <div
-                className={`grid w-full grid-cols-2 col-span-2 gap-4  ${
-                  !showPetInfo ? "hidden" : ""
+                className={`absolute h-full w-full flex gap-10 transition ${
+                  !showPetInfo
+                    ? "opacity-100 -translate-y-0"
+                    : "opacity-0 -translate-y-full"
                 }`}
               >
                 <CustomerPanel
@@ -115,15 +128,23 @@ export default function Customer({
                   customerId={id}
                 />
               </div>
-              {customer.pets.length > 0 ? (
-                <div
-                  className={`grid w-full grid-cols-2 col-span-2 gap-4  ${
-                    showPetInfo ? "hidden" : ""
-                  }`}
-                >
-                  <PetPanel pets={customer.pets} />
-                </div>
-              ) : null}
+              <div
+                className={`absolute  h-full w-full  flex gap-10 transition ${
+                  showPetInfo
+                    ? "opacity-100 -translate-y-0"
+                    : "opacity-0 -translate-y-full"
+                }`}
+              >
+                <PetsSliderPanel
+                  pets={customer.pets}
+                  setSelectedPetIndex={setSelectedPetIndex}
+                />
+                <PetInfoPanel
+                  selectedPet={selectedPet}
+                  editPet={editPet}
+                  uploadImage={uploadImage}
+                />
+              </div>
             </div>
           </div>
         </div>

@@ -5,11 +5,8 @@ import {
   PETS,
   PET_STAT,
 } from "@constants/queryKeys";
-import {
-  CustomerBaseInterface,
-  CustomerInterface,
-} from "@interfaces/cmsInterfaces";
-import { useEffect, useRef, useState } from "react";
+import { CustomerBaseInterface } from "@interfaces/cmsInterfaces";
+import { useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import { queryClient } from "@lib/react-query-client";
 import { toast } from "react-toastify";
@@ -24,7 +21,7 @@ import {
   fetchCustomer,
   fetchCustomers,
   fetchCustomerStat,
-} from "./queries";
+} from "./customerQueries";
 import { useCustomerModalContext } from "context/CustomerModalContext";
 import { CustomerMemoInterface } from "../interfaces/cmsInterfaces";
 

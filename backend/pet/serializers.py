@@ -177,3 +177,11 @@ class PetStatSerializer(serializers.Serializer):
     dead_count = serializers.IntegerField()
     type_count = serializers.IntegerField()
     breed_count = serializers.IntegerField()
+
+
+class PetImageSerializer(serializers.ModelSerializer):
+    thumbnail = serializers.ImageField(read_only=True)
+
+    class Meta:
+        model = Pet
+        fields = ["id", "image", "thumbnail"]

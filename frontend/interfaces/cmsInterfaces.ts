@@ -72,7 +72,7 @@ export interface PetInterface {
   name: "string";
   sex: boolean;
   birth: string;
-  death: string;
+  death: string | null;
   type: {
     id: number;
     name: "string";

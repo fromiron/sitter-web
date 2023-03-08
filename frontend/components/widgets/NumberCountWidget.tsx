@@ -8,7 +8,7 @@ export default function NumberCountWidget({
   title: string;
 }) {
   return (
-    <div className="flex flex-col justify-center w-full h-24 px-4 border border-opacity-50 rounded-md bg-neutral-content text-neutral border-base-200">
+    <div className="flex flex-col justify-center w-full h-24 px-4 border border-opacity-50 rounded-md whitespace-nowrap min-w-fit bg-neutral-content text-neutral border-base-200">
       <div className="text-sm font-medium select-none text-primary">
         {title}
       </div>
